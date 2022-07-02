@@ -14,8 +14,12 @@
     ],
     "autoload": {
 	    "psr-4": {
-	        "FireMidge\\ValueObject\\": "src"
+		  "FireMidge\\ValueObject\\": "src",
+		  "FireMidge\\Tests\\ValueObject\\Unit\\": "tests/unit"
 	    }
     },
-    "minimum-stability": "stable"
+    "minimum-stability": "stable",
+    "require-dev": {
+        "phpunit/phpunit": "^9"
+    }
 }

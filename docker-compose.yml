@@ -1,0 +1,15 @@
+version: '3.7'
+
+services:
+  lib:
+    image: fire-midge-php-cli-test
+    build:
+      context: docker
+      args:
+        UID: ${USER_ID}
+    container_name: ${LIBRARY_NAME}-lib
+    working_dir: /src
+    volumes:
+      - ./:/src
+    env_file:
+      - .env
