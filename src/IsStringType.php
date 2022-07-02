@@ -6,22 +6,16 @@ namespace FireMidge\ValueObject;
 use FireMidge\ValueObject\Exception\InvalidValue;
 
 /**
- * A trait for value objects that consist of a string value,
- * that must be one of a specified set of values.
+ * A trait for value objects that consist of a string value
+ * with custom validation rules.
  */
-trait IsStringEnumType
+trait IsStringType
 {
     private $value;
 
     private function __construct(string $value)
     {
-        if (! in_array($value, $this->all())) {
-            throw InvalidValue::valueNotOneOfEnum(
-                $value,
-                $this->all()
-            );
-        }
-
+        $this->validate($value);
         $this->value = $value;
     }
 
@@ -41,9 +35,14 @@ trait IsStringEnumType
     }
 
     /**
-     * Returns all allowed values.
+     * Override this method to provide custom validation.
      *
-     * @return string[]
+     * @param string  $value  The input value to validate.
+     *
+     * @throws InvalidValue
      */
-    abstract protected function all() : array;
+    protected function validate(string $value) : void
+    {
+        return;
+    }
 }

@@ -25,12 +25,12 @@ trait IsIntEnumType
         $this->value = $value;
     }
 
-    public static function fromInt(int $value): self
+    public static function fromInt(int $value) : self
     {
         return new self($value);
     }
 
-    public function toInt(): int
+    public function toInt() : int
     {
         return $this->value;
     }
@@ -40,5 +40,5 @@ trait IsIntEnumType
      *
      * @return int[]
      */
-    abstract protected function all(): array;
+    abstract protected function all() : array;
 }
