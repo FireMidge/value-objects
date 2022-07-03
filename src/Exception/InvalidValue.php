@@ -31,7 +31,7 @@ class InvalidValue extends \OutOfBoundsException
     public static function invalidValue(
         $value,
         ?string $message = null,
-        int $code = null,
+        int $code = 0,
         ?Throwable $previous = null
     ) : self
     {
@@ -56,7 +56,7 @@ class InvalidValue extends \OutOfBoundsException
         $value,
         $minimumValue,
         ?string $message = null,
-        int $code = null,
+        int $code = 0,
         ?Throwable $previous = null
     ) : self
     {
@@ -82,7 +82,7 @@ class InvalidValue extends \OutOfBoundsException
         $value,
         $maximumValue,
         ?string $message = null,
-        int $code = null,
+        int $code = 0,
         ?Throwable $previous = null
     ) : self
     {

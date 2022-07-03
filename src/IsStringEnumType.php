@@ -30,6 +30,15 @@ trait IsStringEnumType
         return new self($value);
     }
 
+    public static function fromStringOrNull(?string $value = null) : ?self
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        return static::fromString($value);
+    }
+
     public function toString() : string
     {
         return $this->value;

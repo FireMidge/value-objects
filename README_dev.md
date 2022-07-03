@@ -33,6 +33,10 @@ Use the --dev option when requiring new dev dependencies via composer:
 
 ## Commits
 
+### Validate composer.json
+
+Run `docker-compose run lib composer validate` to make sure `composer.json` is still valid.
+
 ### Tag your commit
 
 #### View existing tags

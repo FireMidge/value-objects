@@ -30,6 +30,15 @@ trait IsIntEnumType
         return new self($value);
     }
 
+    public static function fromIntOrNull(?int $value = null) : ?self
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        return static::fromInt($value);
+    }
+
     public function toInt() : int
     {
         return $this->value;

@@ -47,11 +47,19 @@ trait IsIntStringMapType
     }
 
     /**
+     * The map from integer type to string type.
+     * Provide the integer as the array key and the string as the array value.
+     *
+     * @return string[]  Key: integer; Value: string
+     */
+    abstract protected static function provideMap() : array;
+
+    /**
      * Returns all allowed integer values.
      *
      * @return int[]
      */
-    public function allValidIntegers() : array
+    protected function allValidIntegers() : array
     {
         return array_keys($this->map);
     }
@@ -61,18 +69,10 @@ trait IsIntStringMapType
      *
      * @return string[]
      */
-    public function allValidStrings() : array
+    protected function allValidStrings() : array
     {
         return array_values($this->map);
     }
-
-    /**
-     * The map from integer type to string type.
-     * Provide the integer as the array key and the string as the array value.
-     *
-     * @return string[]  Key: integer; Value: string
-     */
-    abstract protected static function provideMap() : array;
 
     /**
      * @throws InvalidValue
