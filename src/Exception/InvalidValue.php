@@ -28,6 +28,24 @@ class InvalidValue extends \OutOfBoundsException
         );
     }
 
+    public static function valuesNotOfEnum(
+        array $values,
+        array $validValues,
+        int $code = 0,
+        ?Throwable $previous = null
+    ) : self
+    {
+        return new static(
+            sprintf(
+                'The following values are not valid: "%s". Valid values are: "%s"',
+                implode('", "', $values),
+                implode('", "', $validValues)
+            ),
+            $code,
+            $previous
+        );
+    }
+
     public static function invalidValue(
         $value,
         ?string $message = null,
