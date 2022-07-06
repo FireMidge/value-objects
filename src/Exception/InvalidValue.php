@@ -60,16 +60,20 @@ class InvalidValue extends \OutOfBoundsException
         ?Throwable $previous = null
     ) : self
     {
-        return new static(
-            sprintf(
-                'Value must be higher than %s, value provided is %s.%s',
-                (string) $minimumValue,
+        $message = $minimumValue === 0
+            ? sprintf(
+                'Value must be a positive number, value provided is %s.%s',
                 (string) $value,
                 $message === null ? '' : sprintf(' (%s)', $message)
-            ),
-            $code,
-            $previous
-        );
+            )
+            : sprintf(
+                'Value must be higher than %s, value provided is %s.%s',
+                (string) --$minimumValue,
+                (string) $value,
+                $message === null ? '' : sprintf(' (%s)', $message)
+            );
+
+        return new static($message, $code, $previous);
     }
 
     /**
@@ -89,7 +93,7 @@ class InvalidValue extends \OutOfBoundsException
         return new static(
             sprintf(
                 'Value must be lower than %s, value provided is %s.%s',
-                (string) $maximumValue,
+                (string) ++$maximumValue,
                 (string) $value,
                 $message === null ? '' : sprintf(' (%s)', $message)
             ),

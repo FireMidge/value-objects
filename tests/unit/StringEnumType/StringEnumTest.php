@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace FireMidge\Tests\ValueObject\Unit;
+namespace FireMidge\Tests\ValueObject\Unit\StringEnumType;
 
-use FireMidge\Tests\ValueObject\Unit\classes\StringEnumType;
+use FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType;
 use FireMidge\ValueObject\Exception\InvalidValue;
 use PHPUnit\Framework\TestCase;
 
@@ -22,8 +22,8 @@ class StringEnumTest extends TestCase
     /**
      * @dataProvider validValueProvider
      *
-     * @covers \FireMidge\Tests\ValueObject\Unit\classes\StringEnumType::fromString
-     * @covers \FireMidge\Tests\ValueObject\Unit\classes\StringEnumType::toString
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType::fromString
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType::toString
      */
     public function testFromStringWithValidValue(string $value) : void
     {
@@ -34,8 +34,8 @@ class StringEnumTest extends TestCase
     /**
      * @dataProvider validValueProvider
      *
-     * @covers \FireMidge\Tests\ValueObject\Unit\classes\StringEnumType::__toString
-     * @covers \FireMidge\Tests\ValueObject\Unit\classes\StringEnumType::fromString
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType::__toString
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType::fromString
      */
     public function testMagicToString(string $value) : void
     {
@@ -60,8 +60,8 @@ class StringEnumTest extends TestCase
     /**
      * @dataProvider validValueProvider
      *
-     * @covers \FireMidge\Tests\ValueObject\Unit\classes\StringEnumType::fromStringOrNull
-     * @covers \FireMidge\Tests\ValueObject\Unit\classes\StringEnumType::toString
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType::fromStringOrNull
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType::toString
      */
     public function testFromStringOrNullWithValidValue(string $value) : void
     {
@@ -70,7 +70,7 @@ class StringEnumTest extends TestCase
     }
 
     /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\classes\StringEnumType::fromStringOrNull
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType::fromStringOrNull
      */
     public function testFromStringOrNullWithNull() : void
     {
@@ -81,7 +81,7 @@ class StringEnumTest extends TestCase
     /**
      * @dataProvider invalidValueProvider
      *
-     * @covers \FireMidge\Tests\ValueObject\Unit\classes\StringEnumType::fromString
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType::fromString
      */
     public function testFromStringWithInvalidValue(string $value) : void
     {
@@ -92,7 +92,7 @@ class StringEnumTest extends TestCase
     /**
      * @dataProvider invalidValueProvider
      *
-     * @covers \FireMidge\Tests\ValueObject\Unit\classes\StringEnumType::fromString
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType::fromString
      */
     public function testFromStringWithInvalidValueErrorMessage(string $value) : void
     {
@@ -106,7 +106,7 @@ class StringEnumTest extends TestCase
     /**
      * @dataProvider invalidValueProvider
      *
-     * @covers \FireMidge\Tests\ValueObject\Unit\classes\StringEnumType::fromStringOrNull
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType::fromStringOrNull
      */
     public function testFromStringOrNullWithInvalidValue(string $value) : void
     {
@@ -117,7 +117,7 @@ class StringEnumTest extends TestCase
     /**
      * @dataProvider invalidValueProvider
      *
-     * @covers \FireMidge\Tests\ValueObject\Unit\classes\StringEnumType::fromStringOrNull
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType::fromStringOrNull
      */
     public function testFromStringOrNullWithInvalidValueErrorMessage(string $value) : void
     {

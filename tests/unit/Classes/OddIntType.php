@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace FireMidge\Tests\ValueObject\Unit\classes;
+namespace FireMidge\Tests\ValueObject\Unit\Classes;
 
 use FireMidge\ValueObject\Exception\InvalidValue;
 use FireMidge\ValueObject\IsIntType;

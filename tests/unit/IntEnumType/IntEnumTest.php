@@ -1,112 +1,113 @@
 <?php
 declare(strict_types=1);
 
-namespace FireMidge\Tests\ValueObject\Unit;
+namespace FireMidge\Tests\ValueObject\Unit\IntEnumType;
 
-use FireMidge\Tests\ValueObject\Unit\classes\SimpleIntType;
+use FireMidge\Tests\ValueObject\Unit\Classes\IntEnumType;
 use FireMidge\ValueObject\Exception\InvalidValue;
 use PHPUnit\Framework\TestCase;
 
-class SimpleIntTest extends TestCase
+class IntEnumTest extends TestCase
 {
     public function validValueProvider() : array
     {
         return [
-            [ 0 ],
-            [ 1 ],
-            [ 700 ],
-            [ 58760295 ],
+            [IntEnumType::SPRING ],
+            [IntEnumType::SUMMER ],
+            [IntEnumType::AUTUMN ],
+            [IntEnumType::WINTER ],
         ];
     }
 
     /**
      * @dataProvider validValueProvider
      *
-     * @covers \FireMidge\Tests\ValueObject\Unit\classes\SimpleIntType::fromInt
-     * @covers \FireMidge\Tests\ValueObject\Unit\classes\SimpleIntType::toInt
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntEnumType::fromInt
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntEnumType::toInt
      */
     public function testFromIntWithValidValue(int $value) : void
     {
-        $instance = SimpleIntType::fromInt($value);
+        $instance = IntEnumType::fromInt($value);
         $this->assertSame($value, $instance->toInt());
     }
 
     /**
      * @dataProvider validValueProvider
      *
-     * @covers \FireMidge\Tests\ValueObject\Unit\classes\SimpleIntType::fromIntOrNull
-     * @covers \FireMidge\Tests\ValueObject\Unit\classes\SimpleIntType::toInt
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntEnumType::fromIntOrNull
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntEnumType::toInt
      */
     public function testFromIntOrNullWithValidValue(int $value) : void
     {
-        $instance = SimpleIntType::fromIntOrNull($value);
+        $instance = IntEnumType::fromIntOrNull($value);
         $this->assertSame($value, $instance->toInt());
     }
 
     /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\classes\SimpleIntType::fromIntOrNull
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntEnumType::fromIntOrNull
      */
     public function testFromIntOrNullWithNull() : void
     {
-        $instance = SimpleIntType::fromIntOrNull(null);
+        $instance = IntEnumType::fromIntOrNull(null);
         $this->assertNull($instance);
     }
 
     public function invalidValueProvider() : array
     {
         return [
+            [ 0 ],
+            [ 5 ],
             [ -1 ],
-            [ -20 ],
         ];
     }
 
     /**
      * @dataProvider invalidValueProvider
      *
-     * @covers \FireMidge\Tests\ValueObject\Unit\classes\SimpleIntType::fromInt
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntEnumType::fromInt
      */
     public function testFromIntWithInvalidValue(int $value) : void
     {
         $this->expectException(InvalidValue::class);
-        SimpleIntType::fromInt($value);
+        IntEnumType::fromInt($value);
     }
 
     /**
      * @dataProvider invalidValueProvider
      *
-     * @covers \FireMidge\Tests\ValueObject\Unit\classes\SimpleIntType::fromInt
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntEnumType::fromInt
      */
     public function testFromIntWithInvalidValueErrorMessage(int $value) : void
     {
         $this->expectExceptionMessage(sprintf(
-            'Value must be higher than 0, value provided is %s.',
-            (string) $value
+            'Value "%s" is invalid. Must be one of: "1", "2", "3", "4"',
+            $value
         ));
-        SimpleIntType::fromInt($value);
+        IntEnumType::fromInt($value);
     }
 
     /**
      * @dataProvider invalidValueProvider
      *
-     * @covers \FireMidge\Tests\ValueObject\Unit\classes\SimpleIntType::fromIntOrNull
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntEnumType::fromIntOrNull
      */
     public function testFromIntOrNullWithInvalidValue(int $value) : void
     {
         $this->expectException(InvalidValue::class);
-        SimpleIntType::fromIntOrNull($value);
+        IntEnumType::fromIntOrNull($value);
     }
 
     /**
      * @dataProvider invalidValueProvider
      *
-     * @covers \FireMidge\Tests\ValueObject\Unit\classes\SimpleIntType::fromIntOrNull
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntEnumType::fromIntOrNull
      */
     public function testFromIntOrNullWithInvalidValueErrorMessage(int $value) : void
     {
         $this->expectExceptionMessage(sprintf(
-            'Value must be higher than 0, value provided is %s.',
-            (string) $value
+            'Value "%s" is invalid. Must be one of: "1", "2", "3", "4"',
+            $value
         ));
-        SimpleIntType::fromIntOrNull($value);
+        IntEnumType::fromIntOrNull($value);
     }
 }
