@@ -34,6 +34,18 @@ class StringEnumTest extends TestCase
     /**
      * @dataProvider validValueProvider
      *
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType::fromStringOrNull
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType::toString
+     */
+    public function testFromStringOrNullWithValidValue(string $value) : void
+    {
+        $instance = StringEnumType::fromStringOrNull($value);
+        $this->assertSame($value, $instance->toString());
+    }
+
+    /**
+     * @dataProvider validValueProvider
+     *
      * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType::__toString
      * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType::fromString
      */
@@ -55,18 +67,6 @@ class StringEnumTest extends TestCase
             [ 'SUMMER' ],
             [ 'summer ' ],
         ];
-    }
-
-    /**
-     * @dataProvider validValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType::fromStringOrNull
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType::toString
-     */
-    public function testFromStringOrNullWithValidValue(string $value) : void
-    {
-        $instance = StringEnumType::fromStringOrNull($value);
-        $this->assertSame($value, $instance->toString());
     }
 
     /**

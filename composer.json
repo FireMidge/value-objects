@@ -2,9 +2,10 @@
     "name": "firemidge/value-objects",
     "description": "Convenience methods for working with value objects",
     "type": "library",
-    "require": {
-        "php": ">=7.3"
-    },
+	"require": {
+	  "php": ">=7.3",
+	  "ext-mbstring": "*"
+	},
     "license": "GPL-3.0-or-later",
     "authors": [
         {

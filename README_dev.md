@@ -14,11 +14,26 @@ In order to be able to run tests, go through the following steps to set up the D
 
 ### Run tests
 
+To run mutation tests:
+`docker-compose run lib php infection.phar`
+
 To run the unit tests:
 `docker-compose run lib vendor/bin/phpunit`
 
-To run mutation tests:
-`docker-compose run lib php infection.phar`
+#### Run a specific test
+
+To run a specific class, or method, run:
+
+`docker-compose run lib vendor/bin/phpunit --filter testWithValueDoesNotChangePreExisting`
+
+where `testWithValueDoesNotChangePreExisting` is the name of the method. You can also use the name of a class instead.
+
+
+To run a specific data set (when using data providers), you can use the name of the data set after the `@`, e.g.:
+
+` docker-compose run lib vendor/bin/phpunit --filter testWithValueDoesNotChangePreExisting@invalidNumber`
+
+where `testWithValueDoesNotChangePreExisting` is the name of the method, and `invalidNumber` is the name of the data set. Note that this only works with non-numeric data set names.
 
 #### Adding new tests
 
@@ -36,6 +51,21 @@ Use the --dev option when requiring new dev dependencies via composer:
 ### Validate composer.json
 
 Run `docker-compose run lib composer validate` to make sure `composer.json` is still valid.
+
+### Update CHANGELOG.md
+
+Add a line in CHANGELOG.md. Make sure you place the newest version on top of the log.
+
+If there are versions missing in CHANGELOG, add them. These commands should help:
+
+`git tag -n`
+: Shows a list of existing (annotated) tags with their descriptions.
+
+`git rev-list -n 1 v1.0`
+: Returns the hash of the commit tagged with "v1.0".
+
+`git show 338a601819077e11fdc439e73079d49dd08319ca`
+: Using the commit hash from the previous command, you can see what's changed in it as well as what its commit message was.
 
 ### Tag your commit
 

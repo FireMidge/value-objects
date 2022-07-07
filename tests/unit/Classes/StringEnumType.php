@@ -14,7 +14,7 @@ class StringEnumType
     public const AUTUMN = 'autumn';
     public const WINTER = 'winter';
 
-    public function all() : array
+    public static function all() : array
     {
         return [
             self::SPRING,
@@ -22,5 +22,25 @@ class StringEnumType
             self::AUTUMN,
             self::WINTER,
         ];
+    }
+
+    public static function spring() : self
+    {
+        return new static(static::SPRING);
+    }
+
+    public static function summer() : self
+    {
+        return new static(static::SUMMER);
+    }
+
+    public static function autumn() : self
+    {
+        return new static(static::AUTUMN);
+    }
+
+    public static function winter() : self
+    {
+        return new static(static::WINTER);
     }
 }

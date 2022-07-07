@@ -15,7 +15,7 @@ trait IsStringEnumType
 
     private function __construct(string $value)
     {
-        if (! in_array($value, $this->all())) {
+        if (! in_array($value, static::all())) {
             throw InvalidValue::valueNotOneOfEnum(
                 $value,
                 $this->all()
@@ -54,5 +54,5 @@ trait IsStringEnumType
      *
      * @return string[]
      */
-    abstract protected function all() : array;
+    abstract protected static function all() : array;
 }
