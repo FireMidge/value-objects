@@ -216,6 +216,25 @@ class ObjectArrayEnumTest extends TestCase
     /**
      * @dataProvider withoutValidValueProvider
      *
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::tryWithoutValue
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::toArray
+     */
+    public function testTryWithoutValueDoesNotChangePreExisting(
+        array $stateBefore,
+        SimpleObject $valueToBeRemoved,
+        array $stateAfter
+    ) : void
+    {
+        $instance = ObjectArrayEnumType::fromArray($stateBefore);
+        $newInstance = $instance->tryWithoutValue($valueToBeRemoved);
+
+        $this->assertEquals($stateAfter, $newInstance->toArray(), 'Expected new instance to match');
+        $this->assertEquals($stateBefore, $instance->toArray(), 'Expected old instance to have remained unchanged');
+    }
+
+    /**
+     * @dataProvider withoutValidValueProvider
+     *
      * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::withoutValue
      * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::toArray
      */
@@ -253,11 +272,11 @@ class ObjectArrayEnumTest extends TestCase
     /**
      * @dataProvider withoutInvalidValueProvider
      *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::withoutValue
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::tryWithoutValue
      *
      * @depends testFromArrayWithEmptyArray
      */
-    public function testWithoutValueWithInvalidValue(
+    public function testTryWithoutValueWithInvalidValue(
         array $stateBefore,
         $valueToBeRemoved,
         string $expectedExceptionClass,
@@ -268,7 +287,32 @@ class ObjectArrayEnumTest extends TestCase
         $this->expectExceptionMessage($expectedErrorMessagePart);
 
         $instance = ObjectArrayEnumType::fromArray($stateBefore);
-        $instance->withoutValue($valueToBeRemoved);
+        $instance->tryWithoutValue($valueToBeRemoved);
+    }
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::withoutValue
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::toArray
+     */
+    public function testWithoutValueNotThrowingExceptionIfValueDidNotExist() : void
+    {
+        $instance = ObjectArrayEnumType::fromArray([new SimpleObject('B')]);
+        $newInstance = $instance->withoutValue(new SimpleObject('A'));
+
+        $this->assertEquals([new SimpleObject('B')], $newInstance->toArray());
+    }
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::withoutValue
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::toArray
+     */
+    public function testWithoutValueThrowingExceptionIfValueInvalid() : void
+    {
+        $this->expectException(InvalidValue::class);
+        $this->expectExceptionMessage('Invalid value. Must be an object and an instance of "FireMidge\Tests\ValueObject\Unit\Classes\SimpleObject"');
+
+        $instance = ObjectArrayEnumType::fromArray([new SimpleObject('B')]);
+        $instance->withoutValue('B');
     }
 
     /**

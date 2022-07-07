@@ -257,4 +257,17 @@ class InvalidValue extends \OutOfBoundsException
             $previous
         );
     }
+
+    public static function invalidType($value, string $type, int $code = 0, ?Throwable $previous = null) : self
+    {
+        return new static(
+            sprintf(
+                'Invalid value. Must be of type "%s" but got "%s"',
+                $type,
+                gettype($value)
+            ),
+            $code,
+            $previous
+        );
+    }
 }

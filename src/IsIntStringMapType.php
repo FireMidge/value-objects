@@ -8,12 +8,18 @@ use FireMidge\ValueObject\Exception\InvalidValue;
 /**
  * A trait for value objects that can be mapped between
  * an integer and a string type.
+ *
+ * This may be useful when you e.g. store a value in the database as an integer (for faster indexing),
+ * but convert it to a string for a public API (for better readability).
  */
 trait IsIntStringMapType
 {
     private $value;
     protected $map;
 
+    /**
+     * @throws InvalidValue  If $value is not one of the allowed values.
+     */
     private function __construct(int $value)
     {
         $this->map = static::provideMap();
@@ -21,11 +27,26 @@ trait IsIntStringMapType
         $this->value = $value;
     }
 
+    /**
+     * Creates a new instance from an integer.
+     *
+     * @throws InvalidValue  If $value is not one of the allowed values.
+     */
     public static function fromInt(int $value) : self
     {
         return new self($value);
     }
 
+    /**
+     * Same as `fromInt`, but also accepts NULL values.
+     * Returns NULL instead of a new instance if NULL is passed into it.
+     *
+     * Useful to be able to do e.g. `fromIntOrNull($request->get('status'));`
+     * where you are not sure whether the value exists, and avoids having to
+     * do a NULL-check before instantiating.
+     *
+     * @throws InvalidValue  If $value is neither NULL nor one of the allowed values.
+     */
     public static function fromIntOrNull(?int $value) : ?self
     {
         if ($value === null) {
@@ -35,11 +56,27 @@ trait IsIntStringMapType
         return static::fromInt($value);
     }
 
+    /**
+     * Creates a new instance from a string.
+     * It converts the string to the equivalent integer based on provideMap().
+     *
+     * @throws InvalidValue  If $value is not one of the allowed values.
+     */
     public static function fromString(string $value) : self
     {
         return new self(static::convertStringToInt($value, static::provideMap()));
     }
 
+    /**
+     * Same as `fromString`, but also accepts NULL values.
+     * Returns NULL instead of a new instance if NULL is passed into it.
+     *
+     * Useful to be able to do e.g. `fromStringOrNull($request->get('status'));`
+     * where you are not sure whether the value exists, and avoids having to
+     * do a NULL-check before instantiating.
+     *
+     * @throws InvalidValue  If $value is neither NULL nor one of the allowed values.
+     */
     public static function fromStringOrNull(?string $value) : ?self
     {
         if ($value === null) {
@@ -49,11 +86,17 @@ trait IsIntStringMapType
         return static::fromString($value);
     }
 
+    /**
+     * Converts the object to the integer value.
+     */
     public function toInt() : int
     {
         return $this->value;
     }
 
+    /**
+     * Converts the object to the string equivalent.
+     */
     public function toString() : string
     {
         return $this->map[$this->value];
@@ -93,7 +136,7 @@ trait IsIntStringMapType
     abstract protected static function provideMap() : array;
 
     /**
-     * @throws InvalidValue
+     * @throws InvalidValue  If $value is not one of the allowed values.
      */
     protected static function validateIntValue(int $value, array $validIntegers) : void
     {
@@ -106,7 +149,7 @@ trait IsIntStringMapType
     }
 
     /**
-     * @throws InvalidValue
+     * @throws InvalidValue  If $value is not one of the available values in $map.
      */
     protected static function convertStringToInt(string $value, array $map) : int
     {
