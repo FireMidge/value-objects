@@ -1,0 +1,17 @@
+{
+  "source": {
+	"directories": [
+	  "src"
+	],
+	"excludes": [
+	  "{Exception/.*}"
+	]
+  },
+  "logs": {
+	"text": "infection.log"
+  },
+  "mutators": {
+	"@default": true
+  },
+  "testFramework": "phpunit"
+}
