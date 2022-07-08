@@ -14,17 +14,15 @@ use FireMidge\ValueObject\Exception\InvalidValue;
  */
 trait IsIntStringMapType
 {
-    private $value;
     protected $map;
 
     /**
      * @throws InvalidValue  If $value is not one of the allowed values.
      */
-    private function __construct(int $value)
+    private function __construct(private int $value)
     {
         $this->map = static::provideMap();
         static::validateIntValue($value, $this->allValidIntegers());
-        $this->value = $value;
     }
 
     /**
@@ -32,9 +30,9 @@ trait IsIntStringMapType
      *
      * @throws InvalidValue  If $value is not one of the allowed values.
      */
-    public static function fromInt(int $value) : self
+    public static function fromInt(int $value) : static
     {
-        return new self($value);
+        return new static($value);
     }
 
     /**
@@ -47,7 +45,7 @@ trait IsIntStringMapType
      *
      * @throws InvalidValue  If $value is neither NULL nor one of the allowed values.
      */
-    public static function fromIntOrNull(?int $value) : ?self
+    public static function fromIntOrNull(?int $value) : ?static
     {
         if ($value === null) {
             return null;
@@ -62,9 +60,9 @@ trait IsIntStringMapType
      *
      * @throws InvalidValue  If $value is not one of the allowed values.
      */
-    public static function fromString(string $value) : self
+    public static function fromString(string $value) : static
     {
-        return new self(static::convertStringToInt($value, static::provideMap()));
+        return new static(static::convertStringToInt($value, static::provideMap()));
     }
 
     /**
@@ -77,7 +75,7 @@ trait IsIntStringMapType
      *
      * @throws InvalidValue  If $value is neither NULL nor one of the allowed values.
      */
-    public static function fromStringOrNull(?string $value) : ?self
+    public static function fromStringOrNull(?string $value) : ?static
     {
         if ($value === null) {
             return null;

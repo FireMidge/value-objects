@@ -15,7 +15,7 @@ class InvalidValue extends \OutOfBoundsException
         array $validValues,
         int $code = 0,
         ?Throwable $previous = null
-    ) : self
+    ) : static
     {
         return new static(
             sprintf(
@@ -33,7 +33,7 @@ class InvalidValue extends \OutOfBoundsException
         array $validValues,
         int $code = 0,
         ?Throwable $previous = null
-    ) : self
+    ) : static
     {
         return new static(
             sprintf(
@@ -51,7 +51,7 @@ class InvalidValue extends \OutOfBoundsException
         ?string $message = null,
         int $code = 0,
         ?Throwable $previous = null
-    ) : self
+    ) : static
     {
         return new static(
             sprintf(
@@ -69,7 +69,7 @@ class InvalidValue extends \OutOfBoundsException
         ?string $message = null,
         int $code = 0,
         ?Throwable  $previous = null
-    ) : self
+    ) : static
     {
         return new static(
             sprintf(
@@ -88,7 +88,7 @@ class InvalidValue extends \OutOfBoundsException
         ?string $message = null,
         int $code = 0,
         ?Throwable  $previous = null
-    ) : self
+    ) : static
     {
         return new static(
             sprintf(
@@ -108,7 +108,7 @@ class InvalidValue extends \OutOfBoundsException
         ?string $message = null,
         int $code = 0,
         ?Throwable $previous = null
-    ) : self
+    ) : static
     {
         $message = $minimumCharacterLength === 0
             ? sprintf(
@@ -132,7 +132,7 @@ class InvalidValue extends \OutOfBoundsException
         ?string $message = null,
         int $code = 0,
         ?Throwable $previous = null
-    ) : self
+    ) : static
     {
         $message = sprintf(
                 'Value "%s" is too long; can only have a maximum length of %d character%s.%s',
@@ -152,7 +152,7 @@ class InvalidValue extends \OutOfBoundsException
         ?string $message = null,
         int $code = 0,
         ?Throwable $previous = null
-    ) : self
+    ) : static
     {
         $message = $minimumCharacterLength === $maximumCharacterLength
             ? sprintf(
@@ -173,19 +173,13 @@ class InvalidValue extends \OutOfBoundsException
         return new static($message, $code, $previous);
     }
 
-    /**
-     * @param float|int|double $value
-     * @param float|int|double $minimumValue
-     *
-     * @return static
-     */
     public static function valueTooLow(
-        $value,
-        $minimumValue,
+        float|int $value,
+        float|int $minimumValue,
         ?string $message = null,
         int $code = 0,
         ?Throwable $previous = null
-    ) : self
+    ) : static
     {
         $message = $minimumValue == 0 // If we were to do a strict comparison here, it would fail for anything but integer
             ? sprintf(
@@ -203,19 +197,13 @@ class InvalidValue extends \OutOfBoundsException
         return new static($message, $code, $previous);
     }
 
-    /**
-     * @param float|int|double $value
-     * @param float|int|double $maximumValue
-     *
-     * @return static
-     */
     public static function valueTooHigh(
-        $value,
-        $maximumValue,
+        float|int $value,
+        float|int $maximumValue,
         ?string $message = null,
         int $code = 0,
         ?Throwable $previous = null
-    ) : self
+    ) : static
     {
         return new static(
             sprintf(
@@ -229,7 +217,7 @@ class InvalidValue extends \OutOfBoundsException
         );
     }
 
-    public static function invalidValues(array $invalidValues, int $code = 0, ?Throwable $previous = null) : self
+    public static function invalidValues(array $invalidValues, int $code = 0, ?Throwable $previous = null) : static
     {
         return new static(
             sprintf('The following values are invalid: "%s"', implode('", "', $invalidValues)),
@@ -238,7 +226,7 @@ class InvalidValue extends \OutOfBoundsException
         );
     }
 
-    public static function notInstanceOf($value, string $class, int $code = 0, ?Throwable $previous = null) : self
+    public static function notInstanceOf($value, string $class, int $code = 0, ?Throwable $previous = null) : static
     {
         $message = is_object($value)
             ? sprintf(
@@ -258,7 +246,7 @@ class InvalidValue extends \OutOfBoundsException
         );
     }
 
-    public static function invalidType($value, string $type, int $code = 0, ?Throwable $previous = null) : self
+    public static function invalidType($value, string $type, int $code = 0, ?Throwable $previous = null) : static
     {
         return new static(
             sprintf(
@@ -276,7 +264,7 @@ class InvalidValue extends \OutOfBoundsException
         ?string $message = null,
         int $code = 0,
         ?Throwable $previous = null
-    ) : self
+    ) : static
     {
         return new static(
             sprintf(

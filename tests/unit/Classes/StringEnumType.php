@@ -24,22 +24,22 @@ class StringEnumType
         ];
     }
 
-    public static function spring() : self
+    public static function spring() : static
     {
         return new static(static::SPRING);
     }
 
-    public static function summer() : self
+    public static function summer() : static
     {
         return new static(static::SUMMER);
     }
 
-    public static function autumn() : self
+    public static function autumn() : static
     {
         return new static(static::AUTUMN);
     }
 
-    public static function winter() : self
+    public static function winter() : static
     {
         return new static(static::WINTER);
     }

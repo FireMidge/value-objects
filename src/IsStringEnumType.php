@@ -11,12 +11,10 @@ use FireMidge\ValueObject\Exception\InvalidValue;
  */
 trait IsStringEnumType
 {
-    private $value;
-
     /**
      * @throws InvalidValue  If $value is not one of the allowed values.
      */
-    private function __construct(string $value)
+    private function __construct(private string $value)
     {
         if (! in_array($value, static::all())) {
             throw InvalidValue::valueNotOneOfEnum(
@@ -24,8 +22,6 @@ trait IsStringEnumType
                 $this->all()
             );
         }
-
-        $this->value = $value;
     }
 
     /**
@@ -33,9 +29,9 @@ trait IsStringEnumType
      *
      * @throws InvalidValue  If $value is not one of the allowed values.
      */
-    public static function fromString(string $value) : self
+    public static function fromString(string $value) : static
     {
-        return new self($value);
+        return new static($value);
     }
 
     /**
@@ -48,7 +44,7 @@ trait IsStringEnumType
      *
      * @throws InvalidValue  If $value is neither NULL nor one of the allowed values.
      */
-    public static function fromStringOrNull(?string $value = null) : ?self
+    public static function fromStringOrNull(?string $value = null) : ?static
     {
         if ($value === null) {
             return null;

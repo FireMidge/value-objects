@@ -7,7 +7,7 @@ use RuntimeException;
 
 class ValueNotFound extends RuntimeException
 {
-    public static function inArray($value, array $availableValues) : self
+    public static function inArray($value, array $availableValues) : static
     {
         return new static(sprintf(
             'Value "%s" was not found. Available values: "%s"',

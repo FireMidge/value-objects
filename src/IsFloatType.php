@@ -14,12 +14,10 @@ use FireMidge\ValueObject\Exception\InvalidValue;
  */
 trait IsFloatType
 {
-    private $value;
-
     /**
      * @throws InvalidValue  If validation has been set up and $value is considered invalid.
      */
-    private function __construct(float $value)
+    private function __construct(private float $value)
     {
         $value = $this->transform($value);
         $this->validate($value);
@@ -31,9 +29,9 @@ trait IsFloatType
      *
      * @throws InvalidValue  If validation has been set up and $value is considered invalid.
      */
-    public static function fromFloat(float $value) : self
+    public static function fromFloat(float $value) : static
     {
-        return new self($value);
+        return new static($value);
     }
 
     /**
@@ -46,7 +44,7 @@ trait IsFloatType
      *
      * @throws InvalidValue  If validation has been set up and $value is considered invalid.
      */
-    public static function fromFloatOrNull(?float $value = null) : ?self
+    public static function fromFloatOrNull(?float $value = null) : ?static
     {
         if ($value === null) {
             return null;
