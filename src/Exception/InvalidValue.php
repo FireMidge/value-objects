@@ -187,15 +187,15 @@ class InvalidValue extends \OutOfBoundsException
         ?Throwable $previous = null
     ) : self
     {
-        $message = $minimumValue === 0
+        $message = $minimumValue == 0 // If we were to do a strict comparison here, it would fail for anything but integer
             ? sprintf(
                 'Value must be a positive number, value provided is %s.%s',
                 (string) $value,
                 $message === null ? '' : sprintf(' (%s)', $message)
             )
             : sprintf(
-                'Value must be higher than %s, value provided is %s.%s',
-                (string) --$minimumValue,
+                'Value must be higher than or equal to %s, value provided is %s.%s',
+                (string) $minimumValue,
                 (string) $value,
                 $message === null ? '' : sprintf(' (%s)', $message)
             );
@@ -219,8 +219,8 @@ class InvalidValue extends \OutOfBoundsException
     {
         return new static(
             sprintf(
-                'Value must be lower than %s, value provided is %s.%s',
-                (string) ++$maximumValue,
+                'Value must be lower than or equal to %s, value provided is %s.%s',
+                (string) $maximumValue,
                 (string) $value,
                 $message === null ? '' : sprintf(' (%s)', $message)
             ),

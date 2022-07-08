@@ -48,14 +48,14 @@ class MinMaxIntTest extends TestCase
     public function invalidValueProvider() : array
     {
         return [
-            [ -1, 'Value must be higher than 122, value provided is -1' ],
-            [ -20, 'Value must be higher than 122, value provided is -20' ],
-            [ 122, 'Value must be higher than 122, value provided is 122' ],
-            [ 0, 'Value must be higher than 122, value provided is 0' ],
-            [ 1, 'Value must be higher than 122, value provided is 1' ],
-            [ 568, 'Value must be lower than 568, value provided is 568' ],
-            [ 569, 'Value must be lower than 568, value provided is 569' ],
-            [ 1000, 'Value must be lower than 568, value provided is 1000' ],
+            [ -1, 'Value must be higher than or equal to 123, value provided is -1' ],
+            [ -20, 'Value must be higher than or equal to 123, value provided is -20' ],
+            [ 122, 'Value must be higher than or equal to 123, value provided is 122' ],
+            [ 0, 'Value must be higher than or equal to 123, value provided is 0' ],
+            [ 1, 'Value must be higher than or equal to 123, value provided is 1' ],
+            [ 568, 'Value must be lower than or equal to 567, value provided is 568' ],
+            [ 569, 'Value must be lower than or equal to 567, value provided is 569' ],
+            [ 1000, 'Value must be lower than or equal to 567, value provided is 1000' ],
         ];
     }
 

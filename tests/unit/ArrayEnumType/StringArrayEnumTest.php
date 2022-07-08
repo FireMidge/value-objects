@@ -159,37 +159,6 @@ class StringArrayEnumTest extends TestCase
         $instance->withValue($invalidValue);
     }
 
-    public function withoutValidValueProvider() : array
-    {
-        return [
-           'one' => [
-                [ 'name', 'email', 'status' ],
-                'name',
-                [ 'email', 'status' ],
-            ],
-           'two' => [
-               [ 'name', 'name', 'email', 'status' ],
-               'name',
-               [ 'name', 'email', 'status' ],
-           ],
-           'three' => [
-               [ 'name', 'email', 'status', 'name' ],
-               'name',
-               [ 'email', 'status', 'name' ],
-           ],
-           'four' => [
-               [ 'status' ],
-               'status',
-               [ ],
-           ],
-           'five' => [
-               [ 'email', 'status' ],
-               'email',
-               [ 'status' ],
-           ],
-        ];
-    }
-
     public function withoutInvalidValueProvider() : array
     {
         return [
@@ -245,6 +214,37 @@ class StringArrayEnumTest extends TestCase
 
         $instance = StringArrayEnumType::fromArray($stateBefore);
         $instance->tryWithoutValue($valueToBeRemoved);
+    }
+
+    public function withoutValidValueProvider() : array
+    {
+        return [
+            'one' => [
+                [ 'name', 'email', 'status' ],
+                'name',
+                [ 'email', 'status' ],
+            ],
+            'two' => [
+                [ 'name', 'name', 'email', 'status' ],
+                'name',
+                [ 'name', 'email', 'status' ],
+            ],
+            'three' => [
+                [ 'name', 'email', 'status', 'name' ],
+                'name',
+                [ 'email', 'status', 'name' ],
+            ],
+            'four' => [
+                [ 'status' ],
+                'status',
+                [ ],
+            ],
+            'five' => [
+                [ 'email', 'status' ],
+                'email',
+                [ 'status' ],
+            ],
+        ];
     }
 
     /**

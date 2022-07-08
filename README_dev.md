@@ -20,6 +20,9 @@ To run mutation tests:
 To run the unit tests:
 `docker-compose run lib vendor/bin/phpunit`
 
+To create a code coverage report:
+`docker-compose run lib vendor/bin/phpunit --coverage-html .`
+
 #### Run a specific test
 
 To run a specific class, or method, run:

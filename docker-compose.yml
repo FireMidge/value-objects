@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   lib:
-    image: fire-midge-php-cli-test
+    image: fire-midge-php-cli-test-7.3
     build:
       context: docker
       args:
