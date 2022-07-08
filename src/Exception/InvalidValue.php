@@ -270,4 +270,22 @@ class InvalidValue extends \OutOfBoundsException
             $previous
         );
     }
+
+    public static function notAnEmailAddress(
+        string $value,
+        ?string $message = null,
+        int $code = 0,
+        ?Throwable $previous = null
+    ) : self
+    {
+        return new static(
+            sprintf(
+                'E-mail address "%s" is invalid.%s',
+                $value,
+                $message === null ? '' : sprintf(' (%s)', $message)
+            ),
+            $code,
+            $previous
+        );
+    }
 }

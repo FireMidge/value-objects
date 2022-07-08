@@ -13,6 +13,7 @@ Feature: Added the following types:
 - `IsIntType`
 - `IsStringArrayEnumType`
 - `IsStringType`
+- `IsEmailType`
 
 Feature: Added `fromNull` methods to `IsStringEnumType` and `IsIntEnumType`.
 

@@ -28,7 +28,7 @@ class StringVOArrayEnumType
         }
     }
 
-    protected static function areValuesUnique(): bool
+    protected static function areValuesUnique() : bool
     {
         return true;
     }

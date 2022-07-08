@@ -9,7 +9,7 @@ use FireMidge\ValueObject\Exception\InvalidValue;
  * A trait for value objects that consist of a string value
  * with or without custom validation rules.
  *
- * This type is useful for e.g. storing an e-mail address
+ * This type is useful for e.g. storing a name
  * and other string values that don't have a finite list of allowed values
  * or where it is not feasible to list all allowed values.
  */
@@ -74,6 +74,7 @@ trait IsStringType
      *
      * There are convenience methods already here that you can call, e.g.:
      * - validateLength
+     * - validateEmailAddress
      *
      * @param string  $value  The input value to validate.
      *
@@ -119,6 +120,16 @@ trait IsStringType
         }
         else if ($maxLength !== null && $length > $maxLength) {
             throw InvalidValue::valueTooLong($value, $maxLength);
+        }
+    }
+
+    /**
+     * A convenience method you can call inside validate().
+     */
+    private function validateEmailAddress(string $value) : void
+    {
+        if (filter_var($value, FILTER_VALIDATE_EMAIL) === false) {
+            throw InvalidValue::notAnEmailAddress($value);
         }
     }
 

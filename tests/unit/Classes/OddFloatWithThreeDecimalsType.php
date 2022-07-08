@@ -10,12 +10,12 @@ class OddFloatWithThreeDecimalsType
 {
     use IsFloatType;
 
-    protected function transform(float $value): float
+    protected function transform(float $value) : float
     {
         return round($value, 3);
     }
 
-    protected function validate(float $value): void
+    protected function validate(float $value) : void
     {
         if ($value % 2 === 0) {
             throw new InvalidValue(sprintf('Only odd values allowed. Value provided: "%g"', $value));

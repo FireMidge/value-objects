@@ -14,7 +14,7 @@ class CapitalStringType
         return $this->trimAndCapitalise($value);
     }
 
-    protected function validate(string $value): void
+    protected function validate(string $value) : void
     {
         $this->validateLength($value, 2, 3);
     }

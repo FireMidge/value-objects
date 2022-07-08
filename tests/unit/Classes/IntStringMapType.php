@@ -9,7 +9,7 @@ class IntStringMapType
 {
     use IsIntStringMapType;
 
-    protected static function provideMap(): array
+    protected static function provideMap() : array
     {
         return [
             1 => 'spring',

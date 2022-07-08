@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class MinMaxIntTest extends TestCase
 {
-    public function validValueProvider(): array
+    public function validValueProvider() : array
     {
         return [
             [ 123 ],
@@ -27,7 +27,7 @@ class MinMaxIntTest extends TestCase
      * @covers       \FireMidge\Tests\ValueObject\Unit\Classes\MinMaxIntType::fromInt
      * @covers       \FireMidge\Tests\ValueObject\Unit\Classes\MinMaxIntType::toInt
      */
-    public function testFromIntWithValidValue(int $value): void
+    public function testFromIntWithValidValue(int $value) : void
     {
         $instance = MinMaxIntType::fromInt($value);
         $this->assertSame($value, $instance->toInt());
@@ -39,7 +39,7 @@ class MinMaxIntTest extends TestCase
      * @covers       \FireMidge\Tests\ValueObject\Unit\Classes\MinMaxIntType::fromIntOrNull
      * @covers       \FireMidge\Tests\ValueObject\Unit\Classes\MinMaxIntType::toInt
      */
-    public function testFromIntOrNullWithValidValue(int $value): void
+    public function testFromIntOrNullWithValidValue(int $value) : void
     {
         $instance = MinMaxIntType::fromIntOrNull($value);
         $this->assertSame($value, $instance->toInt());

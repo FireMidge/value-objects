@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class OddIntTest extends TestCase
 {
-    public function validValueProvider(): array
+    public function validValueProvider() : array
     {
         return [
             [ 123 ],
@@ -27,7 +27,7 @@ class OddIntTest extends TestCase
      * @covers       \FireMidge\Tests\ValueObject\Unit\Classes\OddIntType::fromInt
      * @covers       \FireMidge\Tests\ValueObject\Unit\Classes\OddIntType::toInt
      */
-    public function testFromIntWithValidValue(int $value): void
+    public function testFromIntWithValidValue(int $value) : void
     {
         $instance = OddIntType::fromInt($value);
         $this->assertSame($value, $instance->toInt());
@@ -39,7 +39,7 @@ class OddIntTest extends TestCase
      * @covers       \FireMidge\Tests\ValueObject\Unit\Classes\OddIntType::fromIntOrNull
      * @covers       \FireMidge\Tests\ValueObject\Unit\Classes\OddIntType::toInt
      */
-    public function testFromIntOrNullWithValidValue(int $value): void
+    public function testFromIntOrNullWithValidValue(int $value) : void
     {
         $instance = OddIntType::fromIntOrNull($value);
         $this->assertSame($value, $instance->toInt());

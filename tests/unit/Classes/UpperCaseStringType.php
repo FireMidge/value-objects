@@ -14,7 +14,7 @@ class UpperCaseStringType
         return $this->trimAndUpperCase($value);
     }
 
-    protected function validate(string $value): void
+    protected function validate(string $value) : void
     {
         $this->validateLength($value, null, 2);
     }

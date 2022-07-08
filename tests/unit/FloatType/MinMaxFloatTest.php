@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class MinMaxFloatTest extends TestCase
 {
-    public function validValueProvider(): array
+    public function validValueProvider() : array
     {
         return [
             [ 11.111 ],
@@ -29,7 +29,7 @@ class MinMaxFloatTest extends TestCase
      * @covers       \FireMidge\Tests\ValueObject\Unit\Classes\MinMaxFloatType::fromFloat
      * @covers       \FireMidge\Tests\ValueObject\Unit\Classes\MinMaxFloatType::toFloat
      */
-    public function testFromFloatWithValidValue(float $value): void
+    public function testFromFloatWithValidValue(float $value) : void
     {
         $instance = MinMaxFloatType::fromFloat($value);
         $this->assertSame($value, $instance->toFloat());
@@ -41,7 +41,7 @@ class MinMaxFloatTest extends TestCase
      * @covers       \FireMidge\Tests\ValueObject\Unit\Classes\MinMaxFloatType::fromFloatOrNull
      * @covers       \FireMidge\Tests\ValueObject\Unit\Classes\MinMaxFloatType::toFloat
      */
-    public function testFromFloatOrNullWithValidValue(float $value): void
+    public function testFromFloatOrNullWithValidValue(float $value) : void
     {
         $instance = MinMaxFloatType::fromFloatOrNull($value);
         $this->assertSame($value, $instance->toFloat());

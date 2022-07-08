@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class OddFloatWithThreeDecimalsTest extends TestCase
 {
-    public function validValueProvider(): array
+    public function validValueProvider() : array
     {
         return [
             [ 123 ],
@@ -27,7 +27,7 @@ class OddFloatWithThreeDecimalsTest extends TestCase
      * @covers       \FireMidge\Tests\ValueObject\Unit\Classes\OddFloatWithThreeDecimalsType::fromFloat
      * @covers       \FireMidge\Tests\ValueObject\Unit\Classes\OddFloatWithThreeDecimalsType::toFloat
      */
-    public function testFromFloatWithValidValue(float $value): void
+    public function testFromFloatWithValidValue(float $value) : void
     {
         $instance = OddFloatWithThreeDecimalsType::fromFloat($value);
         $this->assertSame($value, $instance->toFloat());
@@ -39,13 +39,13 @@ class OddFloatWithThreeDecimalsTest extends TestCase
      * @covers       \FireMidge\Tests\ValueObject\Unit\Classes\OddFloatWithThreeDecimalsType::fromFloatOrNull
      * @covers       \FireMidge\Tests\ValueObject\Unit\Classes\OddFloatWithThreeDecimalsType::toFloat
      */
-    public function testFromFloatOrNullWithValidValue(float $value): void
+    public function testFromFloatOrNullWithValidValue(float $value) : void
     {
         $instance = OddFloatWithThreeDecimalsType::fromFloatOrNull($value);
         $this->assertSame($value, $instance->toFloat());
     }
 
-    public function transformProvider(): array
+    public function transformProvider() : array
     {
         return [
             [ 123.1234, 123.123 ],
@@ -65,7 +65,7 @@ class OddFloatWithThreeDecimalsTest extends TestCase
      * @covers       \FireMidge\Tests\ValueObject\Unit\Classes\OddFloatWithThreeDecimalsType::fromFloat
      * @covers       \FireMidge\Tests\ValueObject\Unit\Classes\OddFloatWithThreeDecimalsType::toFloat
      */
-    public function testTransform(float $input, float $output): void
+    public function testTransform(float $input, float $output) : void
     {
         $instance = OddFloatWithThreeDecimalsType::fromFloat($input);
         $this->assertSame($output, $instance->toFloat());

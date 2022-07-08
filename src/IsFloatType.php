@@ -70,7 +70,7 @@ trait IsFloatType
 
     /**
      * Override this method to provide custom validation.
-     *
+     *int
      * @param float  $value  The input value to validate.
      *
      * @throws InvalidValue  If a min and/or max value have been set up and $value is not between them.
