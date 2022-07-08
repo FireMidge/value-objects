@@ -14,15 +14,12 @@ use FireMidge\ValueObject\Exception\InvalidValue;
  */
 trait IsIntType
 {
-    private $value;
-
     /**
      * @throws InvalidValue  If validation has been set up and $value is considered invalid.
      */
-    private function __construct(int $value)
+    private function __construct(private int $value)
     {
         $this->validate($value);
-        $this->value = $value;
     }
 
     /**
@@ -30,9 +27,9 @@ trait IsIntType
      *
      * @throws InvalidValue  If validation has been set up and $value is considered invalid.
      */
-    public static function fromInt(int $value) : self
+    public static function fromInt(int $value) : static
     {
-        return new self($value);
+        return new static($value);
     }
 
     /**
@@ -45,7 +42,7 @@ trait IsIntType
      *
      * @throws InvalidValue  If validation has been set up and $value is considered invalid.
      */
-    public static function fromIntOrNull(?int $value = null) : ?self
+    public static function fromIntOrNull(?int $value = null) : ?static
     {
         if ($value === null) {
             return null;

@@ -14,7 +14,7 @@ trait IsArrayEnumType
      * @throws InvalidValue  If values must be unique and $values contains duplicates.
      * @throws InvalidValue  If other validation checks have been set up and one or more of $values is invalid (e.g. invalid type).
      */
-    private function __construct(array $values)
+    private function __construct(private array $values)
     {
         array_map([$this, 'validateEach'], $values);
 
@@ -30,14 +30,12 @@ trait IsArrayEnumType
         if (static::areValuesUnique() && count(array_unique($values)) !== count($values)) {
             throw InvalidValue::containsDuplicates($values);
         }
-
-        $this->values = $values;
     }
 
     /**
      * Returns a new instance with all available values.
      */
-    public static function withAll() : self
+    public static function withAll() : static
     {
         return new static(static::all());
     }

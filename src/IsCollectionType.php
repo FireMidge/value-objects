@@ -13,13 +13,11 @@ use FireMidge\ValueObject\Exception\ValueNotFound;
  */
 trait IsCollectionType
 {
-    private $values;
-
     /**
      * @throws InvalidValue  If values must be unique and $values contains duplicates.
      * @throws InvalidValue  If other validation checks have been set up and one or more of $values is invalid (e.g. invalid type).
      */
-    private function __construct(array $values)
+    private function __construct(private array $values)
     {
         $values = array_map([$this, 'transformEach'], $values);
         array_map([$this, 'validateEach'], $values);
@@ -34,7 +32,7 @@ trait IsCollectionType
     /**
      * Creates a new instance from an array of values.
      */
-    public static function fromArray(array $values) : self
+    public static function fromArray(array $values) : static
     {
         return new static($values);
     }
@@ -45,7 +43,7 @@ trait IsCollectionType
      * @throws InvalidValue  If values must be unique and $addedValue is a duplicate.
      * @throws InvalidValue  If other validation checks have been set up and $value is invalid (e.g. invalid type).
      */
-    public function withValue($addedValue) : self
+    public function withValue($addedValue) : static
     {
         if (static::areValuesUnique() && $this->contains($addedValue)) {
             throw InvalidValue::duplicateValue($addedValue, $this->values);
@@ -64,7 +62,7 @@ trait IsCollectionType
      *
      * @throws InvalidValue  If validation checks have been set up and $value is invalid.
      */
-    public function withoutValue($value) : self
+    public function withoutValue($value) : static
     {
         $this->validateEach($value);
         $newValues = $this->cloneValues($this->values);
@@ -84,7 +82,7 @@ trait IsCollectionType
      * @throws ValueNotFound If the value did not previously exist in the list.
      * @throws InvalidValue  If validation checks have been set up and $value is invalid.
      */
-    public function tryWithoutValue($value) : self
+    public function tryWithoutValue($value) : static
     {
         $this->validateEach($value);
         $newValues = $this->cloneValues($this->values);

@@ -18,12 +18,10 @@ trait IsStringType
 {
     use CanTransformStrings;
 
-    private $value;
-
     /**
      * @throws InvalidValue  If validation has been set up and $value is considered invalid.
      */
-    private function __construct(string $value)
+    private function __construct(private string $value)
     {
         $value = $this->transform($value);
         $this->validate($value);
@@ -35,9 +33,9 @@ trait IsStringType
      *
      * @throws InvalidValue  If validation has been set up and $value is considered invalid.
      */
-    public static function fromString(string $value) : self
+    public static function fromString(string $value) : static
     {
-        return new self($value);
+        return new static($value);
     }
 
     /**
@@ -50,7 +48,7 @@ trait IsStringType
      *
      * @throws InvalidValue  If validation has been set up and $value is considered invalid.
      */
-    public static function fromStringOrNull(?string $value = null) : ?self
+    public static function fromStringOrNull(?string $value = null) : ?static
     {
         if ($value === null) {
             return null;

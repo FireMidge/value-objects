@@ -5,12 +5,7 @@ namespace FireMidge\Tests\ValueObject\Unit\Classes;
 
 class SimpleObject
 {
-    public $value;
-
-    public function __construct(string $value)
-    {
-        $this->value = $value;
-    }
+    public function __construct(public string $value) {}
 
     public function __toString() : string
     {
