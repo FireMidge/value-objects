@@ -40,11 +40,11 @@ class IntArrayEnumTest extends TestCase
         return [
             'asFloat' => [
                 [ (float) 11 ],
-                'Invalid value. Must be of type "int" but got "double"' // Yep, it says double when passing float
+                'Invalid value. Must be of type "integer" but got "double"' // Yep, it says double when passing float
             ],
             'asString' => [
                 [ (string) 11 ],
-                'Invalid value. Must be of type "int" but got "string"'
+                'Invalid value. Must be of type "integer" but got "string"'
             ],
             'invalidInt' => [
                 [ 44 ],
@@ -56,7 +56,7 @@ class IntArrayEnumTest extends TestCase
             ],
             'mixedInvalidAndInvalidType' => [
                 [ 33, 44, 11, 22.1 ],
-                'Invalid value. Must be of type "int" but got "double"'
+                'Invalid value. Must be of type "integer" but got "double"'
             ],
         ];
     }
@@ -136,18 +136,18 @@ class IntArrayEnumTest extends TestCase
     public function singleInvalidValueProvider() : array
     {
         return  [
-            '11.1'    => [ 11.1, 'Invalid value. Must be of type "int" but got "double"' ],
-            '11.0001' => [ 11.0001, 'Invalid value. Must be of type "int" but got "double"' ],
-            'float'   => [ (float) 11.001, 'Invalid value. Must be of type "int" but got "double"' ], // Yep, it comes back as double even when passing float
+            '11.1'    => [ 11.1, 'Invalid value. Must be of type "integer" but got "double"' ],
+            '11.0001' => [ 11.0001, 'Invalid value. Must be of type "integer" but got "double"' ],
+            'float'   => [ (float) 11.001, 'Invalid value. Must be of type "integer" but got "double"' ], // Yep, it comes back as double even when passing float
             '44'      => [ 44, 'The following values are not valid: "44". Valid values are: "11", "22", "33"' ],
             '1'       => [ 1, 'The following values are not valid: "1". Valid values are: "11", "22", "33"' ],
             '0'       => [ 0, 'The following values are not valid: "0". Valid values are: "11", "22", "33"' ],
             '-11'     => [ -11, 'The following values are not valid: "-11". Valid values are: "11", "22", "33"' ],
-            'empty'   => [ '', 'Invalid value. Must be of type "int" but got "string"' ],
-            'string'  => [ '11', 'Invalid value. Must be of type "int" but got "string"' ],
-            'bool'    => [ false, 'Invalid value. Must be of type "int" but got "boolean"' ],
-            'object'  => [ (object) 11, 'Invalid value. Must be of type "int" but got "object"' ],
-            'array'   => [ [11], 'Invalid value. Must be of type "int" but got "array"' ],
+            'empty'   => [ '', 'Invalid value. Must be of type "integer" but got "string"' ],
+            'string'  => [ '11', 'Invalid value. Must be of type "integer" but got "string"' ],
+            'bool'    => [ false, 'Invalid value. Must be of type "integer" but got "boolean"' ],
+            'object'  => [ (object) 11, 'Invalid value. Must be of type "integer" but got "object"' ],
+            'array'   => [ [11], 'Invalid value. Must be of type "integer" but got "array"' ],
         ];
     }
 
@@ -174,13 +174,13 @@ class IntArrayEnumTest extends TestCase
                 [ 22 ],
                 new \stdClass(22),
                 InvalidValue::class,
-                'Invalid value. Must be of type "int" but got "object"',
+                'Invalid value. Must be of type "integer" but got "object"',
             ],
             'invalidTwo' => [
                 [ 11 ],
                 '11',
                 InvalidValue::class,
-                'Invalid value. Must be of type "int" but got "string"',
+                'Invalid value. Must be of type "integer" but got "string"',
             ],
             'invalidThree' => [
                 [ 33 ],
@@ -293,7 +293,7 @@ class IntArrayEnumTest extends TestCase
     public function testWithoutValueThrowingExceptionIfValueInvalid() : void
     {
         $this->expectException(InvalidValue::class);
-        $this->expectExceptionMessage('Invalid value. Must be of type "int" but got "string"');
+        $this->expectExceptionMessage('Invalid value. Must be of type "integer" but got "string"');
 
         $instance = IntArrayEnumType::fromArray([11]);
         $instance->withoutValue('11');
@@ -327,7 +327,7 @@ class IntArrayEnumTest extends TestCase
 
         $this->expectException(InvalidValue::class);
         $this->expectExceptionMessage(
-            'Invalid value. Must be of type "int" but got "boolean"'
+            'Invalid value. Must be of type "integer" but got "boolean"'
         );
 
         $instance->contains(true);

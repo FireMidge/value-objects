@@ -14,6 +14,7 @@ Feature: Added the following types:
 - `IsStringArrayEnumType`
 - `IsStringType`
 - `IsEmailType`
+- `IsCollectionType`
 
 Feature: Added `fromNull` methods to `IsStringEnumType` and `IsIntEnumType`.
 

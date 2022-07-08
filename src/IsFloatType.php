@@ -106,7 +106,7 @@ trait IsFloatType
 
     /**
      * Override this method to do something to the float before validating it,
-     * e.g. limiting number of decimal points
+     * e.g. limiting number of decimal points.
      *
      * @param float  $value  The input value to transform.
      */

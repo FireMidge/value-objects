@@ -23,7 +23,7 @@ trait IsIntArrayEnumType
     protected function validateEach($value) : void
     {
         if (! is_int($value)) {
-            throw InvalidValue::invalidType($value, 'int');
+            throw InvalidValue::invalidType($value, 'integer');
         }
     }
 }

@@ -4,10 +4,10 @@ This library provides convenience methods for creating value objects.
 You may use the below table to decide which type is best for you.
 *"Single Value" means the object will hold a single value, whereas "Array of Values" means the object can hold more than one value.*
 
-|                             | Single Value                                                         |                         Array of Values                         |
-|:----------------------------|:---------------------------------------------------------------------|:---------------------------------------------------------------|
+|                             | Single Value                                                         | Array of Values                                                     |
+|:----------------------------|:---------------------------------------------------------------------|:--------------------------------------------------------------------|
 | List of Valid Values        | `IsStringEnumType`<br />`IsIntEnumType`<br/>`IsIntStringMapType`     | `IsStringArrayEnumType`<br />`IsIntArrayEnumType`<br/>`ArrayEnumType` |
-| Any Value/Custom Validation | `IsEmailType`<br/>`IsStringType`<br />`IsFloatType` <br/>`IsIntType` |                                                         |
+| Any Value/Custom Validation | `IsEmailType`<br/>`IsStringType`<br />`IsFloatType` <br/>`IsIntType` | `IsCollectionType` |
 
 **Each trait is thoroughly covered by unit tests, and mutation tests are run with each update to ensure the quality of the unit tests.**
 
@@ -137,7 +137,7 @@ class ProductName
         return $this->trimAndCapitalise($value);
     }
 
-    protected function validate(string $value): void
+    protected function validate(string $value) : void
     {
         $this->validateLength($value, 2, 50);
     }
@@ -439,6 +439,11 @@ You can provide custom validation by overriding `protected function validateEach
 
 Example:
 ```injectablephp
+/**
+ * @method static withValue(Status $addedValue)
+ * @method static tryWithoutValue(Status $value)
+ * @method static contains(Status $value)
+ */
 class StatusList
 {
     use IsArrayEnumType;
@@ -468,4 +473,104 @@ Usage:
 ```injectablephp
 $statuses    = StatusList::fromArray([Status::SUCCESS, Status::REDIRECTION]);
 $allStatuses = StatusList::withAll();
+```
+
+
+## IsCollectionType
+
+Use this type when the value represents an array of values and there is **no** finite list of valid values. If there is a list of valid values, use `IsArrayEnumType` (or any of the more specific variations, e.g. `IsStringArrayEnumType` if applicable).
+
+
+### Combination with other types
+You can combine this type with any other type, e.g. to get an array of float types, an array of e-mail addresses, etc.
+
+
+### Unique values
+
+If each value can only appear once in the object, you can override `protected static function areValuesUnique() : bool` and return `true`. An exception will be thrown when trying to add a value more than once to the value object.
+
+
+### Validation
+
+You can provide custom validation by overriding `protected function validateEach($value) : void`, which is executed for each value separately, both when instantiating it and when calling `withValue`. Note that this validation will also run before `withoutValue`, `tryWithoutValue` and `contains`, so you are notified when passing something entirely invalid rather than it being silently swallowed.
+
+**It is recommended to set up validation, at least for the value type.**
+
+### String transformation
+
+If you want to transform the input value but not fail validation, override `protected function transformEach($value) : string`.
+
+By also using the trait `CanTransformStrings`, you'll get 3 convenience methods that you can call inside `transform` if you want:
+- `trimAndLowerCase(string $value)`
+- `trimAndUpperCase(string $value)`
+- `trimAndCapitalise(string $value)`
+
+Example:
+
+```injectablephp
+/**
+ * @method static withValue(string $addedValue)
+ * @method static tryWithoutValue(string $value)
+ * @method static contains(string $value)
+ */
+class ProductNameCollection
+{
+    use IsCollectionType;
+    use CanTransformStrings;
+
+    protected function validateEach($value) : void
+    {
+        if (! is_string($value)) {
+            throw InvalidValue::invalidType($value, 'string');
+        }
+    }
+
+    protected function transformEach(string $value) : string
+    {
+        return $this->trimAndCapitalise($value);
+    }
+}
+```
+
+Usage:
+```injectablephp
+// $productNames will be an instance of ProductNameCollection
+// with these values: [ 'Orange juice', 'Soap', 'Shampoo' ]
+$productNames = ProductNameCollection::fromArray([
+    '  orange juice',
+    'soap ',
+    'SHAMPOO',
+]);
+```
+
+Other example, combining `EmailType` (using the `IsEmailType` trait) and `IsCollectionType`:
+
+```injectablephp
+/**
+ * @method static withValue(EmailType $addedValue)
+ * @method static tryWithoutValue(EmailType $value)
+ * @method static contains(EmailType $value)
+ */
+class EmailCollection
+{
+    use IsCollectionType;
+
+    protected function validateEach($value) : void
+    {
+        if (! is_object($value) || ! $value instanceof EmailType) {
+            throw InvalidValue::notInstanceOf($value, EmailType::class);
+        }
+    }
+}
+```
+
+Usage:
+```injectablephp
+// $productNames will be an instance of ProductNameCollection
+// with these values: [ 'Orange juice', 'Soap', 'Shampoo' ]
+$emails = ProductNameCollection::fromArray([
+    EmailType::fromString('hello@there.co.uk'),
+    EmailType::fromString('lorem@ipsum.it'),
+    EmailType::fromString('bass@player.at'),
+]);
 ```

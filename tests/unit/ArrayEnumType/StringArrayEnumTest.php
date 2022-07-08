@@ -108,8 +108,6 @@ class StringArrayEnumTest extends TestCase
      * @dataProvider singleValidValueProvider
      *
      * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumType::withValue
-     *
-     * @depends testFromArrayWithEmptyArray
      */
     public function testWithValueWithValidValue(string $value) : void
     {
@@ -127,7 +125,7 @@ class StringArrayEnumTest extends TestCase
         $this->assertEquals([
             'email',
             'status',
-        ], $instance->toArray(), 'Expected old instance to have remained unchanged'); // Make sure the previous instance hasn't been changed
+        ], $instance->toArray(), 'Expected old instance to have remained unchanged');
     }
 
     public function singleInvalidValueProvider() : array
@@ -159,7 +157,7 @@ class StringArrayEnumTest extends TestCase
         $instance->withValue($invalidValue);
     }
 
-    public function withoutInvalidValueProvider() : array
+    public function invalidWithoutValueProvider() : array
     {
         return [
             'invalidOne' => [
@@ -196,11 +194,9 @@ class StringArrayEnumTest extends TestCase
     }
 
     /**
-     * @dataProvider withoutInvalidValueProvider
+     * @dataProvider invalidWithoutValueProvider
      *
      * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumType::tryWithoutValue
-     *
-     * @depends testFromArrayWithEmptyArray
      */
     public function testTryWithoutValueWithInvalidValue(
         array $stateBefore,

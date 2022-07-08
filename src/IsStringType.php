@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace FireMidge\ValueObject;
 
 use FireMidge\ValueObject\Exception\InvalidValue;
+use FireMidge\ValueObject\Helper\CanTransformStrings;
 
 /**
  * A trait for value objects that consist of a string value
@@ -15,6 +16,8 @@ use FireMidge\ValueObject\Exception\InvalidValue;
  */
 trait IsStringType
 {
+    use CanTransformStrings;
+
     private $value;
 
     /**
@@ -131,29 +134,5 @@ trait IsStringType
         if (filter_var($value, FILTER_VALIDATE_EMAIL) === false) {
             throw InvalidValue::notAnEmailAddress($value);
         }
-    }
-
-    /**
-     * A convenience method you can call inside transform().
-     */
-    private function trimAndLowerCase(string $value) : string
-    {
-        return mb_strtolower(trim($value));
-    }
-
-    /**
-     * A convenience method you can call inside transform().
-     */
-    private function trimAndUpperCase(string $value) : string
-    {
-        return mb_strtoupper(trim($value));
-    }
-
-    /**
-     * A convenience method you can call inside transform().
-     */
-    private function trimAndCapitalise(string $value) : string
-    {
-        return ucfirst(mb_strtolower(trim($value)));
     }
 }

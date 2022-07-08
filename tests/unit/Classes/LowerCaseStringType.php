@@ -14,7 +14,7 @@ class LowerCaseStringType
         return $this->trimAndLowerCase($value);
     }
 
-    protected function validate(string $value): void
+    protected function validate(string $value) : void
     {
         $this->validateLength($value, 5);
     }
