@@ -3,7 +3,7 @@
     "description": "Convenience methods for working with value objects",
     "type": "library",
 	"require": {
-	  "php": ">=7.3",
+	  "php": "^8.1",
 	  "ext-mbstring": "*"
 	},
     "license": "GPL-3.0-or-later",

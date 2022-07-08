@@ -1,10 +1,17 @@
-FROM php:7.3-cli-alpine
+FROM php:8.1-cli-alpine
 
 RUN \
     # Needed to install pecl libraries
     apk add g++ make autoconf && \
     # PCOV provides code coverage reports and is required by Infection
     pecl install pcov && docker-php-ext-enable pcov
+
+# The following are required by the newer version of Infection (PHP 8), as it makes use of
+# the Normalizer class. Normalizer requires the intl PHP extension, which in turn has
+# icu-dev as a dependency.
+RUN \
+    apk add icu-dev && \
+	docker-php-ext-configure intl && docker-php-ext-install intl
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
 
