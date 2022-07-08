@@ -1,4 +1,20 @@
 # value-objects
 Convenience methods for creating value objects
 
-# TODO.
+## IsStringEnumType
+
+## IsIntEnumType
+
+## IsStringType
+
+## IsIntType
+
+## IsFloatType
+
+## IsIntArrayEnumType
+
+## IsStringArrayEnumType
+
+## IsArrayEnumType
+
+## IsIntStringMapType
