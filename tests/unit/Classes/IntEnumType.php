@@ -14,7 +14,7 @@ class IntEnumType
     public const AUTUMN = 3;
     public const WINTER = 4;
 
-    public function all() : array
+    public static function all() : array
     {
         return [
             self::SPRING,
