@@ -66,5 +66,5 @@ trait IsIntEnumType
      *
      * @return int[]
      */
-    abstract protected function all() : array;
+    abstract protected static function all() : array;
 }

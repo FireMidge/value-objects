@@ -3,6 +3,11 @@
 Works with PHP 8.1
 
 
+### v2.0.1
+
+Fix: `IsIntEnumType` was the only type left not using a static `all` method. This has been fixed now.
+
+
 ### v2.0
 
 Dev: Upgrade to PHP 8.1. Note that anything below PHP 8.1 is no longer supported.
@@ -33,4 +38,5 @@ Dev: Added unit and mutation tests which can be run with Docker.
 
 
 ### v1.0
+
 Feature: Basic `IsIntEnumType` and `IsStringEnumType`
