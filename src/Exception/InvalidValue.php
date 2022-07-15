@@ -64,44 +64,6 @@ class InvalidValue extends \OutOfBoundsException
         );
     }
 
-    public static function containsDuplicates(
-        array $arrayWithDuplicates,
-        ?string $message = null,
-        int $code = 0,
-        ?Throwable  $previous = null
-    ) : static
-    {
-        return new static(
-            sprintf(
-                'Values contain duplicates. Only unique values allowed. Values passed: "%s".%s',
-                implode('", "', $arrayWithDuplicates),
-                $message === null ? '' : sprintf(' (%s)', $message)
-            ),
-            $code,
-            $previous
-        );
-    }
-
-    public static function duplicateValue(
-        $duplicateValue,
-        array $fullArray,
-        ?string $message = null,
-        int $code = 0,
-        ?Throwable  $previous = null
-    ) : static
-    {
-        return new static(
-            sprintf(
-                'Value "%s" cannot be used as it already exists within array. Existing values: "%s".%s',
-                $duplicateValue,
-                implode('", "', $fullArray),
-                $message === null ? '' : sprintf(' (%s)', $message)
-            ),
-            $code,
-            $previous
-        );
-    }
-
     public static function valueTooShort(
         string $value,
         int $minimumCharacterLength,
@@ -275,5 +237,31 @@ class InvalidValue extends \OutOfBoundsException
             $code,
             $previous
         );
+    }
+
+    protected static function renderValue($value) : string
+    {
+        if (is_string($value)) {
+            return sprintf('"%s"', $value);
+        }
+
+        if (is_scalar($value)) {
+            return (string) $value;
+        }
+
+        if (! is_object($value)) {
+            // This contains arrays...
+            return sprintf('"%s"', $value);
+        }
+
+        if (method_exists( $value, '__toString' )) {
+            return sprintf('"%s"', $value);
+        }
+
+        if (method_exists( $value, 'toString' )) {
+            return sprintf('"%s"', $value->toString());
+        }
+
+        return sprintf('of type %s', get_class($value));
     }
 }

@@ -4,10 +4,10 @@ This library provides convenience methods for creating value objects.
 You may use the below table to decide which type is best for you.
 *"Single Value" means the object will hold a single value, whereas "Array of Values" means the object can hold more than one value.*
 
-|                             | Single Value                                                         | Array of Values                                                     |
-|:----------------------------|:---------------------------------------------------------------------|:--------------------------------------------------------------------|
+|                             | Single Value                                                         | Array of Values                                                       |
+|:----------------------------|:---------------------------------------------------------------------|:----------------------------------------------------------------------|
 | List of Valid Values        | `IsStringEnumType`<br />`IsIntEnumType`<br/>`IsIntStringMapType`     | `IsStringArrayEnumType`<br />`IsIntArrayEnumType`<br/>`ArrayEnumType` |
-| Any Value/Custom Validation | `IsEmailType`<br/>`IsStringType`<br />`IsFloatType` <br/>`IsIntType` | `IsCollectionType` |
+| Any Value/Custom Validation | `IsEmailType`<br/>`IsStringType`<br />`IsFloatType` <br/>`IsIntType` | `IsClassCollectionType`<br />`IsCollectionType`                       |
 
 **Each trait is thoroughly covered by unit tests, and mutation tests are run with each update to ensure the quality of the unit tests.**
 
@@ -356,7 +356,7 @@ $allStatuses       = Statuses::withAll();
 $statuses = (Statuses::fromArray([]))
     ->withValue(Statuses::SUCCESS)
     ->withValue(Statuses::SERVER_ERROR)
-    ->tryWithoutValue(Statuses::SUCCESS);
+    ->withoutValue(Statuses::SUCCESS);
     
 // The difference between tryWithoutValue and withoutValue is that the try method
 // will throw an exception if you are trying to remove a value that did not previously
@@ -476,6 +476,66 @@ $allStatuses = StatusList::withAll();
 ```
 
 
+## IsClassCollectionType
+
+Use this type when the value represents an array of values, where each value must be an instance of a class and there is **no** finite list of valid values.
+If there is a list of valid values, use `IsArrayEnumType`.
+If the values are not instances of a class, use `IsCollectionType`.
+
+### Unique values
+
+Note that by default, all the values must be unique. 
+An exception will be thrown when trying to add a value more than once to the value object.
+If you want to allow duplicate values, you can override `protected static function areValuesUnique() : bool` and return `false`. 
+
+### Validation
+
+You can provide custom validation by overriding `protected function validateEach($value) : void`, which is executed for each value separately, both when instantiating it and when calling `withValue`. Note that this validation will also run before `withoutValue`, `tryWithoutValue` and `contains`, so you are notified when passing something entirely invalid rather than it being silently swallowed.
+
+Example:
+
+```injectablephp
+/**
+ * @method static withValue(Email $addedValue)
+ * @method static tryWithoutValue(Email $value)
+ * @method static contains(Email $value)
+ */
+class EmailCollection
+{
+    use IsClassCollectionType;
+    use CanBeConvertedToStringArray;
+
+    protected function className() : string
+    {
+        return Email::class;
+    }
+}
+```
+
+Usage:
+```injectablephp
+$emails = EmailCollection::fromArray([
+    Email::fromString('hello@there.co.uk'),
+    Email::fromString('lorem@ipsum.it'),
+    Email::fromString('bass@player.at'),
+]);
+
+// Returns ['hello@there.co.uk', 'lorem@ipsum.it', 'bass@player.at']
+// This method is provided by the trait `CanBeConvertedToStringArray`
+$emailsAsStrings = $emails->toStringArray();
+
+// Returns 3
+$numberOfEmails = $emails->count();
+
+// Returns `true`, even though strings are passed. This is because `Email` 
+// implements the `__toString` method (via the trait `StringType`).
+$emailsMatch = $emails->isEqualTo([
+   'hello@there.co.uk',
+    'lorem@ipsum.it',
+    'bass@player.at',
+]);
+```
+
 ## IsCollectionType
 
 Use this type when the value represents an array of values and there is **no** finite list of valid values. If there is a list of valid values, use `IsArrayEnumType` (or any of the more specific variations, e.g. `IsStringArrayEnumType` if applicable).
@@ -483,6 +543,7 @@ Use this type when the value represents an array of values and there is **no** f
 
 ### Combination with other types
 You can combine this type with any other type, e.g. to get an array of float types, an array of e-mail addresses, etc.
+If you need each value to be an instance of a class, consider using `IsClassCollectionType` instead.
 
 
 ### Unique values
@@ -496,9 +557,9 @@ You can provide custom validation by overriding `protected function validateEach
 
 **It is recommended to set up validation, at least for the value type.**
 
-### String transformation
+### Value transformation
 
-If you want to transform the input value but not fail validation, override `protected function transformEach($value) : string`.
+If you want to transform the input value but not fail validation, override `protected function transformEach($value)`.
 
 By also using the trait `CanTransformStrings`, you'll get 3 convenience methods that you can call inside `transform` if you want:
 - `trimAndLowerCase(string $value)`
@@ -525,8 +586,16 @@ class ProductNameCollection
         }
     }
 
-    protected function transformEach(string $value) : string
+    /**
+    * @param mixed $value
+    * @return mixed
+     */
+    protected function transformEach($value)
     {
+        if (! is_string($value)) {
+            return $value;
+        }
+    
         return $this->trimAndCapitalise($value);
     }
 }
@@ -543,34 +612,4 @@ $productNames = ProductNameCollection::fromArray([
 ]);
 ```
 
-Other example, combining `EmailType` (using the `IsEmailType` trait) and `IsCollectionType`:
 
-```injectablephp
-/**
- * @method static withValue(EmailType $addedValue)
- * @method static tryWithoutValue(EmailType $value)
- * @method static contains(EmailType $value)
- */
-class EmailCollection
-{
-    use IsCollectionType;
-
-    protected function validateEach($value) : void
-    {
-        if (! is_object($value) || ! $value instanceof EmailType) {
-            throw InvalidValue::notInstanceOf($value, EmailType::class);
-        }
-    }
-}
-```
-
-Usage:
-```injectablephp
-// $productNames will be an instance of ProductNameCollection
-// with these values: [ 'Orange juice', 'Soap', 'Shampoo' ]
-$emails = ProductNameCollection::fromArray([
-    EmailType::fromString('hello@there.co.uk'),
-    EmailType::fromString('lorem@ipsum.it'),
-    EmailType::fromString('bass@player.at'),
-]);
-```

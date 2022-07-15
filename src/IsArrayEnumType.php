@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace FireMidge\ValueObject;
 
+use FireMidge\ValueObject\Exception\DuplicateValue;
 use FireMidge\ValueObject\Exception\InvalidValue;
 
 trait IsArrayEnumType
@@ -28,7 +29,7 @@ trait IsArrayEnumType
         }
 
         if (static::areValuesUnique() && count(array_unique($values)) !== count($values)) {
-            throw InvalidValue::containsDuplicates($values);
+            throw DuplicateValue::containsDuplicates($values);
         }
     }
 

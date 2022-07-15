@@ -353,4 +353,43 @@ class ObjectArrayEnumTest extends TestCase
 
         $instance->contains('A');
     }
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::isEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::isNotEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::fromArray
+     */
+    public function testIsEqualWithSameTypeSuccessful() : void
+    {
+        $instance1 = ObjectArrayEnumType::fromArray([
+            new SimpleObject('A'),
+            new SimpleObject('B'),
+        ]);
+
+        $instance2 = ObjectArrayEnumType::fromArray([
+            new SimpleObject('B'),
+            new SimpleObject('A'),
+        ]);
+
+        $this->assertTrue($instance1->isEqualTo($instance2));
+        $this->assertFalse($instance1->isNotEqualTo($instance2));
+    }
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::isEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::isNotEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::fromArray
+     */
+    public function testIsEqualWithArraySuccessful() : void
+    {
+        $instance = ObjectArrayEnumType::fromArray([
+            new SimpleObject('A'),
+            new SimpleObject('B'),
+        ]);
+
+        $array = ['A', 'B'];
+
+        $this->assertTrue($instance->isEqualTo($array));
+        $this->assertFalse($instance->isNotEqualTo($array));
+    }
 }

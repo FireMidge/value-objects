@@ -5,6 +5,7 @@ namespace FireMidge\Tests\ValueObject\Unit\ArrayEnumType;
 
 use FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType;
 use FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType;
+use FireMidge\ValueObject\Exception\DuplicateValue;
 use FireMidge\ValueObject\Exception\InvalidValue;
 use PHPUnit\Framework\TestCase;
 
@@ -63,7 +64,7 @@ class StringVOArrayEnumTest extends TestCase
      */
     public function testValuesAreUnique() : void
     {
-        $this->expectException(InvalidValue::class);
+        $this->expectException(DuplicateValue::class);
         $this->expectExceptionMessage(
             'Values contain duplicates. Only unique values allowed. Values passed: "autumn", "summer", "summer"'
         );
@@ -181,5 +182,59 @@ class StringVOArrayEnumTest extends TestCase
         );
 
         $instance->contains('autumn');
+    }
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::isEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::isNotEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::fromArray
+     */
+    public function testIsEqualWithSameTypeSuccessful() : void
+    {
+        $instance1 = StringVOArrayEnumType::fromArray([
+            StringEnumType::winter(),
+            StringEnumType::autumn(),
+        ]);
+
+        $instance2 = StringVOArrayEnumType::fromArray([
+            StringEnumType::winter(),
+            StringEnumType::autumn(),
+        ]);
+
+        $this->assertTrue($instance1->isEqualTo($instance2));
+        $this->assertFalse($instance1->isNotEqualTo($instance2));
+    }
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::isEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::isNotEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::fromArray
+     */
+    public function testIsEqualWithArraySuccessful() : void
+    {
+        $instance = StringVOArrayEnumType::fromArray([
+            StringEnumType::winter(),
+            StringEnumType::autumn(),
+        ]);
+
+        $array = ['autumn', 'winter'];
+
+        $this->assertTrue($instance->isEqualTo($array));
+        $this->assertFalse($instance->isNotEqualTo($array));
+    }
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::count
+     */
+    public function testCount() : void
+    {
+        $instance = StringVOArrayEnumType::fromArray(
+            [
+                StringEnumType::winter(),
+                StringEnumType::autumn(),
+            ],
+        );
+
+        $this->assertSame(2, $instance->count());
     }
 }

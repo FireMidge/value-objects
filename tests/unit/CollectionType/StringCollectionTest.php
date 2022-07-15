@@ -4,10 +4,15 @@ declare(strict_types=1);
 namespace FireMidge\Tests\ValueObject\Unit\CollectionType;
 
 use FireMidge\Tests\ValueObject\Unit\Classes\SimpleObject;
+use FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumUpperCaseType;
+use FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionOriginalCasingType;
 use FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType;
+use FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType;
+use FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType;
 use FireMidge\ValueObject\Exception\InvalidValue;
 use FireMidge\ValueObject\Exception\ValueNotFound;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class StringCollectionTest extends TestCase
 {
@@ -297,5 +302,258 @@ class StringCollectionTest extends TestCase
 
         $instance = StringCollectionType::fromArray(['Name']);
         $instance->withoutValue(new SimpleObject('Name'));
+    }
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isNotEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::fromArray
+     */
+    public function testIsEqualToInstanceOfSameClassSuccessful() : void
+    {
+        $instance1 = StringCollectionType::fromArray(['Name', 'Status']);
+        $instance2 = StringCollectionType::fromArray(['Status', 'Name']);
+
+        $this->assertTrue($instance1->isEqualTo($instance2), 'Expected instance1 to be equal to instance2');
+        $this->assertTrue($instance2->isEqualTo($instance1), 'Expected instance2 to be equal to instance1');
+        $this->assertFalse($instance1->isNotEqualTo($instance2), 'Expected notEqualTo to return false for instance1');
+        $this->assertFalse($instance2->isNotEqualTo($instance1), 'Expected notEqualTo to return false for instance2');
+    }
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionOriginalCasingType::isEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionOriginalCasingType::isNotEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionOriginalCasingType::fromArray
+     */
+    public function testIsEqualToInstanceOfDifferentTypesSuccessful() : void
+    {
+        $instance1 = StringVOArrayEnumType::fromArray([
+            StringEnumType::spring(),
+            StringEnumType::winter(),
+        ]);
+        $instance2 = StringCollectionOriginalCasingType::fromArray(['spring', 'winter']);
+
+        $this->assertTrue($instance1->isEqualTo($instance2), 'Expected instance1 to be equal to instance2');
+        $this->assertTrue($instance2->isEqualTo($instance1), 'Expected instance2 to be equal to instance1');
+        $this->assertFalse($instance1->isNotEqualTo($instance2), 'Expected notEqualTo to return false for instance1');
+        $this->assertFalse($instance2->isNotEqualTo($instance1), 'Expected notEqualTo to return false for instance2');
+    }
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isNotEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::fromArray
+     */
+    public function testIsEqualToInstanceOfDifferentClassSuccessful() : void
+    {
+        $instance1 = StringArrayEnumUpperCaseType::fromArray([
+            'Email',
+            'Status',
+        ]);
+        $instance2 = StringCollectionType::fromArray(['email', 'status']);
+
+        $this->assertTrue($instance1->isEqualTo($instance2), 'Expected instance1 to be equal to instance2');
+        $this->assertTrue($instance2->isEqualTo($instance1), 'Expected instance2 to be equal to instance1');
+        $this->assertFalse($instance1->isNotEqualTo($instance2), 'Expected notEqualTo to return false for instance1');
+        $this->assertFalse($instance2->isNotEqualTo($instance1), 'Expected notEqualTo to return false for instance2');
+    }
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isNotEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::fromArray
+     */
+    public function testIsEqualToArraySuccessful() : void
+    {
+        $instance2 = StringCollectionType::fromArray(['Hello', 'H3llo', ' _Hello']);
+        $array = [
+            '_hello',
+            'H3llo',
+            'Hello',
+        ];
+
+        $this->assertTrue($instance2->isEqualTo($array), 'Expected instance1 to be equal to array');
+        $this->assertFalse($instance2->isNotEqualTo($array), 'Expected isNotEqualTo to return false');
+    }
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isNotEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::fromArray
+     */
+    public function testIsEqualToStandardObjectSuccessful() : void
+    {
+        $instance2      = StringCollectionType::fromArray(['Hello', 'H3llo', ' _Hello']);
+        $object         = new stdClass();
+        $object->first  = '_hello';
+        $object->second = 'H3llo';
+        $object->third  = 'Hello';
+
+        $this->assertTrue($instance2->isEqualTo($object), 'Expected instance1 to be equal to object');
+        $this->assertFalse($instance2->isNotEqualTo($object), 'Expected isNotEqualTo to return false');
+    }
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isNotEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::fromArray
+     */
+    public function testIsEqualToInstanceOfSameClassNotEqual() : void
+    {
+        $instance1 = StringCollectionType::fromArray(['Name', 'Status']);
+        $instance2 = StringCollectionType::fromArray(['Status']);
+
+        $this->assertFalse($instance1->isEqualTo($instance2), 'Expected instance1 not to be equal to instance2');
+        $this->assertTrue($instance1->isNotEqualTo($instance2), 'Expected instance1 not to be equal to instance2');
+        $this->assertFalse($instance2->isEqualTo($instance1), 'Expected instance2 not to be equal to instance1');
+        $this->assertTrue($instance2->isNotEqualTo($instance1), 'Expected instance2 not to be equal to instance1');
+    }
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isNotEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::fromArray
+     */
+    public function testIsEqualToInstanceOfDifferentClassNotEqual() : void
+    {
+        $instance1 = StringArrayEnumUpperCaseType::fromArray(['Email',]);
+        $instance2 = StringCollectionType::fromArray(['email', 'status']);
+
+        $this->assertFalse($instance1->isEqualTo($instance2), 'Expected instance1 not to be equal to instance2');
+        $this->assertTrue($instance1->isNotEqualTo($instance2), 'Expected instance1 not to be equal to instance2');
+        $this->assertFalse($instance2->isEqualTo($instance1), 'Expected instance2 not to be equal to instance1');
+        $this->assertTrue($instance2->isNotEqualTo($instance1), 'Expected instance2 not to be equal to instance1');
+    }
+
+    public function notEqualProvider() : array
+    {
+        return [
+            'differentCount'  => [ ['Hello', 'H3llo'] ],
+            'differentValues' => [ ['Hello', 'H3llo', ' Hello_'] ],
+        ];
+    }
+
+    /**
+     * @dataProvider notEqualProvider
+     *
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isNotEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::fromArray
+     */
+    public function testIsEqualToArrayNotEqual(array $valuesToCompareTo) : void
+    {
+        $instance2 = StringCollectionType::fromArray(['Hello', 'H3llo', ' _Hello']);
+
+        $this->assertFalse($instance2->isEqualTo($valuesToCompareTo));
+        $this->assertTrue($instance2->isNotEqualTo($valuesToCompareTo));
+    }
+
+    /**
+     * @dataProvider notEqualProvider
+     *
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isNotEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::fromArray
+     */
+    public function testIsEqualToStandardObjectNotEqual(array $valuesToCompareTo) : void
+    {
+        $instance2 = StringCollectionType::fromArray(['Hello', 'H3llo', ' _Hello']);
+
+        $object = new stdClass();
+        foreach ($valuesToCompareTo as $k => $v) {
+            $propertyName          = 'property' . $k;
+            $object->$propertyName = $v;
+        }
+
+        $this->assertFalse($instance2->isEqualTo($object));
+        $this->assertTrue($instance2->isNotEqualTo($object));
+    }
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::count
+     */
+    public function testCount() : void
+    {
+        $instance = StringCollectionType::fromArray(['Hello', 'H3llo', ' _Hello']);
+
+        $this->assertSame(3, $instance->count());
+    }
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::empty
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::count
+     */
+    public function testEmptyFactoryMethod() : void
+    {
+        $instance = StringCollectionType::empty();
+
+        $this->assertCount(0, $instance->toArray());
+        $this->assertSame(0, $instance->count());
+    }
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isEmpty
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isNotEmpty
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::empty
+     */
+    public function testIsEmptyIsTrue() : void
+    {
+        $instance = StringCollectionType::empty();
+        $this->assertTrue($instance->isEmpty());
+        $this->assertFalse($instance->isNotEmpty());
+    }
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isEmpty
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isNotEmpty
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::fromArray
+     */
+    public function testIsEmptyIsFalse() : void
+    {
+        $instance = StringCollectionType::fromArray(['status']);
+        $this->assertFalse($instance->isEmpty());
+        $this->assertTrue($instance->isNotEmpty());
+    }
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isEmpty
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isNotEmpty
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::empty
+     */
+    public function testIsEmptyAfterAddingValue() : void
+    {
+        $instance = StringCollectionType::empty();
+        $instance = $instance->withValue('newValue');
+
+        $this->assertFalse($instance->isEmpty());
+        $this->assertTrue($instance->isNotEmpty());
+    }
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isEmpty
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isNotEmpty
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::fromArray
+     */
+    public function testIsEmptyAfterRemovingValueWithTryWithoutValue() : void
+    {
+        $instance = StringCollectionType::fromArray(['status']);
+        $instance = $instance->tryWithoutValue('Status');
+
+        $this->assertTrue($instance->isEmpty());
+        $this->assertFalse($instance->isNotEmpty());
+    }
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isEmpty
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isNotEmpty
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::fromArray
+     */
+    public function testIsEmptyAfterRemovingValue() : void
+    {
+        $instance = StringCollectionType::fromArray(['status']);
+        $instance = $instance->withoutValue('Status');
+
+        $this->assertTrue($instance->isEmpty());
+        $this->assertFalse($instance->isNotEmpty());
     }
 }
