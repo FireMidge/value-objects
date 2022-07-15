@@ -169,28 +169,6 @@ trait IsCollectionType
         return ! $this->isEqualTo($other);
     }
 
-    private function isEqualToArray(array $other) : bool
-    {
-        if (count($other) !== count($this->values)) {
-            return false;
-        }
-
-        if (count(array_intersect($this->values, $other)) !== count($this->values)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private function isEqualToObject(object $other) : bool
-    {
-        if (method_exists($other, 'toArray')) {
-            return $this->isEqualToArray($other->toArray());
-        }
-
-        return $this->isEqualToArray((array) $other);
-    }
-
     /**
      * Override this and return true if you want to disallow adding the same
      * value more than once.
@@ -203,7 +181,7 @@ trait IsCollectionType
     /**
      * Override this and return true if you want to silently ignore
      * duplicate values.
-     * This means all values exist only once to the type.
+     * This means all values exist only once in the collection.
      */
     protected static function ignoreDuplicateValues() : bool
     {
@@ -236,6 +214,28 @@ trait IsCollectionType
     protected function transformEach($value)
     {
         return $value;
+    }
+
+    private function isEqualToArray(array $other) : bool
+    {
+        if (count($other) !== count($this->values)) {
+            return false;
+        }
+
+        if (count(array_intersect($this->values, $other)) !== count($this->values)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function isEqualToObject(object $other) : bool
+    {
+        if (method_exists($other, 'toArray')) {
+            return $this->isEqualToArray($other->toArray());
+        }
+
+        return $this->isEqualToArray((array) $other);
     }
 
     private function cloneValues(array $values) : array
