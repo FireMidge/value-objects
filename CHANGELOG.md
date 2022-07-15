@@ -18,6 +18,9 @@ This adds on to `IsCollectionType` and makes it easier to create a collection ho
 
 Feature: Added a small helper trait `CanBeConvertedToStringArray`, which can convert an array type into an array of scalar string values. Useful when using `IsClassCollectionType` with a class implementing the `__toString` method.
 
+Feature: Adding duplicate values can now be ignored, by overriding the `protected static function ignoreDuplicateValues() : bool` method and returning `true`. To be backwards-compatible, it returns `false` by default.
+When this method returns true, then any duplicate values will be ignored and simply not added to the collection; without throwing an exception.
+
 Dev: Separate exception for duplicate values: `DuplicateValue`.
 It is backwards compatible as it extends from `InvalidValue`, but it does now allow developers to catch this exception separately.
 

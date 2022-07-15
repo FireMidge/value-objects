@@ -15,4 +15,9 @@ class StringClassCollectionType
     {
         return SimpleStringType::class;
     }
+
+    protected static function ignoreDuplicateValues() : bool
+    {
+        return true;
+    }
 }

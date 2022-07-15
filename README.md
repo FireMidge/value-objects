@@ -316,7 +316,11 @@ Useful when e.g. building filters, allowing to select a number of statuses or ID
 
 ### Unique values
 
-If each value can only appear once in the object, you can override `protected static function areValuesUnique() : bool` and return `true`. An exception will be thrown when trying to add a value more than once to the value object.
+If each value can only appear once in the object, you have two options:
+- If you want an exception to be thrown when duplicate values are being added (either via `fromArray` or via `withValue`), then override  `protected static function areValuesUnique() : bool` and return `true`. An exception of type `DuplicateValue` will be thrown.
+- If you do not want an exception to be thrown but want duplicate values to simply be silently ignored (both in `fromArray` and in `withValue`), override `protected static function ignoreDuplicateValues() : bool` and return `true`. If duplicate values are found, they are only added once to the array.
+
+When both `areValuesUnique` and `ignoreDuplicateValues` return `true`, the `DuplicateValue` exception will **not** be thrown and duplicate values will be ignored silently (just as if only `ignoreDuplicateValues` returned `true`).
 
 Example:
 ```injectablephp
@@ -376,7 +380,11 @@ Useful when e.g. building filters, allowing to select a number of fields in the 
 
 ### Unique values
 
-If each value can only appear once in the object, you can override `protected static function areValuesUnique() : bool` and return `true`. An exception will be thrown when trying to add a value more than once to the value object.
+If each value can only appear once in the object, you have two options:
+- If you want an exception to be thrown when duplicate values are being added (either via `fromArray` or via `withValue`), then override  `protected static function areValuesUnique() : bool` and return `true`. An exception of type `DuplicateValue` will be thrown.
+- If you do not want an exception to be thrown but want duplicate values to simply be silently ignored (both in `fromArray` and in `withValue`), override `protected static function ignoreDuplicateValues() : bool` and return `true`. If duplicate values are found, they are only added once to the array.
+
+When both `areValuesUnique` and `ignoreDuplicateValues` return `true`, the `DuplicateValue` exception will **not** be thrown and duplicate values will be ignored silently (just as if only `ignoreDuplicateValues` returned `true`).
 
 Example:
 ```injectablephp
@@ -430,7 +438,11 @@ You can combine this type with any other type, e.g. to get an array of float typ
 
 ### Unique values
 
-If each value can only appear once in the object, you can override `protected static function areValuesUnique() : bool` and return `true`. An exception will be thrown when trying to add a value more than once to the value object.
+If each value can only appear once in the object, you have two options:
+- If you want an exception to be thrown when duplicate values are being added (either via `fromArray` or via `withValue`), then override  `protected static function areValuesUnique() : bool` and return `true`. An exception of type `DuplicateValue` will be thrown.
+- If you do not want an exception to be thrown but want duplicate values to simply be silently ignored (both in `fromArray` and in `withValue`), override `protected static function ignoreDuplicateValues() : bool` and return `true`. If duplicate values are found, they are only added once to the array.
+
+When both `areValuesUnique` and `ignoreDuplicateValues` return `true`, the `DuplicateValue` exception will **not** be thrown and duplicate values will be ignored silently (just as if only `ignoreDuplicateValues` returned `true`).
 
 
 ### Validation
@@ -466,6 +478,11 @@ class StatusList
     {
         return true;
     }
+    
+    protected static function ignoreDuplicateValues() : bool
+    {
+        return true;
+    }
 }
 ```
 
@@ -473,6 +490,19 @@ Usage:
 ```injectablephp
 $statuses    = StatusList::fromArray([Status::SUCCESS, Status::REDIRECTION]);
 $allStatuses = StatusList::withAll();
+
+// $duplicateStatusesIgnored will only contain Status::SUCCESS once.
+// [ Status::SUCCESS, Status::REDIRECTION ]
+// This is because of `ignoreDuplicateValues` returning true.
+$duplicateStatusesIgnored = StatusList::fromArray([
+    Status::SUCCESS, 
+    Status::REDIRECTION,
+    Status::SUCCESS,
+])
+
+// $newStatuses will only contain one instance of Status::REDIRECTION.
+// This is because of `ignoreDuplicateValues` returning true.
+$newStatuses = $statuses->withValue(Status::REDIRECTION);
 ```
 
 
@@ -484,9 +514,11 @@ If the values are not instances of a class, use `IsCollectionType`.
 
 ### Unique values
 
-Note that by default, all the values must be unique. 
-An exception will be thrown when trying to add a value more than once to the value object.
-If you want to allow duplicate values, you can override `protected static function areValuesUnique() : bool` and return `false`. 
+If each value can only appear once in the object, you have two options:
+- If you want an exception to be thrown when duplicate values are being added (either via `fromArray` or via `withValue`), then override  `protected static function areValuesUnique() : bool` and return `true`. An exception of type `DuplicateValue` will be thrown.
+- If you do not want an exception to be thrown but want duplicate values to simply be silently ignored (both in `fromArray` and in `withValue`), override `protected static function ignoreDuplicateValues() : bool` and return `true`. If duplicate values are found, they are only added once to the array.
+
+When both `areValuesUnique` and `ignoreDuplicateValues` return `true`, the `DuplicateValue` exception will **not** be thrown and duplicate values will be ignored silently (just as if only `ignoreDuplicateValues` returned `true`).
 
 ### Validation
 
@@ -548,7 +580,11 @@ If you need each value to be an instance of a class, consider using `IsClassColl
 
 ### Unique values
 
-If each value can only appear once in the object, you can override `protected static function areValuesUnique() : bool` and return `true`. An exception will be thrown when trying to add a value more than once to the value object.
+If each value can only appear once in the object, you have two options:
+- If you want an exception to be thrown when duplicate values are being added (either via `fromArray` or via `withValue`), then override  `protected static function areValuesUnique() : bool` and return `true`. An exception of type `DuplicateValue` will be thrown.
+- If you do not want an exception to be thrown but want duplicate values to simply be silently ignored (both in `fromArray` and in `withValue`), override `protected static function ignoreDuplicateValues() : bool` and return `true`. If duplicate values are found, they are only added once to the array.
+
+When both `areValuesUnique` and `ignoreDuplicateValues` return `true`, the `DuplicateValue` exception will **not** be thrown and duplicate values will be ignored silently (just as if only `ignoreDuplicateValues` returned `true`).
 
 
 ### Validation

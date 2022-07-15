@@ -23,8 +23,10 @@ trait IsCollectionType
         $values = array_map([$this, 'transformEach'], $values);
         array_map([$this, 'validateEach'], $values);
 
-        if (static::areValuesUnique() && count(array_unique($values)) !== count($values)) {
-            throw DuplicateValue::containsDuplicates($values);
+        if ((static::areValuesUnique() || static::ignoreDuplicateValues())
+            && count(array_unique($values)) !== count($values)
+        ) {
+            $values = $this->handleDuplicateValues($values);
         }
 
         $this->values = $values;
@@ -54,8 +56,9 @@ trait IsCollectionType
      */
     public function withValue($addedValue) : static
     {
-        if (static::areValuesUnique() && $this->contains($addedValue)) {
-            throw DuplicateValue::duplicateValue($addedValue, $this->values);
+        if ((static::areValuesUnique() || static::ignoreDuplicateValues()) && $this->contains($addedValue)) {
+            $this->handleDuplicateValue($addedValue);
+            return new static($this->values);
         }
 
         $newValues = array_merge($this->cloneValues($this->values), [ $addedValue ]);
@@ -168,9 +171,6 @@ trait IsCollectionType
 
     private function isEqualToArray(array $other) : bool
     {
-        var_dump($other, $this->values);
-        var_dump(array_intersect($this->values, $other));
-        var_dump(array_diff($this->values, $other));
         if (count($other) !== count($this->values)) {
             return false;
         }
@@ -196,6 +196,16 @@ trait IsCollectionType
      * value more than once.
      */
     protected static function areValuesUnique() : bool
+    {
+        return false;
+    }
+
+    /**
+     * Override this and return true if you want to silently ignore
+     * duplicate values.
+     * This means all values exist only once to the type.
+     */
+    protected static function ignoreDuplicateValues() : bool
     {
         return false;
     }
@@ -249,11 +259,31 @@ trait IsCollectionType
         // Not doing a strict comparison here by default,
         // as this would not work as intended for objects.
 
-        $index = array_search($value, $this->values);
+        $index = array_search($value, $this->values, false);
         if ($index === false) {
             throw ValueNotFound::inArray($value, $this->values);
         }
 
         return $index;
+    }
+
+    private function handleDuplicateValues(array $values) : array
+    {
+        if (! static::areValuesUnique() && (! static::ignoreDuplicateValues())) {
+            return $values;
+        }
+
+        if (static::areValuesUnique() && (! static::ignoreDuplicateValues())) {
+            throw DuplicateValue::containsDuplicates($values);
+        }
+
+        return array_unique($values);
+    }
+
+    private function handleDuplicateValue($value) : void
+    {
+        if (static::areValuesUnique() && (! static::ignoreDuplicateValues())) {
+            throw DuplicateValue::duplicateValue($value, $this->values);
+        }
     }
 }

@@ -29,6 +29,10 @@ class StringClassCollectionTest extends TestCase
                 [ SimpleStringType::fromString('Hello'), SimpleStringType::fromString('hello') ],
                 [ SimpleStringType::fromString('Hello'), SimpleStringType::fromString('hello') ],
             ],
+            [ // Doesn't throw when adding duplicate values, but only adds one
+                [ SimpleStringType::fromString('Hello'), SimpleStringType::fromString('Hello') ],
+                [ SimpleStringType::fromString('Hello') ],
+            ],
         ];
     }
 
@@ -162,13 +166,34 @@ class StringClassCollectionTest extends TestCase
         ], $instance->toArray(), 'Expected old instance to have remained unchanged');
     }
 
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringClassCollectionType::withValue
+     */
+    public function testDuplicateValueNotAddedWhenCallingWithValue() : void
+    {
+        $instance    = StringClassCollectionType::fromArray([
+            SimpleStringType::fromString('Hello'),
+            SimpleStringType::fromString('World'),
+        ]);
+        $newInstance = $instance->withValue(SimpleStringType::fromString('Hello'));
+
+        $this->assertEquals([
+            SimpleStringType::fromString('Hello'),
+            SimpleStringType::fromString('World'),
+        ], $newInstance->toArray(), 'Expected new instance to match');
+        $this->assertEquals([
+            SimpleStringType::fromString('Hello'),
+            SimpleStringType::fromString('World'),
+        ], $instance->toArray(), 'Expected old instance to have remained unchanged');
+    }
+
     public function singleInvalidValueProvider() : array
     {
         return [
-            'int'       => [1, 'Invalid value. Must be of type "object" but got "integer"'],
-            'bool'      => [false, 'Invalid value. Must be of type "object" but got "boolean"'],
-            'string'    => ['hello', 'Invalid value. Must be of type "object" but got "string"'],
-            'object'    => [
+            'int'    => [1, 'Invalid value. Must be of type "object" but got "integer"'],
+            'bool'   => [false, 'Invalid value. Must be of type "object" but got "boolean"'],
+            'string' => ['hello', 'Invalid value. Must be of type "object" but got "string"'],
+            'object' => [
                 new SimpleObject('name'),
                 'Invalid value. Must be an instance of "FireMidge\Tests\ValueObject\Unit\Classes\SimpleStringType", '
                     . 'but is "FireMidge\Tests\ValueObject\Unit\Classes\SimpleObject"'],

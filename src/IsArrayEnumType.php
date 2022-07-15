@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace FireMidge\ValueObject;
 
-use FireMidge\ValueObject\Exception\DuplicateValue;
 use FireMidge\ValueObject\Exception\InvalidValue;
 
 trait IsArrayEnumType
@@ -17,6 +16,7 @@ trait IsArrayEnumType
      */
     private function __construct(private array $values)
     {
+        $values = array_map([$this, 'transformEach'], $values);
         array_map([$this, 'validateEach'], $values);
 
         $difference = array_diff($values, static::all());
@@ -28,9 +28,13 @@ trait IsArrayEnumType
             );
         }
 
-        if (static::areValuesUnique() && count(array_unique($values)) !== count($values)) {
-            throw DuplicateValue::containsDuplicates($values);
+        if ((static::areValuesUnique() || static::ignoreDuplicateValues())
+            && count(array_unique($values)) !== count($values)
+        ) {
+            $values = $this->handleDuplicateValues($values);
         }
+
+        $this->values = $values;
     }
 
     /**
