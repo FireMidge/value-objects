@@ -16,6 +16,7 @@ trait IsArrayEnumType
      */
     private function __construct(private array $values)
     {
+        $values = array_map([$this, 'transformEach'], $values);
         array_map([$this, 'validateEach'], $values);
 
         $difference = array_diff($values, static::all());
@@ -27,9 +28,13 @@ trait IsArrayEnumType
             );
         }
 
-        if (static::areValuesUnique() && count(array_unique($values)) !== count($values)) {
-            throw InvalidValue::containsDuplicates($values);
+        if ((static::areValuesUnique() || static::ignoreDuplicateValues())
+            && count(array_unique($values)) !== count($values)
+        ) {
+            $values = $this->handleDuplicateValues($values);
         }
+
+        $this->values = $values;
     }
 
     /**

@@ -11,6 +11,7 @@ use FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType;
 use FireMidge\ValueObject\Exception\InvalidValue;
 use FireMidge\ValueObject\Exception\ValueNotFound;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class IntVOCollectionTest extends TestCase
 {
@@ -342,5 +343,202 @@ class IntVOCollectionTest extends TestCase
             MinMaxIntType::fromInt(402),
         ]);
         $instance->withoutValue(OddIntType::fromInt(401));
+    }
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isNotEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::fromArray
+     */
+    public function testIsEqualToInstanceOfSameClassSuccessful() : void
+    {
+        $instance1 = IntVOCollectionType::fromArray([
+            MinMaxIntType::fromInt(401),
+            MinMaxIntType::fromInt(402),
+        ]);
+        $instance2 = IntVOCollectionType::fromArray([
+            MinMaxIntType::fromInt(402),
+            MinMaxIntType::fromInt(401),
+        ]);
+
+        $this->assertTrue($instance1->isEqualTo($instance2), 'Expected instance1 to be equal to instance2');
+        $this->assertTrue($instance2->isEqualTo($instance1), 'Expected instance2 to be equal to instance1');
+        $this->assertFalse($instance1->isNotEqualTo($instance2), 'Expected isNotEqualTo to return false for instance1');
+        $this->assertFalse($instance2->isNotEqualTo($instance1), 'Expected isNotEqualTo to return false for instance2');
+    }
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isNotEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::fromArray
+     */
+    public function testIsEqualToInstanceOfSameClassNotEqual() : void
+    {
+        $instance1 = IntVOCollectionType::fromArray([
+            MinMaxIntType::fromInt(401),
+            MinMaxIntType::fromInt(402),
+        ]);
+        $instance2 = IntVOCollectionType::fromArray([
+            MinMaxIntType::fromInt(402),
+        ]);
+
+        $this->assertFalse($instance1->isEqualTo($instance2), 'Expected instance1 not to be equal to instance2');
+        $this->assertFalse($instance2->isEqualTo($instance1), 'Expected instance2 not to be equal to instance1');
+        $this->assertTrue($instance1->isNotEqualTo($instance2), 'Expected isNotEqualTo to return true for instance1');
+        $this->assertTrue($instance2->isNotEqualTo($instance1), 'Expected isNotEqualTo to return true for instance2');
+    }
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isNotEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::fromArray
+     */
+    public function testIsEqualToArraySuccessful() : void
+    {
+        $instance1 = IntVOCollectionType::fromArray([
+            MinMaxIntType::fromInt(401),
+            MinMaxIntType::fromInt(402),
+        ]);
+        $array = [
+            MinMaxIntType::fromInt(402),
+            MinMaxIntType::fromInt(401),
+        ];
+
+        $this->assertTrue($instance1->isEqualTo($array));
+        $this->assertFalse($instance1->isNotEqualTo($array));
+    }
+
+    public function notEqualProvider() : array
+    {
+        return [
+            'differentCount'  => [[MinMaxIntType::fromInt(402)]],
+            'differentValues' => [[MinMaxIntType::fromInt(402), MinMaxIntType::fromInt(403)]],
+        ];
+    }
+
+    /**
+     * @dataProvider notEqualProvider
+     *
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isNotEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::fromArray
+     */
+    public function testIsEqualToArrayNotEqual(array $valuesToCompareTo) : void
+    {
+        $instance1 = IntVOCollectionType::fromArray([
+            MinMaxIntType::fromInt(401),
+            MinMaxIntType::fromInt(402),
+        ]);
+
+        $this->assertFalse($instance1->isEqualTo($valuesToCompareTo));
+        $this->assertTrue($instance1->isNotEqualTo($valuesToCompareTo));
+    }
+
+    /**
+     * @dataProvider notEqualProvider
+     *
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isNotEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::fromArray
+     */
+    public function testIsEqualToStandardObjectNotEqual(array $valuesToCompareTo) : void
+    {
+        $instance1 = IntVOCollectionType::fromArray([
+            MinMaxIntType::fromInt(401),
+            MinMaxIntType::fromInt(402),
+        ]);
+
+        $object = new stdClass();
+        foreach ($valuesToCompareTo as $k => $v) {
+            $propertyName          = 'property' . $k;
+            $object->$propertyName = $v;
+        }
+
+        $this->assertFalse($instance1->isEqualTo($object));
+        $this->assertTrue($instance1->isNotEqualTo($object));
+    }
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isNotEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::fromArray
+     */
+    public function testIsEqualToStandardObjectSuccessful() : void
+    {
+        $instance1 = IntVOCollectionType::fromArray([
+            MinMaxIntType::fromInt(401),
+            MinMaxIntType::fromInt(402),
+        ]);
+
+        $object         = new stdClass();
+        $object->first  = MinMaxIntType::fromInt(402);
+        $object->second = MinMaxIntType::fromInt(401);
+
+        $this->assertTrue($instance1->isEqualTo($object));
+        $this->assertFalse($instance1->isNotEqualTo($object));
+    }
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isNotEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::fromArray
+     */
+    public function testIsEqualToStandardObjectEqualWithDifferentTypes() : void
+    {
+        $instance1 = IntVOCollectionType::fromArray([
+            MinMaxIntType::fromInt(401),
+            MinMaxIntType::fromInt(402),
+        ]);
+
+        $object         = new stdClass();
+        $object->first  = 402;
+        $object->second = 401;
+
+        $this->assertTrue($instance1->isEqualTo($object));
+        $this->assertFalse($instance1->isNotEqualTo($object));
+    }
+
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isNotEqualTo
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::fromArray
+     */
+    public function testIsEqualToArrayEqualWithDifferentTypes() : void
+    {
+        $instance1 = IntVOCollectionType::fromArray([
+            MinMaxIntType::fromInt(401),
+            MinMaxIntType::fromInt(402),
+        ]);
+        $array = [402, 401];
+
+        $this->assertTrue($instance1->isEqualTo($array));
+        $this->assertFalse($instance1->isNotEqualTo($array));
+    }
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::count
+     */
+    public function testCount() : void
+    {
+        $instance = IntVOCollectionType::fromArray([
+            MinMaxIntType::fromInt(401),
+            MinMaxIntType::fromInt(402),
+            MinMaxIntType::fromInt(403),
+        ]);
+
+        $this->assertSame(3, $instance->count());
+    }
+
+    /**
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::empty
+     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::count
+     */
+    public function testEmptyFactoryMethod() : void
+    {
+        $instance = IntVOCollectionType::empty();
+
+        $this->assertCount(0, $instance->toArray());
+        $this->assertSame(0, $instance->count());
     }
 }

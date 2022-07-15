@@ -4,10 +4,10 @@ This library provides convenience methods for creating value objects.
 You may use the below table to decide which type is best for you.
 *"Single Value" means the object will hold a single value, whereas "Array of Values" means the object can hold more than one value.*
 
-|                             | Single Value                                                         | Array of Values                                                     |
-|:----------------------------|:---------------------------------------------------------------------|:--------------------------------------------------------------------|
+|                             | Single Value                                                         | Array of Values                                                       |
+|:----------------------------|:---------------------------------------------------------------------|:----------------------------------------------------------------------|
 | List of Valid Values        | `IsStringEnumType`<br />`IsIntEnumType`<br/>`IsIntStringMapType`     | `IsStringArrayEnumType`<br />`IsIntArrayEnumType`<br/>`ArrayEnumType` |
-| Any Value/Custom Validation | `IsEmailType`<br/>`IsStringType`<br />`IsFloatType` <br/>`IsIntType` | `IsCollectionType` |
+| Any Value/Custom Validation | `IsEmailType`<br/>`IsStringType`<br />`IsFloatType` <br/>`IsIntType` | `IsClassCollectionType`<br />`IsCollectionType`                       |
 
 **Each trait is thoroughly covered by unit tests, and mutation tests are run with each update to ensure the quality of the unit tests.**
 
@@ -19,7 +19,7 @@ Use this type when there is a set of fixed valid values, and your object represe
 *If there is a set of fixed valid values but your object represents an array of values, use `IsStringArrayEnumType`.*
 
 Example:
-```injectablephp
+```php
 class Season
 {
     use IsStringEnumType;
@@ -42,7 +42,7 @@ class Season
 ```
 
 Usage:
-```injectablephp
+```php
 $spring = Season::fromString(Season::SPRING);
 ```
 
@@ -53,7 +53,7 @@ Use this type when there is a set of fixed valid values, and your object represe
 *If there is a set of fixed valid values but your object represents an array of values, use `IsIntArrayEnumType`.*
 
 Example:
-```injectablephp
+```php
 class Status
 {
     use IsIntEnumType;
@@ -78,7 +78,7 @@ class Status
 ```
 
 Usage:
-```injectablephp
+```php
 $success = Status::fromInt(Status::SUCCESS);
 ```
 
@@ -89,7 +89,7 @@ This trait uses `IsStringType` under the hood but performs standard e-mail valid
 
 Example:
 
-```injectablephp
+```php
 class Email
 {
     use IsEmailType;
@@ -98,7 +98,7 @@ class Email
 
 Usage:
 Usage:
-```injectablephp
+```php
 $email = Email::fromString('hello@there.co.uk');
 ```
 
@@ -127,7 +127,7 @@ There are 3 convenience methods available that you can call inside `transform` i
 
 Example:
 
-```injectablephp
+```php
 class ProductName
 {
     use IsStringType;
@@ -145,7 +145,7 @@ class ProductName
 ```
 
 Usage:
-```injectablephp
+```php
 // $productName will be 'Orange juice'
 $productName = ProductName::fromString('  orange juice');
 ```
@@ -163,7 +163,7 @@ If you only want to validate that a value is between a certain minimum and maxim
 
 Example:
 
-```injectablephp
+```php
 class Percentage
 {
     use IsIntType;
@@ -181,7 +181,7 @@ class Percentage
 ```
 
 Another example, for a value without any limitations:
-```injectablephp
+```php
 class Balance
 {
     use IsIntType;
@@ -194,7 +194,7 @@ class Balance
 ```
 
 Another example, for a value which has no upper limit but may never be below 5.
-```injectablephp
+```php
 class Investment
 {
     use IsIntType;
@@ -213,7 +213,7 @@ class Investment
 ```
 
 Another example which only allows odd values:
-```injectablephp
+```php
 class OddIntType
 {
     use IsIntType;
@@ -228,7 +228,7 @@ class OddIntType
 ```
 
 Usage:
-```injectablephp
+```php
 $percentage = Percentage::fromInt(78);
 ```
 
@@ -244,7 +244,7 @@ You can provide custom validation rules by overriding `protected function valida
 If you only want to validate that a value is between a certain minimum and maximum value, override `protected static function minValidValue() : ?float ` and `protected static function maxValidValue() : ?float`. Returning `NULL` from either means there is no limitation to the minimum or the maximum value respectively.
 
 Example, which allows a value between 0 and 100, and which automatically crops any decimal points after the 3rd:
-```injectablephp
+```php
 class Percentage
 {
     use IsFloatType;
@@ -267,7 +267,7 @@ class Percentage
 ```
 
 Usage:
-```injectablephp
+```php
 // $percentage will be 78.58
 $percentage = Percentage::fromFloat(78.578);
 ```
@@ -280,7 +280,7 @@ This may be useful when you e.g. store a value in the database as an integer (fo
 
 Example:
 
-```injectablephp
+```php
 class Season
 {
     use IsIntStringMapType;
@@ -298,7 +298,7 @@ class Season
 ```
 
 Usage:
-```injectablephp
+```php
 // Returns 'summer'
 $label = (Season::fromInt(2))->toString();
 
@@ -316,10 +316,14 @@ Useful when e.g. building filters, allowing to select a number of statuses or ID
 
 ### Unique values
 
-If each value can only appear once in the object, you can override `protected static function areValuesUnique() : bool` and return `true`. An exception will be thrown when trying to add a value more than once to the value object.
+If each value can only appear once in the object, you have two options:
+- If you want an exception to be thrown when duplicate values are being added (either via `fromArray` or via `withValue`), then override  `protected static function areValuesUnique() : bool` and return `true`. An exception of type `DuplicateValue` will be thrown.
+- If you do not want an exception to be thrown but want duplicate values to simply be silently ignored (both in `fromArray` and in `withValue`), override `protected static function ignoreDuplicateValues() : bool` and return `true`. If duplicate values are found, they are only added once to the array.
+
+When both `areValuesUnique` and `ignoreDuplicateValues` return `true`, `ignoreDuplicateValues` takes precedence.
 
 Example:
-```injectablephp
+```php
 class Statuses
 {
     use IsIntArrayEnumType;
@@ -349,14 +353,14 @@ class Statuses
 ```
 
 Usage:
-```injectablephp
+```php
 $statusesToInclude = Statuses::fromArray([Statuses::INFORMATION, Statuses::SUCCESS]);
 $allStatuses       = Statuses::withAll();
 
 $statuses = (Statuses::fromArray([]))
     ->withValue(Statuses::SUCCESS)
     ->withValue(Statuses::SERVER_ERROR)
-    ->tryWithoutValue(Statuses::SUCCESS);
+    ->withoutValue(Statuses::SUCCESS);
     
 // The difference between tryWithoutValue and withoutValue is that the try method
 // will throw an exception if you are trying to remove a value that did not previously
@@ -376,10 +380,14 @@ Useful when e.g. building filters, allowing to select a number of fields in the 
 
 ### Unique values
 
-If each value can only appear once in the object, you can override `protected static function areValuesUnique() : bool` and return `true`. An exception will be thrown when trying to add a value more than once to the value object.
+If each value can only appear once in the object, you have two options:
+- If you want an exception to be thrown when duplicate values are being added (either via `fromArray` or via `withValue`), then override  `protected static function areValuesUnique() : bool` and return `true`. An exception of type `DuplicateValue` will be thrown.
+- If you do not want an exception to be thrown but want duplicate values to simply be silently ignored (both in `fromArray` and in `withValue`), override `protected static function ignoreDuplicateValues() : bool` and return `true`. If duplicate values are found, they are only added once to the array.
+
+When both `areValuesUnique` and `ignoreDuplicateValues` return `true`, `ignoreDuplicateValues` takes precedence.
 
 Example:
-```injectablephp
+```php
 class UserFieldList
 {
     use IsStringArrayEnumType;
@@ -402,7 +410,7 @@ class UserFieldList
 ```
 
 Usage:
-```injectablephp
+```php
 $fields = $fieldsFromRequest === null
     ? UserFieldList::withAll()
     : UserFieldList::fromArray($fieldsFromRequest);
@@ -430,7 +438,11 @@ You can combine this type with any other type, e.g. to get an array of float typ
 
 ### Unique values
 
-If each value can only appear once in the object, you can override `protected static function areValuesUnique() : bool` and return `true`. An exception will be thrown when trying to add a value more than once to the value object.
+If each value can only appear once in the object, you have two options:
+- If you want an exception to be thrown when duplicate values are being added (either via `fromArray` or via `withValue`), then override  `protected static function areValuesUnique() : bool` and return `true`. An exception of type `DuplicateValue` will be thrown.
+- If you do not want an exception to be thrown but want duplicate values to simply be silently ignored (both in `fromArray` and in `withValue`), override `protected static function ignoreDuplicateValues() : bool` and return `true`. If duplicate values are found, they are only added once to the array.
+
+When both `areValuesUnique` and `ignoreDuplicateValues` return `true`, `ignoreDuplicateValues` takes precedence.
 
 
 ### Validation
@@ -438,7 +450,7 @@ If each value can only appear once in the object, you can override `protected st
 You can provide custom validation by overriding `protected function validateEach($value) : void`, which is executed for each value separately, both when instantiating it and when calling `withValue`. Note that this validation will also run before `withoutValue`, `tryWithoutValue` and `contains`, so you are notified when passing something entirely invalid rather than it being silently swallowed.
 
 Example:
-```injectablephp
+```php
 /**
  * @method static withValue(Status $addedValue)
  * @method static tryWithoutValue(Status $value)
@@ -466,15 +478,97 @@ class StatusList
     {
         return true;
     }
+    
+    protected static function ignoreDuplicateValues() : bool
+    {
+        return true;
+    }
 }
 ```
 
 Usage:
-```injectablephp
+```php
 $statuses    = StatusList::fromArray([Status::SUCCESS, Status::REDIRECTION]);
 $allStatuses = StatusList::withAll();
+
+// $duplicateStatusesIgnored will only contain Status::SUCCESS once.
+// [ Status::SUCCESS, Status::REDIRECTION ]
+// This is because of `ignoreDuplicateValues` returning true.
+$duplicateStatusesIgnored = StatusList::fromArray([
+    Status::SUCCESS, 
+    Status::REDIRECTION,
+    Status::SUCCESS,
+])
+
+// $newStatuses will only contain one instance of Status::REDIRECTION.
+// This is because of `ignoreDuplicateValues` returning true.
+$newStatuses = $statuses->withValue(Status::REDIRECTION);
 ```
 
+
+## IsClassCollectionType
+
+Use this type when the value represents an array of values, where each value must be an instance of a class and there is **no** finite list of valid values.
+If there is a list of valid values, use `IsArrayEnumType`.
+If the values are not instances of a class, use `IsCollectionType`.
+
+
+### Unique values
+
+If each value can only appear once in the object, you have two options:
+- If you want an exception to be thrown when duplicate values are being added (either via `fromArray` or via `withValue`), then override  `protected static function areValuesUnique() : bool` and return `true`. An exception of type `DuplicateValue` will be thrown.
+- If you do not want an exception to be thrown but want duplicate values to simply be silently ignored (both in `fromArray` and in `withValue`), override `protected static function ignoreDuplicateValues() : bool` and return `true`. If duplicate values are found, they are only added once to the array.
+
+When both `areValuesUnique` and `ignoreDuplicateValues` return `true`, `ignoreDuplicateValues` takes precedence.
+
+
+### Validation
+
+You can provide custom validation by overriding `protected function validateEach($value) : void`, which is executed for each value separately, both when instantiating it and when calling `withValue`. Note that this validation will also run before `withoutValue`, `tryWithoutValue` and `contains`, so you are notified when passing something entirely invalid rather than it being silently swallowed.
+
+Example:
+
+```php
+/**
+ * @method static withValue(Email $addedValue)
+ * @method static tryWithoutValue(Email $value)
+ * @method static contains(Email $value)
+ */
+class EmailCollection
+{
+    use IsClassCollectionType;
+    use CanBeConvertedToStringArray;
+
+    protected function className() : string
+    {
+        return Email::class;
+    }
+}
+```
+
+Usage:
+```php
+$emails = EmailCollection::fromArray([
+    Email::fromString('hello@there.co.uk'),
+    Email::fromString('lorem@ipsum.it'),
+    Email::fromString('bass@player.at'),
+]);
+
+// Returns ['hello@there.co.uk', 'lorem@ipsum.it', 'bass@player.at']
+// This method is provided by the trait `CanBeConvertedToStringArray`
+$emailsAsStrings = $emails->toStringArray();
+
+// Returns 3
+$numberOfEmails = $emails->count();
+
+// Returns `true`, even though strings are passed. This is because `Email` 
+// implements the `__toString` method (via the trait `StringType`).
+$emailsMatch = $emails->isEqualTo([
+   'hello@there.co.uk',
+    'lorem@ipsum.it',
+    'bass@player.at',
+]);
+```
 
 ## IsCollectionType
 
@@ -483,11 +577,16 @@ Use this type when the value represents an array of values and there is **no** f
 
 ### Combination with other types
 You can combine this type with any other type, e.g. to get an array of float types, an array of e-mail addresses, etc.
+If you need each value to be an instance of a class, consider using `IsClassCollectionType` instead.
 
 
 ### Unique values
 
-If each value can only appear once in the object, you can override `protected static function areValuesUnique() : bool` and return `true`. An exception will be thrown when trying to add a value more than once to the value object.
+If each value can only appear once in the object, you have two options:
+- If you want an exception to be thrown when duplicate values are being added (either via `fromArray` or via `withValue`), then override  `protected static function areValuesUnique() : bool` and return `true`. An exception of type `DuplicateValue` will be thrown.
+- If you do not want an exception to be thrown but want duplicate values to simply be silently ignored (both in `fromArray` and in `withValue`), override `protected static function ignoreDuplicateValues() : bool` and return `true`. If duplicate values are found, they are only added once to the array.
+
+When both `areValuesUnique` and `ignoreDuplicateValues` return `true`, `ignoreDuplicateValues` takes precedence.
 
 
 ### Validation
@@ -496,9 +595,10 @@ You can provide custom validation by overriding `protected function validateEach
 
 **It is recommended to set up validation, at least for the value type.**
 
-### String transformation
 
-If you want to transform the input value but not fail validation, override `protected function transformEach($value) : string`.
+### Value transformation
+
+If you want to transform the input value but not fail validation, override `protected function transformEach($value)`.
 
 By also using the trait `CanTransformStrings`, you'll get 3 convenience methods that you can call inside `transform` if you want:
 - `trimAndLowerCase(string $value)`
@@ -507,7 +607,7 @@ By also using the trait `CanTransformStrings`, you'll get 3 convenience methods 
 
 Example:
 
-```injectablephp
+```php
 /**
  * @method static withValue(string $addedValue)
  * @method static tryWithoutValue(string $value)
@@ -525,15 +625,23 @@ class ProductNameCollection
         }
     }
 
-    protected function transformEach(string $value) : string
+    /**
+    * @param mixed $value
+    * @return mixed
+     */
+    protected function transformEach($value)
     {
+        if (! is_string($value)) {
+            return $value;
+        }
+    
         return $this->trimAndCapitalise($value);
     }
 }
 ```
 
 Usage:
-```injectablephp
+```php
 // $productNames will be an instance of ProductNameCollection
 // with these values: [ 'Orange juice', 'Soap', 'Shampoo' ]
 $productNames = ProductNameCollection::fromArray([
@@ -543,34 +651,4 @@ $productNames = ProductNameCollection::fromArray([
 ]);
 ```
 
-Other example, combining `EmailType` (using the `IsEmailType` trait) and `IsCollectionType`:
 
-```injectablephp
-/**
- * @method static withValue(EmailType $addedValue)
- * @method static tryWithoutValue(EmailType $value)
- * @method static contains(EmailType $value)
- */
-class EmailCollection
-{
-    use IsCollectionType;
-
-    protected function validateEach($value) : void
-    {
-        if (! is_object($value) || ! $value instanceof EmailType) {
-            throw InvalidValue::notInstanceOf($value, EmailType::class);
-        }
-    }
-}
-```
-
-Usage:
-```injectablephp
-// $productNames will be an instance of ProductNameCollection
-// with these values: [ 'Orange juice', 'Soap', 'Shampoo' ]
-$emails = ProductNameCollection::fromArray([
-    EmailType::fromString('hello@there.co.uk'),
-    EmailType::fromString('lorem@ipsum.it'),
-    EmailType::fromString('bass@player.at'),
-]);
-```
