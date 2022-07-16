@@ -8,6 +8,9 @@ use FireMidge\ValueObject\Exception\InvalidValue;
 use FireMidge\ValueObject\Exception\ValueNotFound;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntArrayEnumType
+ */
 class IntArrayEnumTest extends TestCase
 {
     public function validValueProvider() : array

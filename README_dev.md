@@ -25,7 +25,7 @@ To run the unit tests:
 `docker-compose run lib vendor/bin/phpunit`
 
 To create a code coverage report:
-`docker-compose run lib vendor/bin/phpunit --coverage-html .`
+`docker-compose run lib vendor/bin/phpunit --coverage-html ./coverage-report`
 
 
 #### Run a specific test

@@ -8,6 +8,9 @@
     <include>
       <directory>src</directory>
     </include>
+	  <exclude>
+		  <directory>src/Exception</directory>
+	  </exclude>
   </coverage>
   <php>
     <ini name="error_reporting" value="-1"/>

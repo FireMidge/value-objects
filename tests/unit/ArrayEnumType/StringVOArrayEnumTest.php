@@ -9,6 +9,10 @@ use FireMidge\ValueObject\Exception\DuplicateValue;
 use FireMidge\ValueObject\Exception\InvalidValue;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType
+ * @uses \FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType
+ */
 class StringVOArrayEnumTest extends TestCase
 {
     public function validValueProvider() : array

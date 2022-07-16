@@ -7,6 +7,9 @@ use FireMidge\Tests\ValueObject\Unit\Classes\EmailType;
 use FireMidge\ValueObject\Exception\InvalidValue;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \FireMidge\Tests\ValueObject\Unit\Classes\EmailType
+ */
 class EmailTest extends TestCase
 {
     public function validValueProvider() : array
@@ -21,9 +24,6 @@ class EmailTest extends TestCase
 
     /**
      * @dataProvider validValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\EmailType::fromString
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\EmailType::toString
      */
     public function testFromStringWithValidValue(string $raw, string $value) : void
     {
@@ -33,9 +33,6 @@ class EmailTest extends TestCase
 
     /**
      * @dataProvider validValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\EmailType::fromStringOrNull
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\EmailType::toString
      */
     public function testFromStringOrNullWithValidValue(string $raw, string $value) : void
     {
@@ -58,9 +55,6 @@ class EmailTest extends TestCase
 
     /**
      * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\EmailType::fromString
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\EmailType::toString
      */
     public function testFromStringWithInvalidValue(string $value, string $expectedExceptionMessagePart) : void
     {
@@ -71,9 +65,6 @@ class EmailTest extends TestCase
 
     /**
      * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\EmailType::fromStringOrNull
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\EmailType::toString
      */
     public function testFromStringOrNullWithInvalidValue(string $value, string $expectedExceptionMessagePart) : void
     {

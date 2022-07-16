@@ -6,6 +6,9 @@ namespace FireMidge\Tests\ValueObject\Unit\StringType;
 use FireMidge\Tests\ValueObject\Unit\Classes\SimpleStringType;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleStringType
+ */
 class SimpleStringTest extends TestCase
 {
     public function validValueProvider() : array
@@ -32,9 +35,6 @@ class SimpleStringTest extends TestCase
 
     /**
      * @dataProvider validValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleStringType::fromString
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleStringType::toString
      */
     public function testFromStringWithValidValue(string $value) : void
     {
@@ -44,9 +44,6 @@ class SimpleStringTest extends TestCase
 
     /**
      * @dataProvider validValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleStringType::fromStringOrNull
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleStringType::toString
      */
     public function testFromStringOrNullWithValidValue(string $value) : void
     {
@@ -54,9 +51,6 @@ class SimpleStringTest extends TestCase
         $this->assertSame($value, $instance->toString());
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleStringType::fromStringOrNull
-     */
     public function testFromStringOrNullWithNull() : void
     {
         $instance = SimpleStringType::fromStringOrNull(null);
@@ -65,9 +59,6 @@ class SimpleStringTest extends TestCase
 
     /**
      * @dataProvider validValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleStringType::__toString
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleStringType::fromString
      */
     public function testMagicToString(string $value) : void
     {

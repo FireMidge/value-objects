@@ -1,6 +1,6 @@
 # v2
 
-Works with PHP 8.1
+Works with PHP 8.1.
 
 
 ### v2.1

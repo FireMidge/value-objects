@@ -6,6 +6,9 @@ namespace FireMidge\Tests\ValueObject\Unit\FloatType;
 use FireMidge\Tests\ValueObject\Unit\Classes\NegativeFloatType;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \FireMidge\Tests\ValueObject\Unit\Classes\NegativeFloatType
+ */
 class NegativeFloatTest extends TestCase
 {
     public function validValueProvider() : array

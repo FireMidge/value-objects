@@ -14,6 +14,10 @@ use FireMidge\ValueObject\Exception\ValueNotFound;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
+/**
+ * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType
+ * @uses \FireMidge\Tests\ValueObject\Unit\Classes\SimpleStringType
+ */
 class StringCollectionTest extends TestCase
 {
     public function validValueProvider() : array
@@ -30,9 +34,6 @@ class StringCollectionTest extends TestCase
 
     /**
      * @dataProvider validValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::fromArray
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::toArray
      */
     public function testFromArrayWithValidValue(array $input, array $output) : void
     {
@@ -55,9 +56,6 @@ class StringCollectionTest extends TestCase
 
     /**
      * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::fromArray
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::toArray
      */
     public function testFromArrayWithInvalidValue(array $input, string $errorMessage) : void
     {
@@ -67,20 +65,12 @@ class StringCollectionTest extends TestCase
         StringCollectionType::fromArray($input);
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::contains
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::fromArray
-     */
     public function testContainsWithEmptyArray() : void
     {
         $instance = StringCollectionType::fromArray([]);
         $this->assertFalse($instance->contains('ipsum'));
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::contains
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::fromArray
-     */
     public function testContainsIsCaseSensitive() : void
     {
         $instance = StringCollectionType::fromArray([
@@ -98,10 +88,6 @@ class StringCollectionTest extends TestCase
         $this->assertFalse($instance->contains(' ipsum'), 'Did not expect " ipsum" to be contained');
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::contains
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::fromArray
-     */
     public function testContainsThrowsExceptionWithInvalidType() : void
     {
         $this->expectException(InvalidValue::class);
@@ -126,8 +112,6 @@ class StringCollectionTest extends TestCase
 
     /**
      * @dataProvider singleValidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::withValue
      */
     public function testWithValueWithValidValue(string $value) : void
     {
@@ -160,8 +144,6 @@ class StringCollectionTest extends TestCase
 
     /**
      * @dataProvider singleInvalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::withValue
      */
     public function testWithValueWithInvalidValue($invalidValue, string $expectedExceptionMessage) : void
     {
@@ -212,8 +194,6 @@ class StringCollectionTest extends TestCase
 
     /**
      * @dataProvider invalidWithoutValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::tryWithoutValue
      */
     public function testTryWithoutValueWithInvalidValue(
         array $stateBefore,
@@ -262,9 +242,6 @@ class StringCollectionTest extends TestCase
 
     /**
      * @dataProvider withoutValidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::tryWithoutValue
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::toArray
      */
     public function testTryWithoutValueDoesNotChangePreExisting(
         array $stateBefore,
@@ -279,10 +256,6 @@ class StringCollectionTest extends TestCase
         $this->assertEquals($stateBefore, $instance->toArray(), 'Expected old instance to have remained unchanged');
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::withoutValue
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::toArray
-     */
     public function testWithoutValueNotThrowingExceptionIfValueDidNotExist() : void
     {
         $instance = StringCollectionType::fromArray(['Name']);
@@ -291,10 +264,6 @@ class StringCollectionTest extends TestCase
         $this->assertEquals(['Name'], $newInstance->toArray());
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::withoutValue
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::toArray
-     */
     public function testWithoutValueThrowingExceptionIfValueInvalid() : void
     {
         $this->expectException(InvalidValue::class);
@@ -304,11 +273,6 @@ class StringCollectionTest extends TestCase
         $instance->withoutValue(new SimpleObject('Name'));
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isNotEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::fromArray
-     */
     public function testIsEqualToInstanceOfSameClassSuccessful() : void
     {
         $instance1 = StringCollectionType::fromArray(['Name', 'Status']);
@@ -320,11 +284,6 @@ class StringCollectionTest extends TestCase
         $this->assertFalse($instance2->isNotEqualTo($instance1), 'Expected notEqualTo to return false for instance2');
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionOriginalCasingType::isEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionOriginalCasingType::isNotEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionOriginalCasingType::fromArray
-     */
     public function testIsEqualToInstanceOfDifferentTypesSuccessful() : void
     {
         $instance1 = StringVOArrayEnumType::fromArray([
@@ -339,11 +298,6 @@ class StringCollectionTest extends TestCase
         $this->assertFalse($instance2->isNotEqualTo($instance1), 'Expected notEqualTo to return false for instance2');
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isNotEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::fromArray
-     */
     public function testIsEqualToInstanceOfDifferentClassSuccessful() : void
     {
         $instance1 = StringArrayEnumUpperCaseType::fromArray([
@@ -358,11 +312,6 @@ class StringCollectionTest extends TestCase
         $this->assertFalse($instance2->isNotEqualTo($instance1), 'Expected notEqualTo to return false for instance2');
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isNotEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::fromArray
-     */
     public function testIsEqualToArraySuccessful() : void
     {
         $instance2 = StringCollectionType::fromArray(['Hello', 'H3llo', ' _Hello']);
@@ -376,11 +325,6 @@ class StringCollectionTest extends TestCase
         $this->assertFalse($instance2->isNotEqualTo($array), 'Expected isNotEqualTo to return false');
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isNotEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::fromArray
-     */
     public function testIsEqualToStandardObjectSuccessful() : void
     {
         $instance2      = StringCollectionType::fromArray(['Hello', 'H3llo', ' _Hello']);
@@ -393,11 +337,6 @@ class StringCollectionTest extends TestCase
         $this->assertFalse($instance2->isNotEqualTo($object), 'Expected isNotEqualTo to return false');
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isNotEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::fromArray
-     */
     public function testIsEqualToInstanceOfSameClassNotEqual() : void
     {
         $instance1 = StringCollectionType::fromArray(['Name', 'Status']);
@@ -409,11 +348,6 @@ class StringCollectionTest extends TestCase
         $this->assertTrue($instance2->isNotEqualTo($instance1), 'Expected instance2 not to be equal to instance1');
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isNotEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::fromArray
-     */
     public function testIsEqualToInstanceOfDifferentClassNotEqual() : void
     {
         $instance1 = StringArrayEnumUpperCaseType::fromArray(['Email',]);
@@ -435,10 +369,6 @@ class StringCollectionTest extends TestCase
 
     /**
      * @dataProvider notEqualProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isNotEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::fromArray
      */
     public function testIsEqualToArrayNotEqual(array $valuesToCompareTo) : void
     {
@@ -450,10 +380,6 @@ class StringCollectionTest extends TestCase
 
     /**
      * @dataProvider notEqualProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isNotEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::fromArray
      */
     public function testIsEqualToStandardObjectNotEqual(array $valuesToCompareTo) : void
     {
@@ -469,9 +395,6 @@ class StringCollectionTest extends TestCase
         $this->assertTrue($instance2->isNotEqualTo($object));
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::count
-     */
     public function testCount() : void
     {
         $instance = StringCollectionType::fromArray(['Hello', 'H3llo', ' _Hello']);
@@ -479,10 +402,6 @@ class StringCollectionTest extends TestCase
         $this->assertSame(3, $instance->count());
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::empty
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::count
-     */
     public function testEmptyFactoryMethod() : void
     {
         $instance = StringCollectionType::empty();
@@ -491,11 +410,6 @@ class StringCollectionTest extends TestCase
         $this->assertSame(0, $instance->count());
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isEmpty
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isNotEmpty
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::empty
-     */
     public function testIsEmptyIsTrue() : void
     {
         $instance = StringCollectionType::empty();
@@ -503,11 +417,6 @@ class StringCollectionTest extends TestCase
         $this->assertFalse($instance->isNotEmpty());
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isEmpty
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isNotEmpty
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::fromArray
-     */
     public function testIsEmptyIsFalse() : void
     {
         $instance = StringCollectionType::fromArray(['status']);
@@ -515,11 +424,6 @@ class StringCollectionTest extends TestCase
         $this->assertTrue($instance->isNotEmpty());
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isEmpty
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isNotEmpty
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::empty
-     */
     public function testIsEmptyAfterAddingValue() : void
     {
         $instance = StringCollectionType::empty();
@@ -529,11 +433,6 @@ class StringCollectionTest extends TestCase
         $this->assertTrue($instance->isNotEmpty());
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isEmpty
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isNotEmpty
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::fromArray
-     */
     public function testIsEmptyAfterRemovingValueWithTryWithoutValue() : void
     {
         $instance = StringCollectionType::fromArray(['status']);
@@ -543,11 +442,6 @@ class StringCollectionTest extends TestCase
         $this->assertFalse($instance->isNotEmpty());
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isEmpty
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::isNotEmpty
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType::fromArray
-     */
     public function testIsEmptyAfterRemovingValue() : void
     {
         $instance = StringCollectionType::fromArray(['status']);

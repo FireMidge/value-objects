@@ -7,6 +7,9 @@ use FireMidge\Tests\ValueObject\Unit\Classes\MinMaxFloatType;
 use FireMidge\ValueObject\Exception\InvalidValue;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \FireMidge\Tests\ValueObject\Unit\Classes\MinMaxFloatType
+ */
 class MinMaxFloatTest extends TestCase
 {
     public function validValueProvider() : array

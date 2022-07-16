@@ -7,6 +7,9 @@ use FireMidge\Tests\ValueObject\Unit\Classes\OddIntType;
 use FireMidge\ValueObject\Exception\InvalidValue;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \FireMidge\Tests\ValueObject\Unit\Classes\OddIntType
+ */
 class OddIntTest extends TestCase
 {
     public function validValueProvider() : array

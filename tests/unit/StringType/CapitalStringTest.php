@@ -7,6 +7,9 @@ use FireMidge\Tests\ValueObject\Unit\Classes\CapitalStringType;
 use FireMidge\ValueObject\Exception\InvalidValue;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \FireMidge\Tests\ValueObject\Unit\Classes\CapitalStringType
+ */
 class CapitalStringTest extends TestCase
 {
     public function validValueProvider() : array
@@ -28,9 +31,6 @@ class CapitalStringTest extends TestCase
 
     /**
      * @dataProvider validValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\CapitalStringType::fromString
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\CapitalStringType::toString
      */
     public function testFromStringWithValidValue(string $raw, string $value) : void
     {
@@ -40,9 +40,6 @@ class CapitalStringTest extends TestCase
 
     /**
      * @dataProvider validValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\CapitalStringType::fromStringOrNull
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\CapitalStringType::toString
      */
     public function testFromStringOrNullWithValidValue(string $raw, string $value) : void
     {
@@ -63,9 +60,6 @@ class CapitalStringTest extends TestCase
 
     /**
      * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\CapitalStringType::fromString
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\CapitalStringType::toString
      */
     public function testFromStringWithInvalidValue(string $value, string $expectedExceptionMessagePart) : void
     {
@@ -76,9 +70,6 @@ class CapitalStringTest extends TestCase
 
     /**
      * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\CapitalStringType::fromStringOrNull
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\CapitalStringType::toString
      */
     public function testFromStringOrNullWithInvalidValue(string $value, string $expectedExceptionMessagePart) : void
     {

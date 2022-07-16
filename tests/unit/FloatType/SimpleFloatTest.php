@@ -7,6 +7,9 @@ use FireMidge\Tests\ValueObject\Unit\Classes\SimpleFloatType;
 use FireMidge\ValueObject\Exception\InvalidValue;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleFloatType
+ */
 class SimpleFloatTest extends TestCase
 {
     public function validValueProvider() : array
