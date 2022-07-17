@@ -98,6 +98,8 @@ If there are versions missing in CHANGELOG, add them. These commands should help
 Run this command (but don't forget substituting values with the current values):
 `docker-compose run lib php docs/generateBadges.php --cc=0 --msi=0 --mcc=0 --ccm=0`
 
+*Round all percentages to 0 decimals. Round down until .49, round up from .5.*
+
 #### cc
 `cc` is the Code Coverage percentage of covered methods. You get this value by running `docker-compose run lib vendor/bin/phpunit --coverage-text` and taking the "Methods" percentage from the summary section.
 

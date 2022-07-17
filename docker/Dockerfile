@@ -3,13 +3,14 @@ FROM php:8.1-cli-alpine
 RUN \
     # Needed to install pecl libraries
     apk add g++ make autoconf && \
-    # To get code coverage reports in PHPUnit (which is mandatory for running Infection), we need either PCOV or xDebug \
+    #
+    # To get code coverage reports in PHPUnit (which is mandatory for running Infection), we need either PCOV or xDebug.
     #
     # Installing xDebug:
 	# apk add --no-cache $PHPIZE_DEPS && \
 	# pecl install xdebug && docker-php-ext-enable xdebug \
     #
-    # Installing PCOV (which is supposed to be faster than xDebug):
+    # Installing PCOV (which is faster than xDebug):
     pecl install pcov && docker-php-ext-enable pcov
 
 # The following are required by the newer version of Infection (PHP 8), as it makes use of
