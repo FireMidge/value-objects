@@ -78,10 +78,9 @@ class InvalidValue extends \OutOfBoundsException
                 $message === null ? '' : sprintf(' (%s)', $message)
             )
             : sprintf(
-                'Value "%s" is too short; must have %d or more character%s.%s',
+                'Value "%s" is too short; must have %d or more characters.%s',
                 $value,
                 $minimumCharacterLength,
-                $minimumCharacterLength === 1 ? '' : 's',
                 $message === null ? '' : sprintf(' (%s)', $message)
             );
 

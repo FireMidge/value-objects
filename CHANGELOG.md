@@ -3,6 +3,15 @@
 Works with PHP 8.1.
 
 
+### v2.2
+
+Feature: It is now possible to also transform values in `IsStringEnumType` before validating.
+
+Feature: There is a new `fromString` method on `IsIntType`.
+
+Dev: Instead of using method-based @covers annotations, we now have class-based @covers annotations, which is working SO much better. Now the Infection log and coverage reports are far more accurate.
+
+
 ### v2.1
 
 Feature: Added the following methods to all the array types (`IsArrayEnumType`, `IsCollectionType`, `IsIntArrayEnumType`, `IsStringArrayEnumType`, `IsClassCollectionType`):

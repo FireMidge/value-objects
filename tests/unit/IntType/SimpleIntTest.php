@@ -24,9 +24,6 @@ class SimpleIntTest extends TestCase
 
     /**
      * @dataProvider validValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleIntType::fromInt
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleIntType::toInt
      */
     public function testFromIntWithValidValue(int $value) : void
     {
@@ -36,9 +33,6 @@ class SimpleIntTest extends TestCase
 
     /**
      * @dataProvider validValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleIntType::fromIntOrNull
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleIntType::toInt
      */
     public function testFromIntOrNullWithValidValue(int $value) : void
     {
@@ -46,9 +40,6 @@ class SimpleIntTest extends TestCase
         $this->assertSame($value, $instance->toInt());
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleIntType::fromIntOrNull
-     */
     public function testFromIntOrNullWithNull() : void
     {
         $instance = SimpleIntType::fromIntOrNull(null);
@@ -65,8 +56,6 @@ class SimpleIntTest extends TestCase
 
     /**
      * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleIntType::fromInt
      */
     public function testFromIntWithInvalidValue(int $value) : void
     {
@@ -76,8 +65,6 @@ class SimpleIntTest extends TestCase
 
     /**
      * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleIntType::fromInt
      */
     public function testFromIntWithInvalidValueErrorMessage(int $value) : void
     {
@@ -90,8 +77,6 @@ class SimpleIntTest extends TestCase
 
     /**
      * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleIntType::fromIntOrNull
      */
     public function testFromIntOrNullWithInvalidValue(int $value) : void
     {
@@ -101,8 +86,6 @@ class SimpleIntTest extends TestCase
 
     /**
      * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleIntType::fromIntOrNull
      */
     public function testFromIntOrNullWithInvalidValueErrorMessage(int $value) : void
     {
@@ -111,5 +94,47 @@ class SimpleIntTest extends TestCase
             (string) $value
         ));
         SimpleIntType::fromIntOrNull($value);
+    }
+
+    public function validStringValueProvider() : array
+    {
+        return [
+            [ '0', 0 ],
+            [ '1', 1 ],
+            [ '700', 700 ],
+            [ '58760295', 58760295 ],
+        ];
+    }
+
+    /**
+     * @dataProvider validStringValueProvider
+     */
+    public function testFromStringWithValidValue(string $input, int $output) : void
+    {
+        $instance = SimpleIntType::fromString($input);
+        $this->assertSame($output, $instance->toInt());
+    }
+
+    public function invalidStringValueProvider() : array
+    {
+        return [
+            [ '', 'Value "" is invalid. (Value is not numeric.)' ],
+            [ 'Hello1', 'Value "Hello1" is invalid. (Value is not numeric.)' ],
+            [ '1Hello', 'Value "1Hello" is invalid. (Value is not numeric.)' ],
+            [ '87e', 'Value "87e" is invalid. (Value is not numeric.)' ],
+            [ '10.0', 'Value "10.0" is invalid. (Value is not an integer. Does not match expected "10".)' ],
+            [ '10.5', 'Value "10.5" is invalid. (Value is not an integer. Does not match expected "10".)' ],
+        ];
+    }
+
+    /**
+     * @dataProvider invalidStringValueProvider
+     */
+    public function testFromStringWithInvalidValue(string $input, string $expectedMessage) : void
+    {
+        $this->expectException(InvalidValue::class);
+        $this->expectExceptionMessage($expectedMessage);
+
+        SimpleIntType::fromString($input);
     }
 }

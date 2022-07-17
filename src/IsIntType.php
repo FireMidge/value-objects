@@ -33,6 +33,29 @@ trait IsIntType
     }
 
     /**
+     * Accepts an integer as a string and returns a new instance.
+     * Note that "1.0" is considered a float/double and causes an exception.
+     *
+     * @throws InvalidValue  If the value is not an integer value in a string.
+     */
+    public static function fromString(string $value) : static
+    {
+        if (! is_numeric($value)) {
+            throw InvalidValue::invalidValue($value, 'Value is not numeric.');
+        }
+
+        $converted = (int) $value;
+        if ((string) $converted !== $value) {
+            throw InvalidValue::invalidValue($value, sprintf(
+                'Value is not an integer. Does not match expected "%s".',
+                $converted
+            ));
+        }
+
+        return static::fromInt($converted);
+    }
+
+    /**
      * Same as `fromInt`, but also accepts NULL values.
      * Returns NULL instead of a new instance if NULL is passed into it.
      *
