@@ -5,7 +5,7 @@ namespace FireMidge\Tests\ValueObject\Unit\CollectionType;
 
 use FireMidge\Tests\ValueObject\Unit\Classes\SimpleObject;
 use FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumUpperCaseType;
-use FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionOriginalCasingType;
+use FireMidge\Tests\ValueObject\Unit\Classes\BasicStringCollectionType;
 use FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType;
 use FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType;
 use FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType;
@@ -290,7 +290,7 @@ class StringCollectionTest extends TestCase
             StringEnumType::spring(),
             StringEnumType::winter(),
         ]);
-        $instance2 = StringCollectionOriginalCasingType::fromArray(['spring', 'winter']);
+        $instance2 = BasicStringCollectionType::fromArray(['spring', 'winter']);
 
         $this->assertTrue($instance1->isEqualTo($instance2), 'Expected instance1 to be equal to instance2');
         $this->assertTrue($instance2->isEqualTo($instance1), 'Expected instance2 to be equal to instance1');
@@ -383,7 +383,7 @@ class StringCollectionTest extends TestCase
      */
     public function testIsEqualToStandardObjectNotEqual(array $valuesToCompareTo) : void
     {
-        $instance2 = StringCollectionType::fromArray(['Hello', 'H3llo', ' _Hello']);
+        $instance = StringCollectionType::fromArray(['Hello', 'H3llo', ' _Hello']);
 
         $object = new stdClass();
         foreach ($valuesToCompareTo as $k => $v) {
@@ -391,8 +391,24 @@ class StringCollectionTest extends TestCase
             $object->$propertyName = $v;
         }
 
-        $this->assertFalse($instance2->isEqualTo($object));
-        $this->assertTrue($instance2->isNotEqualTo($object));
+        $this->assertFalse($instance->isEqualTo($object));
+        $this->assertTrue($instance->isNotEqualTo($object));
+    }
+
+    public function testEqualWithNullReturnsFalse() : void
+    {
+        $instance = StringCollectionType::fromArray(['Hello', 'H3llo', ' _Hello']);
+
+        $this->assertFalse($instance->isEqualTo(null));
+        $this->assertTrue($instance->isNotEqualTo(null));
+    }
+
+    public function testEqualWithNullReturnsFalseWhenComparingWithEmpty() : void
+    {
+        $instance = StringCollectionType::empty();
+
+        $this->assertFalse($instance->isEqualTo(null));
+        $this->assertTrue($instance->isNotEqualTo(null));
     }
 
     public function testCount() : void

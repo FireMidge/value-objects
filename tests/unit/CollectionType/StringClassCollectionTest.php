@@ -448,7 +448,7 @@ class StringClassCollectionTest extends TestCase
             ],
         );
 
-        $this->assertEquals([
+        $this->assertSame([
             'Hello',
             'World',
             'hello',

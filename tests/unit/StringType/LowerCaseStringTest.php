@@ -24,6 +24,8 @@ class LowerCaseStringTest extends TestCase
             [ '@abcd', '@abcd' ],
             [ '01234', '01234' ],
             [ 'O RGA', 'o rga' ],
+            [ '  ÖÄßüä', 'öäßüä' ],
+            [ 'ÁýúÓé  ', 'áýúóé' ],
         ];
     }
 

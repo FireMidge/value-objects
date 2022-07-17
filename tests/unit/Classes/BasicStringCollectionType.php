@@ -7,7 +7,7 @@ use FireMidge\ValueObject\Exception\InvalidValue;
 use FireMidge\ValueObject\Helper\CanTransformStrings;
 use FireMidge\ValueObject\IsCollectionType;
 
-class StringCollectionOriginalCasingType
+class BasicStringCollectionType
 {
     use IsCollectionType;
     use CanTransformStrings;

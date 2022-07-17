@@ -108,7 +108,7 @@ class IntVOCollectionTest extends TestCase
         return [
             '400' => [ MinMaxIntType::fromInt(400) ],
             '450' => [ MinMaxIntType::fromInt(450) ],
-            '135' => [ MinMaxIntType::fromInt(135) ],
+            '135' => [ MinMaxIntType::fromInt(135) ], // duplicate value, which is allowed
         ];
     }
 

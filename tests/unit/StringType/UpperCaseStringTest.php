@@ -21,6 +21,8 @@ class UpperCaseStringTest extends TestCase
             [ '@a', '@A' ],
             [ '3@         ', '3@' ],
             [ '-a', '-A' ],
+            [ 'áú', 'ÁÚ' ],
+            [ '  öä', 'ÖÄ' ],
         ];
     }
 

@@ -26,6 +26,8 @@ class CapitalStringTest extends TestCase
             [ '-a', '-a' ],
             [ '-a-', '-a-' ],
             [ '---', '---' ],
+            [ 'ÜÄö', 'Üäö' ],
+            [ 'áýÚ', 'Áýú' ],
         ];
     }
 

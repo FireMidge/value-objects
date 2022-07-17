@@ -24,8 +24,11 @@ To run mutation tests:
 To run the unit tests:
 `docker-compose run lib vendor/bin/phpunit`
 
-To create a code coverage report:
+To create a code coverage report in HTML style:
 `docker-compose run lib vendor/bin/phpunit --coverage-html ./coverage-report`
+
+To create a quick code coverage overview in the CLI:
+`docker-compose run lib vendor/bin/phpunit --coverage-text`
 
 
 #### Run a specific test
@@ -58,6 +61,18 @@ Use the --dev option when requiring new dev dependencies via composer:
 
 ## Commits
 
+- Validate `composer.json`
+- Update `CHANGELOG.md` and briefly describe any additions/changes/backwards-compatibility-breaking changes
+- Update `README.md` with any new features. Change any text that is no longer accurate
+- Run PhpUnit and Infection - inspect the Infection log and fix any regressions. Make sure new code coverage isn't lower than previously.
+- Regenerate badges with new code coverage scores, and update the Alt text in the Quality Control section in `README.md` for blind developers
+- Create the PR
+- Use "squash & merge" as the merge option
+- After the branch has been merged into master, pull the latest `master` and tag the latest commit with the new version
+- Create new release in Github if new features have been added or the latest version contains backwards-compatibility-breaking changes. Can re-use the same text as in `CHANGELOG.md` for the release.
+
+Any slightly more "complex" tasks have been detailed below.
+
 ### Validate composer.json
 
 Run `docker-compose run lib composer validate` to make sure `composer.json` is still valid.
@@ -77,6 +92,25 @@ If there are versions missing in CHANGELOG, add them. These commands should help
 
 `git show 338a601819077e11fdc439e73079d49dd08319ca`
 : Using the commit hash from the previous command, you can see what's changed in it as well as what its commit message was.
+
+### Regenerate badges with new code coverage scores
+
+Run this command (but don't forget substituting values with the current values):
+`docker-compose run lib php docs/generateBadges.php --cc=0 --msi=0 --mcc=0 --ccm=0`
+
+#### cc
+`cc` is the Code Coverage percentage of covered methods. You get this value by running `docker-compose run lib vendor/bin/phpunit --coverage-text` and taking the "Methods" percentage from the summary section.
+
+#### msi, mcc, ccm
+All of these values are taken from the Infection summary. Run `docker-compose run lib php infection.phar`, which gives you a "Metrics" section, from which you take the following percentages:
+
+msi: Mutation Score Indicator
+
+mcc: Mutation Code Coverage
+
+ccm: Code Coverage MSI
+
+**Don't forget to also update the Alt text in `README.md` in the `Quality Control` table for each of the badges.** Using images was the only way to be able to display colour-coded stats but for them to remain accessible to blind developers, it's important to keep the "alt" text up-to-date.
 
 
 ### Tag your commit
