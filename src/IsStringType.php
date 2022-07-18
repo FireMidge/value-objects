@@ -5,6 +5,7 @@ namespace FireMidge\ValueObject;
 
 use FireMidge\ValueObject\Exception\InvalidValue;
 use FireMidge\ValueObject\Helper\CanTransformStrings;
+use LogicException;
 
 /**
  * A trait for value objects that consist of a string value
@@ -109,6 +110,15 @@ trait IsStringType
     {
         if ($minLength === null && $maxLength === null) {
             return;
+        }
+
+        if ($minLength !== null && $maxLength !== null && $minLength > $maxLength) {
+            throw new LogicException(sprintf(
+                'Trying to validate length of a string, '
+                . 'but the required $minLength "%d" is higher than $maxLength "%d"',
+                $minLength,
+                $maxLength
+            ));
         }
 
         $length = mb_strlen($value);

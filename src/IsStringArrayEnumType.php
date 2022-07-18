@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace FireMidge\ValueObject;
 
 use FireMidge\ValueObject\Exception\InvalidValue;
+use FireMidge\ValueObject\Helper\CanTransformStrings;
 
 /**
  * This type is similar to IsStringEnumType with the exception that instead of holding a single value,
@@ -21,6 +22,7 @@ use FireMidge\ValueObject\Exception\InvalidValue;
 trait IsStringArrayEnumType
 {
     use IsArrayEnumType;
+    use CanTransformStrings;
 
     protected function validateEach($value) : void
     {

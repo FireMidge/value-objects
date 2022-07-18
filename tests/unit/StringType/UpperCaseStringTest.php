@@ -7,6 +7,9 @@ use FireMidge\Tests\ValueObject\Unit\Classes\UpperCaseStringType;
 use FireMidge\ValueObject\Exception\InvalidValue;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \FireMidge\Tests\ValueObject\Unit\Classes\UpperCaseStringType
+ */
 class UpperCaseStringTest extends TestCase
 {
     public function validValueProvider() : array
@@ -18,14 +21,13 @@ class UpperCaseStringTest extends TestCase
             [ '@a', '@A' ],
             [ '3@         ', '3@' ],
             [ '-a', '-A' ],
+            [ 'áú', 'ÁÚ' ],
+            [ '  öä', 'ÖÄ' ],
         ];
     }
 
     /**
      * @dataProvider validValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\UpperCaseStringType::fromString
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\UpperCaseStringType::toString
      */
     public function testFromStringWithValidValue(string $raw, string $value) : void
     {
@@ -35,9 +37,6 @@ class UpperCaseStringTest extends TestCase
 
     /**
      * @dataProvider validValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\UpperCaseStringType::fromStringOrNull
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\UpperCaseStringType::toString
      */
     public function testFromStringOrNullWithValidValue(string $raw, string $value) : void
     {
@@ -58,9 +57,6 @@ class UpperCaseStringTest extends TestCase
 
     /**
      * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\UpperCaseStringType::fromString
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\UpperCaseStringType::toString
      */
     public function testFromStringWithInvalidValue(string $value, string $expectedExceptionMessagePart) : void
     {
@@ -71,9 +67,6 @@ class UpperCaseStringTest extends TestCase
 
     /**
      * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\UpperCaseStringType::fromStringOrNull
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\UpperCaseStringType::toString
      */
     public function testFromStringOrNullWithInvalidValue(string $value, string $expectedExceptionMessagePart) : void
     {

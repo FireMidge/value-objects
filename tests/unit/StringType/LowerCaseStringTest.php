@@ -7,6 +7,9 @@ use FireMidge\Tests\ValueObject\Unit\Classes\LowerCaseStringType;
 use FireMidge\ValueObject\Exception\InvalidValue;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \FireMidge\Tests\ValueObject\Unit\Classes\LowerCaseStringType
+ */
 class LowerCaseStringTest extends TestCase
 {
     public function validValueProvider() : array
@@ -21,14 +24,13 @@ class LowerCaseStringTest extends TestCase
             [ '@abcd', '@abcd' ],
             [ '01234', '01234' ],
             [ 'O RGA', 'o rga' ],
+            [ '  ÖÄßüä', 'öäßüä' ],
+            [ 'ÁýúÓé  ', 'áýúóé' ],
         ];
     }
 
     /**
      * @dataProvider validValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\LowerCaseStringType::fromString
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\LowerCaseStringType::toString
      */
     public function testFromStringWithValidValue(string $raw, string $value) : void
     {
@@ -38,9 +40,6 @@ class LowerCaseStringTest extends TestCase
 
     /**
      * @dataProvider validValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\LowerCaseStringType::fromStringOrNull
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\LowerCaseStringType::toString
      */
     public function testFromStringOrNullWithValidValue(string $raw, string $value) : void
     {
@@ -62,9 +61,6 @@ class LowerCaseStringTest extends TestCase
 
     /**
      * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\LowerCaseStringType::fromString
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\LowerCaseStringType::toString
      */
     public function testFromStringWithInvalidValue(string $value, string $expectedExceptionMessagePart) : void
     {
@@ -75,9 +71,6 @@ class LowerCaseStringTest extends TestCase
 
     /**
      * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\LowerCaseStringType::fromStringOrNull
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\LowerCaseStringType::toString
      */
     public function testFromStringOrNullWithInvalidValue(string $value, string $expectedExceptionMessagePart) : void
     {

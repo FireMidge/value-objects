@@ -16,12 +16,16 @@ trait IsStringEnumType
      */
     private function __construct(private string $value)
     {
+        $value = $this->transform($value);
+
         if (! in_array($value, static::all())) {
             throw InvalidValue::valueNotOneOfEnum(
                 $value,
                 $this->all()
             );
         }
+
+        $this->value = $value;
     }
 
     /**
@@ -72,4 +76,20 @@ trait IsStringEnumType
      * @return string[]
      */
     abstract protected static function all() : array;
+
+    /**
+     * Override this method to do something to the string before validating it,
+     * e.g. trimming whitespace, lower-casing everything, ...
+     *
+     * There are some convenience methods already here that you can call, e.g.
+     * - trimAndLowerCase
+     * - trimAndUpperCase
+     * - trimAndCapitalise
+     *
+     * @param string  $value  The input value to transform.
+     */
+    protected function transform(string $value) : string
+    {
+        return $value;
+    }
 }

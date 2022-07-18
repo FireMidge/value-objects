@@ -26,6 +26,8 @@ trait CanTransformStrings
      */
     private function trimAndCapitalise(string $value) : string
     {
-        return ucfirst(mb_strtolower(trim($value)));
+        // ucfirst is not multi-byte-string-safe, so need to do this in a more roundabout way
+        $allLowerCase = (mb_strtolower(trim($value)));
+        return mb_strtoupper(mb_substr($allLowerCase, 0, 1)) . mb_substr($allLowerCase, 1);
     }
 }

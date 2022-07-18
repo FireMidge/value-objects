@@ -7,6 +7,9 @@ use FireMidge\Tests\ValueObject\Unit\Classes\OddFloatWithThreeDecimalsType;
 use FireMidge\ValueObject\Exception\InvalidValue;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \FireMidge\Tests\ValueObject\Unit\Classes\OddFloatWithThreeDecimalsType
+ */
 class OddFloatWithThreeDecimalsTest extends TestCase
 {
     public function validValueProvider() : array

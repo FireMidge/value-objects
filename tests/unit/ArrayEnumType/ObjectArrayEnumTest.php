@@ -9,6 +9,9 @@ use FireMidge\ValueObject\Exception\InvalidValue;
 use FireMidge\ValueObject\Exception\ValueNotFound;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType
+ */
 class ObjectArrayEnumTest extends TestCase
 {
     public function validValueProvider() : array
@@ -26,9 +29,6 @@ class ObjectArrayEnumTest extends TestCase
 
     /**
      * @dataProvider validValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::fromArray
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::toArray
      */
     public function testFromArrayWithValidValue(array $values) : void
     {
@@ -64,9 +64,6 @@ class ObjectArrayEnumTest extends TestCase
 
     /**
      * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::fromArray
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::toArray
      */
     public function testFromArrayWithInvalidValue(array $values, string $expectedExceptionMessage) : void
     {
@@ -75,10 +72,6 @@ class ObjectArrayEnumTest extends TestCase
         ObjectArrayEnumType::fromArray($values);
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::withAll
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::toArray
-     */
     public function testWithAll() : void
     {
         $instance = ObjectArrayEnumType::withAll();
@@ -89,11 +82,6 @@ class ObjectArrayEnumTest extends TestCase
         ], $instance->toArray());
     }
 
-
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::fromArray
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::toArray
-     */
     public function testFromArrayWithEmptyArray() : void
     {
         $instance = ObjectArrayEnumType::fromArray([]);
@@ -111,8 +99,6 @@ class ObjectArrayEnumTest extends TestCase
 
     /**
      * @dataProvider singleValidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::withValue
      *
      * @depends testFromArrayWithEmptyArray
      */
@@ -142,8 +128,6 @@ class ObjectArrayEnumTest extends TestCase
     /**
      * @dataProvider singleInvalidValueProvider
      *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::withValue
-     *
      * @depends testFromArrayWithEmptyArray
      */
     public function testWithValueWithInvalidValue($invalidValue, string $expectedExceptionMessage) : void
@@ -157,9 +141,6 @@ class ObjectArrayEnumTest extends TestCase
 
     /**
      * @dataProvider singleValidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::withValue
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::toArray
      */
     public function testWithValueDoesNotChangePreExisting(SimpleObject $value) : void
     {
@@ -215,9 +196,6 @@ class ObjectArrayEnumTest extends TestCase
 
     /**
      * @dataProvider withoutValidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::tryWithoutValue
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::toArray
      */
     public function testTryWithoutValueDoesNotChangePreExisting(
         array $stateBefore,
@@ -234,9 +212,6 @@ class ObjectArrayEnumTest extends TestCase
 
     /**
      * @dataProvider withoutValidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::withoutValue
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::toArray
      */
     public function testWithoutValueDoesNotChangePreExisting(
         array $stateBefore,
@@ -272,8 +247,6 @@ class ObjectArrayEnumTest extends TestCase
     /**
      * @dataProvider withoutInvalidValueProvider
      *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::tryWithoutValue
-     *
      * @depends testFromArrayWithEmptyArray
      */
     public function testTryWithoutValueWithInvalidValue(
@@ -290,10 +263,6 @@ class ObjectArrayEnumTest extends TestCase
         $instance->tryWithoutValue($valueToBeRemoved);
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::withoutValue
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::toArray
-     */
     public function testWithoutValueNotThrowingExceptionIfValueDidNotExist() : void
     {
         $instance = ObjectArrayEnumType::fromArray([new SimpleObject('B')]);
@@ -302,10 +271,6 @@ class ObjectArrayEnumTest extends TestCase
         $this->assertEquals([new SimpleObject('B')], $newInstance->toArray());
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::withoutValue
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::toArray
-     */
     public function testWithoutValueThrowingExceptionIfValueInvalid() : void
     {
         $this->expectException(InvalidValue::class);
@@ -315,10 +280,6 @@ class ObjectArrayEnumTest extends TestCase
         $instance->withoutValue('B');
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::contains
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::fromArray
-     */
     public function testContains() : void
     {
         $instance = ObjectArrayEnumType::fromArray([
@@ -336,10 +297,6 @@ class ObjectArrayEnumTest extends TestCase
         );
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::contains
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::fromArray
-     */
     public function testContainsThrowingError() : void
     {
         $instance = ObjectArrayEnumType::fromArray([
@@ -354,11 +311,6 @@ class ObjectArrayEnumTest extends TestCase
         $instance->contains('A');
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::isEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::isNotEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::fromArray
-     */
     public function testIsEqualWithSameTypeSuccessful() : void
     {
         $instance1 = ObjectArrayEnumType::fromArray([
@@ -375,11 +327,6 @@ class ObjectArrayEnumTest extends TestCase
         $this->assertFalse($instance1->isNotEqualTo($instance2));
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::isEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::isNotEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType::fromArray
-     */
     public function testIsEqualWithArraySuccessful() : void
     {
         $instance = ObjectArrayEnumType::fromArray([

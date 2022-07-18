@@ -9,6 +9,9 @@ use FireMidge\ValueObject\Exception\InvalidValue;
 use FireMidge\ValueObject\Exception\ValueNotFound;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumType
+ */
 class StringArrayEnumTest extends TestCase
 {
     public function validValueProvider() : array
@@ -319,5 +322,65 @@ class StringArrayEnumTest extends TestCase
         );
 
         $instance->contains(true);
+    }
+
+    public function trimAndLowerCaseProvider() : array
+    {
+        return [
+            [ '      United KINGDOM    ', 'united kingdom' ],
+            [ '   Österreich    ', 'österreich' ],
+            [ ' ESPAÑA    ', 'españa' ],
+            [ '  suOMI  ', 'suomi' ],
+            [ '  BLÅBÆRSYLTETØY  ', 'blåbærsyltetøy' ],
+            [ ' ÆÅØ  ', 'æåø' ],
+        ];
+    }
+
+    /**
+     * @dataProvider trimAndLowerCaseProvider
+     */
+    public function testTrimAndLowerCase(string $input, string $output) : void
+    {
+        $this->assertSame($output, StringArrayEnumType::empty()->trimAndLowerCase($input));
+    }
+
+    public function trimAndUpperCaseProvider() : array
+    {
+        return [
+            [ '      United KINGDOM    ', 'UNITED KINGDOM' ],
+            [ '   Österreich    ', 'ÖSTERREICH' ],
+            [ ' ESPAÑA    ', 'ESPAÑA' ],
+            [ '  suOMI  ', 'SUOMI' ],
+            [ '  blåbærsyltetøy  ', 'BLÅBÆRSYLTETØY' ],
+            [ ' æåø  ', 'ÆÅØ' ],
+        ];
+    }
+
+    /**
+     * @dataProvider trimAndUpperCaseProvider
+     */
+    public function testTrimAndUpperCase(string $input, string $output) : void
+    {
+        $this->assertSame($output, StringArrayEnumType::empty()->trimAndUpperCase($input));
+    }
+
+    public function trimAndCapitaliseProvider() : array
+    {
+        return [
+            [ '      United KINGDOM    ', 'United kingdom' ],
+            [ '   Österreich    ', 'Österreich' ],
+            [ ' ESPAÑA    ', 'España' ],
+            [ '  suOMI  ', 'Suomi' ],
+            [ '  BLÅBÆRSYLTETØY  ', 'Blåbærsyltetøy' ],
+            [ ' ÆÅØ  ', 'Æåø' ],
+        ];
+    }
+
+    /**
+     * @dataProvider trimAndCapitaliseProvider
+     */
+    public function testTrimAndCapitalise(string $input, string $output) : void
+    {
+        $this->assertSame($output, StringArrayEnumType::empty()->trimAndCapitalise($input));
     }
 }

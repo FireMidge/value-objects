@@ -3,7 +3,14 @@ FROM php:8.1-cli-alpine
 RUN \
     # Needed to install pecl libraries
     apk add g++ make autoconf && \
-    # PCOV provides code coverage reports and is required by Infection
+    #
+    # To get code coverage reports in PHPUnit (which is mandatory for running Infection), we need either PCOV or xDebug.
+    #
+    # Installing xDebug:
+	# apk add --no-cache $PHPIZE_DEPS && \
+	# pecl install xdebug && docker-php-ext-enable xdebug \
+    #
+    # Installing PCOV (which is faster than xDebug):
     pecl install pcov && docker-php-ext-enable pcov
 
 # The following are required by the newer version of Infection (PHP 8), as it makes use of
@@ -12,6 +19,9 @@ RUN \
 RUN \
     apk add icu-dev && \
 	docker-php-ext-configure intl && docker-php-ext-install intl
+
+# The following is required to install the PHP GD library, which is used to generate images.
+RUN apk add --no-cache libpng libpng-dev && docker-php-ext-install gd && apk del libpng-dev
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
 

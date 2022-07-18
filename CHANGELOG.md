@@ -1,6 +1,19 @@
 # v2
 
-Works with PHP 8.1
+Works with PHP 8.1.
+
+
+### v2.2
+
+Feature: It is now possible to also transform values in `IsStringEnumType` before validating.
+
+Feature: There is a new `fromString` method on `IsIntType`.
+
+Dev: Instead of using method-based @covers annotations, we now have class-based @covers annotations, which is working SO much better. Now the Infection log and coverage reports are far more accurate.
+
+Dev: Added more tests, to bring unit test coverage up to 100%.
+
+Dev: Throwing LogicException when trying to validate the length of a string but passing a higher $minNumber than $maxNumber.
 
 
 ### v2.1

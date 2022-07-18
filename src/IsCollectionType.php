@@ -56,6 +56,8 @@ trait IsCollectionType
      */
     public function withValue($addedValue) : static
     {
+        $addedValue = $this->transformEach($addedValue);
+
         if ((static::areValuesUnique() || static::ignoreDuplicateValues()) && $this->contains($addedValue)) {
             $this->handleDuplicateValue($addedValue);
             return new static($this->values);
@@ -269,9 +271,13 @@ trait IsCollectionType
 
     private function handleDuplicateValues(array $values) : array
     {
+        // @codeCoverageIgnoreStart
+        //  This is never going to be executed because the same check also happens in __construct (for performance reasons).
+        // But I don't want to remove it from here, just in case. It's an easy check.
         if (! static::areValuesUnique() && (! static::ignoreDuplicateValues())) {
             return $values;
         }
+        // @codeCoverageIgnoreEnd
 
         if (static::areValuesUnique() && (! static::ignoreDuplicateValues())) {
             throw DuplicateValue::containsDuplicates($values);

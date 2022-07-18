@@ -3,11 +3,15 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 bootstrap="vendor/autoload.php"
 		 testdox="true"
+		 forceCoversAnnotation="true"
 		 xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
   <coverage>
     <include>
       <directory>src</directory>
     </include>
+	  <exclude>
+		  <directory>src/Exception</directory>
+	  </exclude>
   </coverage>
   <php>
     <ini name="error_reporting" value="-1"/>

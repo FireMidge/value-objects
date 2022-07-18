@@ -9,6 +9,10 @@ use FireMidge\ValueObject\Exception\DuplicateValue;
 use FireMidge\ValueObject\Exception\InvalidValue;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType
+ * @uses \FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType
+ */
 class StringVOArrayEnumTest extends TestCase
 {
     public function validValueProvider() : array
@@ -26,9 +30,6 @@ class StringVOArrayEnumTest extends TestCase
 
     /**
      * @dataProvider validValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::fromArray
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::toArray
      */
     public function testFromArrayWithValidValue(array $values) : void
     {
@@ -48,9 +49,6 @@ class StringVOArrayEnumTest extends TestCase
 
     /**
      * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::fromArray
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::toArray
      */
     public function testFromArrayWithInvalidValue(array $values, string $expectedExceptionMessage) : void
     {
@@ -59,9 +57,6 @@ class StringVOArrayEnumTest extends TestCase
         StringVOArrayEnumType::fromArray($values);
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::fromArray
-     */
     public function testValuesAreUnique() : void
     {
         $this->expectException(DuplicateValue::class);
@@ -75,10 +70,6 @@ class StringVOArrayEnumTest extends TestCase
         ]);
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::withAll
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::toArray
-     */
     public function testWithAll() : void
     {
         $instance = StringVOArrayEnumType::withAll();
@@ -90,10 +81,6 @@ class StringVOArrayEnumTest extends TestCase
         ], $instance->toArray());
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::fromArray
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::toArray
-     */
     public function testFromArrayWithEmptyArray() : void
     {
         $instance = StringVOArrayEnumType::fromArray([]);
@@ -111,8 +98,6 @@ class StringVOArrayEnumTest extends TestCase
 
     /**
      * @dataProvider singleValidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::withValue
      *
      * @depends testFromArrayWithEmptyArray
      */
@@ -132,9 +117,6 @@ class StringVOArrayEnumTest extends TestCase
         ], $instance->toArray(), 'Expected old instance to have remained unchanged'); // Make sure the previous instance hasn't been changed
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::withValue
-     */
     public function testWithValueThrowsOnDuplicate() : void
     {
         $this->expectException(InvalidValue::class);
@@ -149,10 +131,6 @@ class StringVOArrayEnumTest extends TestCase
         $instance->withValue(StringEnumType::spring());
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::contains
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::fromArray
-     */
     public function testContains() : void
     {
         $instance = StringVOArrayEnumType::fromArray([
@@ -166,10 +144,6 @@ class StringVOArrayEnumTest extends TestCase
         $this->assertFalse($instance->contains(StringEnumType::autumn()), 'Expected not to contain autumn');
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::contains
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::fromArray
-     */
     public function testContainsThrowingError() : void
     {
         $instance = StringVOArrayEnumType::fromArray([
@@ -184,11 +158,6 @@ class StringVOArrayEnumTest extends TestCase
         $instance->contains('autumn');
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::isEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::isNotEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::fromArray
-     */
     public function testIsEqualWithSameTypeSuccessful() : void
     {
         $instance1 = StringVOArrayEnumType::fromArray([
@@ -205,11 +174,6 @@ class StringVOArrayEnumTest extends TestCase
         $this->assertFalse($instance1->isNotEqualTo($instance2));
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::isEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::isNotEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::fromArray
-     */
     public function testIsEqualWithArraySuccessful() : void
     {
         $instance = StringVOArrayEnumType::fromArray([
@@ -223,9 +187,17 @@ class StringVOArrayEnumTest extends TestCase
         $this->assertFalse($instance->isNotEqualTo($array));
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType::count
-     */
+    public function testEqualWithNullReturnsFalse() : void
+    {
+        $instance = StringVOArrayEnumType::fromArray([
+            StringEnumType::winter(),
+            StringEnumType::autumn(),
+        ]);
+
+        $this->assertFalse($instance->isEqualTo(null));
+        $this->assertTrue($instance->isNotEqualTo(null));
+    }
+
     public function testCount() : void
     {
         $instance = StringVOArrayEnumType::fromArray(

@@ -21,6 +21,7 @@
     },
     "minimum-stability": "stable",
     "require-dev": {
+		"ext-gd": "*",
         "phpunit/phpunit": "^9"
     }
 }

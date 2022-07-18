@@ -13,6 +13,10 @@ use FireMidge\ValueObject\Exception\ValueNotFound;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
+/**
+ * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType
+ * @uses \FireMidge\Tests\ValueObject\Unit\Classes\MinMaxIntType
+ */
 class IntVOCollectionTest extends TestCase
 {
     public function validValueProvider() : array
@@ -27,9 +31,6 @@ class IntVOCollectionTest extends TestCase
 
     /**
      * @dataProvider validValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::fromArray
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::toArray
      */
     public function testFromArrayWithValidValue(array $values) : void
     {
@@ -52,9 +53,6 @@ class IntVOCollectionTest extends TestCase
 
     /**
      * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::fromArray
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::toArray
      */
     public function testFromArrayWithInvalidValue(array $input, string $errorMessage) : void
     {
@@ -64,20 +62,12 @@ class IntVOCollectionTest extends TestCase
         IntVOCollectionType::fromArray($input);
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::contains
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::fromArray
-     */
     public function testContainsWithEmptyArray() : void
     {
         $instance = IntVOCollectionType::fromArray([]);
         $this->assertFalse($instance->contains(MinMaxIntType::fromInt(400)));
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::contains
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::fromArray
-     */
     public function testContainsWithDifferentValue() : void
     {
         $instance = IntVOCollectionType::fromArray([
@@ -86,10 +76,6 @@ class IntVOCollectionTest extends TestCase
         $this->assertFalse($instance->contains(MinMaxIntType::fromInt(401)));
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::contains
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::fromArray
-     */
     public function testContainsWithMultipleValues() : void
     {
         $instance = IntVOCollectionType::fromArray([
@@ -104,10 +90,6 @@ class IntVOCollectionTest extends TestCase
         $this->assertTrue($instance->contains(MinMaxIntType::fromInt(450)), 'Expected to contain "450"');
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::contains
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::fromArray
-     */
     public function testContainsThrowsExceptionWithInvalidType() : void
     {
         $this->expectException(InvalidValue::class);
@@ -126,14 +108,12 @@ class IntVOCollectionTest extends TestCase
         return [
             '400' => [ MinMaxIntType::fromInt(400) ],
             '450' => [ MinMaxIntType::fromInt(450) ],
-            '135' => [ MinMaxIntType::fromInt(135) ],
+            '135' => [ MinMaxIntType::fromInt(135) ], // duplicate value, which is allowed
         ];
     }
 
     /**
      * @dataProvider singleValidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::withValue
      */
     public function testWithValueWithValidValue(MinMaxIntType $value) : void
     {
@@ -182,8 +162,6 @@ class IntVOCollectionTest extends TestCase
 
     /**
      * @dataProvider singleInvalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::withValue
      */
     public function testWithValueWithInvalidValue($invalidValue, string $expectedExceptionMessage) : void
     {
@@ -241,8 +219,6 @@ class IntVOCollectionTest extends TestCase
 
     /**
      * @dataProvider invalidWithoutValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::tryWithoutValue
      */
     public function testTryWithoutValueWithInvalidValue(
         array $stateBefore,
@@ -291,9 +267,6 @@ class IntVOCollectionTest extends TestCase
 
     /**
      * @dataProvider withoutValidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::tryWithoutValue
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::toArray
      */
     public function testTryWithoutValueDoesNotChangePreExisting(
         array $stateBefore,
@@ -308,10 +281,6 @@ class IntVOCollectionTest extends TestCase
         $this->assertEquals($stateBefore, $instance->toArray(), 'Expected old instance to have remained unchanged');
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::withoutValue
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::toArray
-     */
     public function testWithoutValueNotThrowingExceptionIfValueDidNotExist() : void
     {
         $instance = IntVOCollectionType::fromArray([
@@ -326,10 +295,6 @@ class IntVOCollectionTest extends TestCase
         ], $newInstance->toArray());
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::withoutValue
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::toArray
-     */
     public function testWithoutValueThrowingExceptionIfValueInvalid() : void
     {
         $this->expectException(InvalidValue::class);
@@ -345,11 +310,6 @@ class IntVOCollectionTest extends TestCase
         $instance->withoutValue(OddIntType::fromInt(401));
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isNotEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::fromArray
-     */
     public function testIsEqualToInstanceOfSameClassSuccessful() : void
     {
         $instance1 = IntVOCollectionType::fromArray([
@@ -367,11 +327,6 @@ class IntVOCollectionTest extends TestCase
         $this->assertFalse($instance2->isNotEqualTo($instance1), 'Expected isNotEqualTo to return false for instance2');
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isNotEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::fromArray
-     */
     public function testIsEqualToInstanceOfSameClassNotEqual() : void
     {
         $instance1 = IntVOCollectionType::fromArray([
@@ -388,11 +343,6 @@ class IntVOCollectionTest extends TestCase
         $this->assertTrue($instance2->isNotEqualTo($instance1), 'Expected isNotEqualTo to return true for instance2');
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isNotEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::fromArray
-     */
     public function testIsEqualToArraySuccessful() : void
     {
         $instance1 = IntVOCollectionType::fromArray([
@@ -418,10 +368,6 @@ class IntVOCollectionTest extends TestCase
 
     /**
      * @dataProvider notEqualProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isNotEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::fromArray
      */
     public function testIsEqualToArrayNotEqual(array $valuesToCompareTo) : void
     {
@@ -436,10 +382,6 @@ class IntVOCollectionTest extends TestCase
 
     /**
      * @dataProvider notEqualProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isNotEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::fromArray
      */
     public function testIsEqualToStandardObjectNotEqual(array $valuesToCompareTo) : void
     {
@@ -458,11 +400,6 @@ class IntVOCollectionTest extends TestCase
         $this->assertTrue($instance1->isNotEqualTo($object));
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isNotEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::fromArray
-     */
     public function testIsEqualToStandardObjectSuccessful() : void
     {
         $instance1 = IntVOCollectionType::fromArray([
@@ -478,11 +415,6 @@ class IntVOCollectionTest extends TestCase
         $this->assertFalse($instance1->isNotEqualTo($object));
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isNotEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::fromArray
-     */
     public function testIsEqualToStandardObjectEqualWithDifferentTypes() : void
     {
         $instance1 = IntVOCollectionType::fromArray([
@@ -498,12 +430,6 @@ class IntVOCollectionTest extends TestCase
         $this->assertFalse($instance1->isNotEqualTo($object));
     }
 
-
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::isNotEqualTo
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::fromArray
-     */
     public function testIsEqualToArrayEqualWithDifferentTypes() : void
     {
         $instance1 = IntVOCollectionType::fromArray([
@@ -516,9 +442,6 @@ class IntVOCollectionTest extends TestCase
         $this->assertFalse($instance1->isNotEqualTo($array));
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::count
-     */
     public function testCount() : void
     {
         $instance = IntVOCollectionType::fromArray([
@@ -530,10 +453,6 @@ class IntVOCollectionTest extends TestCase
         $this->assertSame(3, $instance->count());
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::empty
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType::count
-     */
     public function testEmptyFactoryMethod() : void
     {
         $instance = IntVOCollectionType::empty();
