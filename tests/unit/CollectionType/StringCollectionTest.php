@@ -135,7 +135,7 @@ class StringCollectionTest extends TestCase
     public function singleInvalidValueProvider() : array
     {
         return [
-            'duplicate' => ['SOME-VALUE', 'Values contain duplicates. Only unique values allowed. Values passed: "Some-value", "Some-value"'],
+            'duplicate' => ['SOME-VALUE', 'Value "Some-value" cannot be used as it already exists within array. Existing values: "Some-value".'],
             'int'       => [1, 'Invalid value. Must be of type "string" but got "integer"'],
             'bool'      => [false, 'Invalid value. Must be of type "string" but got "boolean"'],
             'object'    => [new SimpleObject('name'), 'Invalid value. Must be of type "string" but got "object"'],

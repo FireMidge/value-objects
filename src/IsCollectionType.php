@@ -56,6 +56,8 @@ trait IsCollectionType
      */
     public function withValue($addedValue) : static
     {
+        $addedValue = $this->transformEach($addedValue);
+
         if ((static::areValuesUnique() || static::ignoreDuplicateValues()) && $this->contains($addedValue)) {
             $this->handleDuplicateValue($addedValue);
             return new static($this->values);

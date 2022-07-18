@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace FireMidge\Tests\ValueObject\Unit\CollectionType;
 
 use FireMidge\Tests\ValueObject\Unit\Classes\BasicStringCollectionType;
+use FireMidge\ValueObject\IsCollectionType;
 use PHPUnit\Framework\TestCase;
 
 /**
