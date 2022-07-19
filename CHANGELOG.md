@@ -3,6 +3,12 @@
 Works with PHP 8.1.
 
 
+## v2.3
+
+Feature: Added `isEqualTo` and `isNotEqualTo` to `IsIntStringMapType`.
+Overall Mutation Code Coverage has risen from 97% to 98%. No value has decreased.
+
+
 ### v2.2
 
 Feature: It is now possible to also transform values in `IsStringEnumType` before validating.
