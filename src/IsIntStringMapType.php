@@ -85,6 +85,49 @@ trait IsIntStringMapType
     }
 
     /**
+     * If $other is an integer, this returns true if the integer value of this is equal to $other.
+     * If $other is a string, this returns true if the string value of this is equal to $other.
+     * If $other is an object:
+     * - If it has both a toString and a toInt method, this returns true only if both the integer and the string
+     *   value match.
+     * - If it has only a toInt method, this returns true if the integer values match.
+     * - If it only has a toString method, this returns true if the string values match.
+     *
+     * If $strictCheck is true, this only returns true if $other is an object of the same class
+     * AND has the same string and integer values.
+     *
+     * @param object|string|int|null $other        The value to compare to.
+     * @param bool                   $strictCheck  If true, $other must additionally be of the same class.
+     */
+    public function isEqualTo(null|object|string|int $other = null, bool $strictCheck = false) : bool
+    {
+        if ($other === null) {
+            return false;
+        }
+
+        if (! $strictCheck) {
+            return $this->looseComparison($other);
+        }
+
+        if (! is_a($other, static::class)) {
+            return false;
+        }
+
+        return $this->compareObject($other);
+    }
+
+    /**
+     * See isEqualTo for more details on the evaluation rules.
+     *
+     * @param object|string|int|null $other        The value to compare to.
+     * @param bool                   $strictCheck  If true, $other must additionally be of the same class.
+     */
+    public function isNotEqualTo(null|object|string|int $other = null, bool $strictCheck = false) : bool
+    {
+        return ! $this->isEqualTo($other, $strictCheck);
+    }
+
+    /**
      * Converts the object to the integer value.
      */
     public function toInt() : int
@@ -158,5 +201,40 @@ trait IsIntStringMapType
         }
 
         return $result;
+    }
+
+    private function looseComparison(object|string|int $other) : bool
+    {
+        if (is_string($other) && $this->toString() === $other) {
+            return true;
+
+        } else if (is_int($other) && $this->toInt() === $other) {
+            return true;
+
+        } else if (is_object($other)) {
+            return $this->compareObject($other);
+        }
+
+        return false;
+    }
+
+    private function compareObject(object $other) : bool
+    {
+        $hasIntMethod    = method_exists($other, 'toInt');
+        $hasStringMethod = method_exists($other, 'toString');
+
+        if ($hasIntMethod && $hasStringMethod) {
+            return $other->toInt() === $this->toInt() && $other->toString() === $this->toString();
+        }
+
+        if ($hasIntMethod) {
+            return $other->toInt() === $this->toInt();
+        }
+
+        if ($hasStringMethod) {
+            return $other->toString() === $this->toString();
+        }
+
+        return false;
     }
 }

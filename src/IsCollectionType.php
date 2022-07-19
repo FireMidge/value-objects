@@ -52,7 +52,7 @@ trait IsCollectionType
      * Returns a new instance with $addedValue added to the list.
      *
      * @throws InvalidValue  If values must be unique and $addedValue is a duplicate.
-     * @throws InvalidValue  If other validation checks have been set up and $value is invalid (e.g. invalid type).
+     * @throws InvalidValue  If other validation checks have been set up and $addedValue is invalid (e.g. invalid type).
      */
     public function withValue($addedValue) : static
     {
@@ -69,10 +69,25 @@ trait IsCollectionType
     }
 
     /**
+     * Returns a new instance with all of $addedValues added to the list.
+     *
+     * @throws InvalidValue  If values must be unique and any of $addedValues is a duplicate.
+     * @throws InvalidValue  If other validation checks have been set up and any of $addedValues is invalid (e.g. invalid type).
+     */
+    public function withValues(array $addedValues) : static
+    {
+        $instance = $this;
+        foreach ($addedValues as $addedValue) {
+            $instance = $instance->withValue($addedValue);
+        }
+
+        return $instance;
+    }
+
+    /**
      * Returns a new instance without the value if the value previously existed.
      * If the value did not exist, it will return a new instance with the same
      * values.
-     * Throws an exception if the value isn't valid and validation has been set up.
      *
      * @throws InvalidValue  If validation checks have been set up and $value is invalid.
      */
@@ -85,13 +100,31 @@ trait IsCollectionType
             $index = $this->getIndexForValue($value);
             unset($newValues[$index]);
             $newValues = array_values($newValues); // Making sure it re-indexes.
-        } catch (ValueNotFound $ex) {}
+        } catch (ValueNotFound) {}
 
         return new static($newValues);
     }
 
     /**
-     * Throws an exception when trying to remove a value that did not exist.
+     * Returns a new instance without any of the values in $values.
+     * Any that did not previously exist are ignored.
+     *
+     * @throws InvalidValue  If validation checks have been set up and any of $values is invalid.
+     */
+    public function withoutValues(array $values) : static
+    {
+        $instance = $this;
+        foreach ($values as $valueToBeRemoved) {
+            $instance = $instance->withoutValue($valueToBeRemoved);
+        }
+
+        return $instance;
+    }
+
+
+    /**
+     * Same as `withoutValue` but throws an exception when trying to
+     * remove a value that did not exist.
      *
      * @throws ValueNotFound If the value did not previously exist in the list.
      * @throws InvalidValue  If validation checks have been set up and $value is invalid.
@@ -106,6 +139,23 @@ trait IsCollectionType
         $newValues = array_values($newValues); // Making sure it re-indexes.
 
         return new static($newValues);
+    }
+
+    /**
+     * Same as `withoutValues` but throws an exception when trying to
+     * remove a value that did not exist.
+     *
+     * @throws ValueNotFound If any of the values did not previously exist in the list.
+     * @throws InvalidValue  If validation checks have been set up and any of $values is invalid.
+     */
+    public function tryWithoutValues(array $values) : static
+    {
+        $instance = $this;
+        foreach ($values as $valueToBeRemoved) {
+            $instance = $instance->tryWithoutValue($valueToBeRemoved);
+        }
+
+        return $instance;
     }
 
     /**

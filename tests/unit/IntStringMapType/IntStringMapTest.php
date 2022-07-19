@@ -4,6 +4,9 @@ declare(strict_types=1);
 namespace FireMidge\Tests\ValueObject\Unit\IntStringMapType;
 
 use FireMidge\Tests\ValueObject\Unit\Classes\IntStringMapType;
+use FireMidge\Tests\ValueObject\Unit\Classes\IntStringMapTypeTwo;
+use FireMidge\Tests\ValueObject\Unit\Classes\SimpleIntType;
+use FireMidge\Tests\ValueObject\Unit\Classes\SimpleStringType;
 use FireMidge\ValueObject\Exception\InvalidValue;
 use PHPUnit\Framework\TestCase;
 
@@ -283,5 +286,75 @@ class IntStringMapTest extends TestCase
             $value
         ));
         IntStringMapType::fromString($value);
+    }
+
+    public function equalityProvider() : array
+    {
+        return [
+          'sameClassStrict'         => [ IntStringMapType::fromString('summer'), true ],
+          'sameClassLoose'          => [ IntStringMapType::fromString('summer'), false ],
+          'integerLoose'            => [ 2, false ],
+          'stringLoose'             => [ 'summer', false ],
+          'objectWithToStringLoose' => [ SimpleStringType::fromString('summer'), false ],
+          'objectWithToIntLoose'    => [ SimpleIntType::fromInt(2), false ],
+        ];
+    }
+
+    /**
+     * @dataProvider equalityProvider
+     */
+    public function testIsEqualToReturningTrue($other, bool $strictCheck = false) : void
+    {
+        $instance = IntStringMapType::fromInt(2);
+
+        $this->assertTrue($instance->isEqualTo($other, $strictCheck));
+        $this->assertFalse($instance->isNotEqualTo($other, $strictCheck));
+    }
+
+    public function inequalityProvider() : array
+    {
+        return [
+            'sameClassDifferentValueStrict'           => [ IntStringMapType::fromString('spring'), true ],
+            'sameClassDifferentValueLoose'            => [ IntStringMapType::fromString('spring'), false ],
+            'sameIntegerStrict'                       => [ 2, true ],
+            'differentIntegerStrict'                  => [ 1, true ],
+            'differentIntegerLoose'                   => [ 1, false ],
+            'stringStrict'                            => [ 'summer', true ],
+            'differentStringLoose'                    => [ 'spring', false ],
+            'differentStringStrict'                   => [ 'spring', true ],
+            'objectWithToStringStrict'                => [ SimpleStringType::fromString('summer'), true ],
+            'objectWithToIntStrict'                   => [ SimpleIntType::fromInt(2), true ],
+            'objectWithToStringDifferentValueLoose'   => [ SimpleStringType::fromString('summers'), false ],
+            'objectWithToStringDifferentValueStrict'  => [ SimpleStringType::fromString('summers'), true ],
+            'objectWithToIntDifferentValueLoose'      => [ SimpleIntType::fromInt(1), false ],
+            'objectWithToIntDifferentValueStrict'     => [ SimpleIntType::fromInt(1), true ],
+            'objectWithNeitherMethodLoose'            => [ (object) ['summer'], false ],
+            'objectWithNeitherMethodStrict'           => [ (object) ['summer'], true ],
+            'nullLoose'                               => [ null, false ],
+            'nullStrict'                              => [ null, true ],
+            'objectSameIntDifferentStringLoose'       => [ IntStringMapTypeTwo::fromInt(2), false ],
+            'objectSameIntDifferentStringStrict'      => [ IntStringMapTypeTwo::fromInt(2), true ],
+            'objectSameStringDifferentIntLoose'       => [ IntStringMapTypeTwo::fromString('summer'), false ],
+            'objectSameStringDifferentIntStrict'      => [ IntStringMapTypeTwo::fromString('summer'), true ],
+        ];
+    }
+
+    /**
+     * @dataProvider inequalityProvider
+     */
+    public function testIsEqualToReturningFalse($other, bool $strictCheck = false) : void
+    {
+        $instance = IntStringMapType::fromInt(2);
+
+        $this->assertFalse($instance->isEqualTo($other, $strictCheck));
+        $this->assertTrue($instance->isNotEqualTo($other, $strictCheck));
+    }
+
+    public function testIsEqualToWithDefaultStrictCheckParameter() : void
+    {
+        $instance = IntStringMapType::fromInt(2);
+
+        $this->assertTrue($instance->isEqualTo(2));
+        $this->assertFalse($instance->isNotEqualTo(2));
     }
 }
