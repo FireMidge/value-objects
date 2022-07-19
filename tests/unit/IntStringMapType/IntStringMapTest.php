@@ -8,7 +8,6 @@ use FireMidge\Tests\ValueObject\Unit\Classes\IntStringMapTypeTwo;
 use FireMidge\Tests\ValueObject\Unit\Classes\SimpleIntType;
 use FireMidge\Tests\ValueObject\Unit\Classes\SimpleStringType;
 use FireMidge\ValueObject\Exception\InvalidValue;
-use phpDocumentor\Reflection\Types\Object_;
 use PHPUnit\Framework\TestCase;
 
 /**

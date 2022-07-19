@@ -9,6 +9,7 @@ use FireMidge\Tests\ValueObject\Unit\Classes\BasicStringCollectionType;
 use FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType;
 use FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType;
 use FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType;
+use FireMidge\ValueObject\Exception\DuplicateValue;
 use FireMidge\ValueObject\Exception\InvalidValue;
 use FireMidge\ValueObject\Exception\ValueNotFound;
 use PHPUnit\Framework\TestCase;
@@ -465,5 +466,144 @@ class StringCollectionTest extends TestCase
 
         $this->assertTrue($instance->isEmpty());
         $this->assertFalse($instance->isNotEmpty());
+    }
+
+    public function testAddValuesBeingSuccessful() : void
+    {
+        $instance  = StringCollectionType::fromArray(['Orange', 'Green']);
+        $instance2 = $instance->withValues(['Red', 'Black', 'Purple']);
+
+        $this->assertEquals([
+            'Orange',
+            'Green',
+            'Red',
+            'Black',
+            'Purple',
+        ], $instance2->toArray(), 'Expected new array to match');
+        $this->assertEquals([
+            'Orange',
+            'Green',
+        ], $instance->toArray(), 'Expected original to have remained untouched');
+    }
+
+    public function testAddValuesWithAnEmptyArray() : void
+    {
+        $instance  = StringCollectionType::fromArray(['Orange', 'Green']);
+        $instance2 = $instance->withValues([]);
+
+        $this->assertEquals([
+            'Orange',
+            'Green',
+        ], $instance2->toArray(), 'Expected new array to match');
+        $this->assertEquals([
+            'Orange',
+            'Green',
+        ], $instance->toArray(), 'Expected original to have remained untouched');
+    }
+
+    public function testAddValuesThrowingExceptionBecauseOfDuplicateValue() : void
+    {
+        $this->expectException(DuplicateValue::class);
+        $this->expectExceptionMessage(
+            'Value "Green" cannot be used as it already exists within array. '
+            . 'Existing values: "Orange", "Green", "Red", "Black"'
+        );
+
+        $instance = StringCollectionType::fromArray(['Orange', 'Green']);
+        $instance->withValues(['Red', 'Black', 'Green']);
+    }
+
+    public function testWithoutValuesBeingSuccessful() : void
+    {
+        $instance  = StringCollectionType::fromArray(['Orange', 'Black', 'Green', 'Purple']);
+        $instance2 = $instance->withoutValues(['Red', 'Black', 'Purple', 'Black']);
+
+        $this->assertEquals([
+            'Orange',
+            'Green',
+        ], $instance2->toArray(), 'Expected new array to match');
+        $this->assertEquals([
+            'Orange',
+            'Black',
+            'Green',
+            'Purple'
+        ], $instance->toArray(), 'Expected original to have remained untouched');
+    }
+
+    public function testWithoutValuesWithEmptyArray() : void
+    {
+        $instance  = StringCollectionType::fromArray(['Orange', 'Black', 'Green', 'Purple']);
+        $instance2 = $instance->withoutValues([]);
+
+        $this->assertEquals([
+            'Orange',
+            'Black',
+            'Green',
+            'Purple'
+        ], $instance2->toArray(), 'Expected new array to match');
+        $this->assertEquals([
+            'Orange',
+            'Black',
+            'Green',
+            'Purple'
+        ], $instance->toArray(), 'Expected original to have remained untouched');
+    }
+
+    public function testTryWithoutValuesThrowingExceptionBecauseOfNonExistingValue() : void
+    {
+        $this->expectException(ValueNotFound::class);
+        $this->expectExceptionMessage(
+            'Value "Red" was not found. Available values: "Orange"'
+        );
+
+        $instance = StringCollectionType::fromArray(['Orange', 'Green']);
+        $instance->tryWithoutValues(['Green', 'Red']);
+    }
+
+    public function testTryWithoutValuesBeingSuccessful() : void
+    {
+        $instance  = StringCollectionType::fromArray(['Orange', 'Black', 'Green', 'Purple']);
+        $instance2 = $instance->tryWithoutValues(['Black', 'Purple']);
+
+        $this->assertEquals([
+            'Orange',
+            'Green',
+        ], $instance2->toArray(), 'Expected new array to match');
+        $this->assertEquals([
+            'Orange',
+            'Black',
+            'Green',
+            'Purple',
+        ], $instance->toArray(), 'Expected original to have remained untouched');
+    }
+
+    public function testTryWithoutValuesWithEmptyArray() : void
+    {
+        $instance  = StringCollectionType::fromArray(['Orange', 'Black', 'Green', 'Purple']);
+        $instance2 = $instance->tryWithoutValues([]);
+
+        $this->assertEquals([
+            'Orange',
+            'Black',
+            'Green',
+            'Purple',
+        ], $instance2->toArray(), 'Expected new array to match');
+        $this->assertEquals([
+            'Orange',
+            'Black',
+            'Green',
+            'Purple',
+        ], $instance->toArray(), 'Expected original to have remained untouched');
+    }
+
+    public function testTryWithoutValuesThrowingExceptionBecauseOfNowNonExistingValue() : void
+    {
+        $this->expectException(ValueNotFound::class);
+        $this->expectExceptionMessage(
+            'Value "Black" was not found. Available values: "Orange", "Green"'
+        );
+
+        $instance = StringCollectionType::fromArray(['Orange', 'Green']);
+        $instance->tryWithoutValues(['Black', 'Orange', 'Black']);
     }
 }
