@@ -323,8 +323,11 @@ class ObjectArrayEnumTest extends TestCase
             new SimpleObject('A'),
         ]);
 
-        $this->assertTrue($instance1->isEqualTo($instance2));
-        $this->assertFalse($instance1->isNotEqualTo($instance2));
+        $this->assertTrue($instance1->isEqualTo($instance2, false));
+        $this->assertFalse($instance1->isNotEqualTo($instance2, false));
+
+        $this->assertTrue($instance1->isEqualTo($instance2), 'isEqualTo with strict check');
+        $this->assertFalse($instance2->isNotEqualTo($instance1), 'isNotEqualTo with strict check');
     }
 
     public function testIsEqualWithArraySuccessful() : void
@@ -336,7 +339,10 @@ class ObjectArrayEnumTest extends TestCase
 
         $array = ['A', 'B'];
 
-        $this->assertTrue($instance->isEqualTo($array));
-        $this->assertFalse($instance->isNotEqualTo($array));
+        $this->assertTrue($instance->isEqualTo($array, false));
+        $this->assertFalse($instance->isNotEqualTo($array, false));
+
+        $this->assertFalse($instance->isEqualTo($array), 'isEqualTo with strict check');
+        $this->assertTrue($instance->isNotEqualTo($array), 'isNotEqualTo with strict check');
     }
 }

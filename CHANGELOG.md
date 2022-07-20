@@ -3,6 +3,13 @@
 Works with PHP 8.1.
 
 
+## v2.4
+
+Change: `isEqualTo` and `isNotEqualTo` on `IntStringMapType` default to using a strict check, which means the item to compare it to must be of the same class. If you do not want a strict check to happen, you can continue to pass `false` for the `$strictCheck` parameter.
+
+Change: `isEqualTo` and `isNotEqualTo` on `IsCollectionType` (which affects all array types) have a new `$strictCheck` parameter, defaulting to `true`. When it is true, the item to compare to must be of the same class. If you do not want a strict check to happen, you can pass `false` for the `$strictCheck` parameter.
+
+
 ## v2.3
 
 Feature: Added `isEqualTo` and `isNotEqualTo` to `IsIntStringMapType`.
