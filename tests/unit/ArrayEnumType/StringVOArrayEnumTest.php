@@ -172,6 +172,9 @@ class StringVOArrayEnumTest extends TestCase
 
         $this->assertTrue($instance1->isEqualTo($instance2));
         $this->assertFalse($instance1->isNotEqualTo($instance2));
+
+        $this->assertTrue($instance1->isEqualTo($instance2, false), 'isEqualTo without strict check');
+        $this->assertFalse($instance1->isNotEqualTo($instance2, false), 'isNotEqualTo without strict check');
     }
 
     public function testIsEqualWithArraySuccessful() : void
@@ -183,8 +186,17 @@ class StringVOArrayEnumTest extends TestCase
 
         $array = ['autumn', 'winter'];
 
-        $this->assertTrue($instance->isEqualTo($array));
-        $this->assertFalse($instance->isNotEqualTo($array));
+        $this->assertTrue(
+            $instance->isEqualTo($array, false),
+            'Expected comparison to succeed without strict check'
+        );
+        $this->assertFalse(
+            $instance->isNotEqualTo($array, false),
+            'Expected isNotEqualTo comparison to fail without strict check'
+        );
+
+        $this->assertFalse($instance->isEqualTo($array), 'Expected comparison to fail with strict check');
+        $this->assertTrue($instance->isNotEqualTo($array), 'Expected isNotEqualTo comparison to succeed with strict check');
     }
 
     public function testEqualWithNullReturnsFalse() : void
@@ -194,8 +206,11 @@ class StringVOArrayEnumTest extends TestCase
             StringEnumType::autumn(),
         ]);
 
-        $this->assertFalse($instance->isEqualTo(null));
-        $this->assertTrue($instance->isNotEqualTo(null));
+        $this->assertFalse($instance->isEqualTo(null, false));
+        $this->assertTrue($instance->isNotEqualTo(null, false));
+
+        $this->assertFalse($instance->isEqualTo(null, true));
+        $this->assertTrue($instance->isNotEqualTo(null, true));
     }
 
     public function testCount() : void

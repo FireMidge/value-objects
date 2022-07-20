@@ -203,9 +203,30 @@ trait IsCollectionType
         return ! $this->isEmpty();
     }
 
-    public function isEqualTo(null|array|object $other = null) : bool
+    /**
+     * If $strictCheck is true, this only returns true if $other is an object of the same class
+     * AND has the same values.
+     *
+     * If $strictCheck is false, see rules below:
+     *
+     * If $other is an array, this returns true if the arrays (of this and $other) have the same *string* values.
+     *                        This means, each item is converted to a string before comparing.
+     *                        The order of the elements does not matter.
+     * If $other is an object, and the object has a "toArray" method, the object is converted to an array this way
+     *                         and the arrays (of this and $other->toArray()) compared as described above.
+     * If $other is an object and has no "toArray" method, the object's public properties are converted into an array
+     *                        and then compared like the array comparison described above.
+     *
+     * @param null|array|object $other        The value to compare to.
+     * @param bool              $strictCheck  If false, $other does not have to be of the same class.
+     */
+    public function isEqualTo(null|array|object $other = null, bool $strictCheck = true) : bool
     {
         if ($other === null) {
+            return false;
+        }
+
+        if ($strictCheck && ! is_a($other, static::class)) {
             return false;
         }
 
@@ -216,9 +237,15 @@ trait IsCollectionType
         return $this->isEqualToObject($other);
     }
 
-    public function isNotEqualTo(null|array|object $other = null) : bool
+    /**
+     * See isEqualTo for more details on the evaluation rules.
+     *
+     * @param null|array|object $other        The value to compare to.
+     * @param bool              $strictCheck  If false, $other does not have to be of the same class.
+     */
+    public function isNotEqualTo(null|array|object $other = null, bool $strictCheck = true) : bool
     {
-        return ! $this->isEqualTo($other);
+        return ! $this->isEqualTo($other, $strictCheck);
     }
 
     /**

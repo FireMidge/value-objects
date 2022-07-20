@@ -354,7 +354,7 @@ class IntStringMapTest extends TestCase
     {
         $instance = IntStringMapType::fromInt(2);
 
-        $this->assertTrue($instance->isEqualTo(2));
-        $this->assertFalse($instance->isNotEqualTo(2));
+        $this->assertFalse($instance->isEqualTo(2));
+        $this->assertTrue($instance->isNotEqualTo(2));
     }
 }

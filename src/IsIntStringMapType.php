@@ -85,6 +85,11 @@ trait IsIntStringMapType
     }
 
     /**
+     * If $strictCheck is true, this only returns true if $other is an object of the same class
+     * AND has the same string and integer values.
+     *
+     * If $strictCheck is false, see rules below:
+     *
      * If $other is an integer, this returns true if the integer value of this is equal to $other.
      * If $other is a string, this returns true if the string value of this is equal to $other.
      * If $other is an object:
@@ -93,13 +98,10 @@ trait IsIntStringMapType
      * - If it has only a toInt method, this returns true if the integer values match.
      * - If it only has a toString method, this returns true if the string values match.
      *
-     * If $strictCheck is true, this only returns true if $other is an object of the same class
-     * AND has the same string and integer values.
-     *
      * @param object|string|int|null $other        The value to compare to.
-     * @param bool                   $strictCheck  If true, $other must additionally be of the same class.
+     * @param bool                   $strictCheck  If false, $other does not have to be of the same class.
      */
-    public function isEqualTo(null|object|string|int $other = null, bool $strictCheck = false) : bool
+    public function isEqualTo(null|object|string|int $other = null, bool $strictCheck = true) : bool
     {
         if ($other === null) {
             return false;
@@ -120,9 +122,9 @@ trait IsIntStringMapType
      * See isEqualTo for more details on the evaluation rules.
      *
      * @param object|string|int|null $other        The value to compare to.
-     * @param bool                   $strictCheck  If true, $other must additionally be of the same class.
+     * @param bool                   $strictCheck  If false, $other does not have to be of the same class.
      */
-    public function isNotEqualTo(null|object|string|int $other = null, bool $strictCheck = false) : bool
+    public function isNotEqualTo(null|object|string|int $other = null, bool $strictCheck = true) : bool
     {
         return ! $this->isEqualTo($other, $strictCheck);
     }

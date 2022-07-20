@@ -377,10 +377,39 @@ class StringClassCollectionTest extends TestCase
             ],
         );
 
-        $this->assertTrue($instance1->isEqualTo($instance2), 'Expected instance1 to be equal to instance2');
-        $this->assertTrue($instance2->isEqualTo($instance1), 'Expected instance2 to be equal to instance1');
-        $this->assertFalse($instance1->isNotEqualTo($instance2), 'Expected notEqualTo to return false for instance1');
-        $this->assertFalse($instance2->isNotEqualTo($instance1), 'Expected notEqualTo to return false for instance2');
+        $this->assertTrue(
+            $instance1->isEqualTo($instance2, false),
+            'Expected instance1 to be equal to instance2'
+        );
+        $this->assertTrue(
+            $instance2->isEqualTo($instance1, false),
+            'Expected instance2 to be equal to instance1'
+        );
+        $this->assertFalse(
+            $instance1->isNotEqualTo($instance2, false),
+            'Expected notEqualTo to return false for instance1'
+        );
+        $this->assertFalse(
+            $instance2->isNotEqualTo($instance1, false),
+            'Expected notEqualTo to return false for instance2'
+        );
+
+        $this->assertTrue(
+            $instance1->isEqualTo($instance2),
+            'Expected instance1 to be equal to instance2 with strict check'
+        );
+        $this->assertTrue(
+            $instance2->isEqualTo($instance1),
+            'Expected instance2 to be equal to instance1 with strict check'
+        );
+        $this->assertFalse(
+            $instance1->isNotEqualTo($instance2),
+            'Expected notEqualTo to return false for instance1 with strict check'
+        );
+        $this->assertFalse(
+            $instance2->isNotEqualTo($instance1),
+            'Expected notEqualTo to return false for instance2 with strict check'
+        );
     }
 
     public function testIsEqualToArraySuccessful() : void
@@ -396,8 +425,23 @@ class StringClassCollectionTest extends TestCase
             SimpleStringType::fromString('Hello'),
         ];
 
-        $this->assertTrue($instance->isEqualTo($array), 'Expected instance to be equal to array');
-        $this->assertFalse($instance->isNotEqualTo($array), 'Expected isNotEqualTo to return false');
+        $this->assertTrue(
+            $instance->isEqualTo($array, false),
+            'Expected instance to be equal to array'
+        );
+        $this->assertFalse(
+            $instance->isNotEqualTo($array, false),
+            'Expected isNotEqualTo to return false'
+        );
+
+        $this->assertFalse(
+            $instance->isEqualTo($array),
+            'Expected instance not to be equal to array with strict check'
+        );
+        $this->assertTrue(
+            $instance->isNotEqualTo($array),
+            'Expected isNotEqualTo to return true with strict check'
+        );
     }
 
     public function testIsEqualToStandardObjectSuccessful() : void
@@ -413,8 +457,23 @@ class StringClassCollectionTest extends TestCase
         $object->first  = SimpleStringType::fromString('World');
         $object->second = SimpleStringType::fromString('Hello');
 
-        $this->assertTrue($instance->isEqualTo($object), 'Expected instance to be equal to object');
-        $this->assertFalse($instance->isNotEqualTo($object), 'Expected isNotEqualTo to return false');
+        $this->assertTrue(
+            $instance->isEqualTo($object, false),
+            'Expected instance to be equal to object'
+        );
+        $this->assertFalse(
+            $instance->isNotEqualTo($object, false),
+            'Expected isNotEqualTo to return false'
+        );
+
+        $this->assertFalse(
+            $instance->isEqualTo($object),
+            'Expected instance not to be equal to object with strict check'
+        );
+        $this->assertTrue(
+            $instance->isNotEqualTo($object),
+            'Expected isNotEqualTo to return true with strict check'
+        );
     }
 
     public function testCount() : void

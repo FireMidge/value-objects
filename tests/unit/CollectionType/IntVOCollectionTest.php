@@ -321,10 +321,39 @@ class IntVOCollectionTest extends TestCase
             MinMaxIntType::fromInt(401),
         ]);
 
-        $this->assertTrue($instance1->isEqualTo($instance2), 'Expected instance1 to be equal to instance2');
-        $this->assertTrue($instance2->isEqualTo($instance1), 'Expected instance2 to be equal to instance1');
-        $this->assertFalse($instance1->isNotEqualTo($instance2), 'Expected isNotEqualTo to return false for instance1');
-        $this->assertFalse($instance2->isNotEqualTo($instance1), 'Expected isNotEqualTo to return false for instance2');
+        $this->assertTrue(
+            $instance1->isEqualTo($instance2, false),
+            'Expected instance1 to be equal to instance2'
+        );
+        $this->assertTrue(
+            $instance2->isEqualTo($instance1, false),
+            'Expected instance2 to be equal to instance1'
+        );
+        $this->assertFalse(
+            $instance1->isNotEqualTo($instance2, false),
+            'Expected isNotEqualTo to return false for instance1'
+        );
+        $this->assertFalse(
+            $instance2->isNotEqualTo($instance1, false),
+            'Expected isNotEqualTo to return false for instance2'
+        );
+
+        $this->assertTrue(
+            $instance1->isEqualTo($instance2),
+            'Expected instance1 to be equal to instance2 with strict check'
+        );
+        $this->assertTrue(
+            $instance2->isEqualTo($instance1),
+            'Expected instance2 to be equal to instance1 with strict check'
+        );
+        $this->assertFalse(
+            $instance1->isNotEqualTo($instance2),
+            'Expected isNotEqualTo to return false for instance1 with strict check'
+        );
+        $this->assertFalse(
+            $instance2->isNotEqualTo($instance1),
+            'Expected isNotEqualTo to return false for instance2 with strict check'
+        );
     }
 
     public function testIsEqualToInstanceOfSameClassNotEqual() : void
@@ -337,10 +366,39 @@ class IntVOCollectionTest extends TestCase
             MinMaxIntType::fromInt(402),
         ]);
 
-        $this->assertFalse($instance1->isEqualTo($instance2), 'Expected instance1 not to be equal to instance2');
-        $this->assertFalse($instance2->isEqualTo($instance1), 'Expected instance2 not to be equal to instance1');
-        $this->assertTrue($instance1->isNotEqualTo($instance2), 'Expected isNotEqualTo to return true for instance1');
-        $this->assertTrue($instance2->isNotEqualTo($instance1), 'Expected isNotEqualTo to return true for instance2');
+        $this->assertFalse(
+            $instance1->isEqualTo($instance2, false),
+            'Expected instance1 not to be equal to instance2'
+        );
+        $this->assertFalse(
+            $instance2->isEqualTo($instance1, false),
+            'Expected instance2 not to be equal to instance1'
+        );
+        $this->assertTrue(
+            $instance1->isNotEqualTo($instance2, false),
+            'Expected isNotEqualTo to return true for instance1'
+        );
+        $this->assertTrue(
+            $instance2->isNotEqualTo($instance1, false),
+            'Expected isNotEqualTo to return true for instance2'
+        );
+
+        $this->assertFalse(
+            $instance1->isEqualTo($instance2),
+            'Expected instance1 not to be equal to instance2 with strict check'
+        );
+        $this->assertFalse(
+            $instance2->isEqualTo($instance1),
+            'Expected instance2 not to be equal to instance1 with strict check'
+        );
+        $this->assertTrue(
+            $instance1->isNotEqualTo($instance2),
+            'Expected isNotEqualTo to return true for instance1 with strict check'
+        );
+        $this->assertTrue(
+            $instance2->isNotEqualTo($instance1),
+            'Expected isNotEqualTo to return true for instance2 with strict check'
+        );
     }
 
     public function testIsEqualToArraySuccessful() : void
@@ -354,8 +412,11 @@ class IntVOCollectionTest extends TestCase
             MinMaxIntType::fromInt(401),
         ];
 
-        $this->assertTrue($instance1->isEqualTo($array));
-        $this->assertFalse($instance1->isNotEqualTo($array));
+        $this->assertTrue($instance1->isEqualTo($array, false));
+        $this->assertFalse($instance1->isNotEqualTo($array, false));
+
+        $this->assertFalse($instance1->isEqualTo($array), 'isEqualTo with strict check');
+        $this->assertTrue($instance1->isNotEqualTo($array), 'isNotEqualTo with strict check');
     }
 
     public function notEqualProvider() : array
@@ -376,8 +437,11 @@ class IntVOCollectionTest extends TestCase
             MinMaxIntType::fromInt(402),
         ]);
 
-        $this->assertFalse($instance1->isEqualTo($valuesToCompareTo));
-        $this->assertTrue($instance1->isNotEqualTo($valuesToCompareTo));
+        $this->assertFalse($instance1->isEqualTo($valuesToCompareTo, false));
+        $this->assertTrue($instance1->isNotEqualTo($valuesToCompareTo, false));
+
+        $this->assertFalse($instance1->isEqualTo($valuesToCompareTo), 'isEqualTo with strict check');
+        $this->assertTrue($instance1->isNotEqualTo($valuesToCompareTo), 'isNotEqualTo with strict check');
     }
 
     /**
@@ -396,8 +460,11 @@ class IntVOCollectionTest extends TestCase
             $object->$propertyName = $v;
         }
 
-        $this->assertFalse($instance1->isEqualTo($object));
-        $this->assertTrue($instance1->isNotEqualTo($object));
+        $this->assertFalse($instance1->isEqualTo($object, false));
+        $this->assertTrue($instance1->isNotEqualTo($object, false));
+
+        $this->assertFalse($instance1->isEqualTo($object), 'isEqualTo with strict check');
+        $this->assertTrue($instance1->isNotEqualTo($object), 'isNotEqualTo with strict check');
     }
 
     public function testIsEqualToStandardObjectSuccessful() : void
@@ -411,8 +478,11 @@ class IntVOCollectionTest extends TestCase
         $object->first  = MinMaxIntType::fromInt(402);
         $object->second = MinMaxIntType::fromInt(401);
 
-        $this->assertTrue($instance1->isEqualTo($object));
-        $this->assertFalse($instance1->isNotEqualTo($object));
+        $this->assertTrue($instance1->isEqualTo($object, false));
+        $this->assertFalse($instance1->isNotEqualTo($object, false));
+
+        $this->assertFalse($instance1->isEqualTo($object), 'isEqualTo with strict check');
+        $this->assertTrue($instance1->isNotEqualTo($object), 'isNotEqualTo with strict check');
     }
 
     public function testIsEqualToStandardObjectEqualWithDifferentTypes() : void
@@ -426,8 +496,11 @@ class IntVOCollectionTest extends TestCase
         $object->first  = 402;
         $object->second = 401;
 
-        $this->assertTrue($instance1->isEqualTo($object));
-        $this->assertFalse($instance1->isNotEqualTo($object));
+        $this->assertTrue($instance1->isEqualTo($object, false));
+        $this->assertFalse($instance1->isNotEqualTo($object, false));
+
+        $this->assertFalse($instance1->isEqualTo($object), 'isEqualTo with strict check');
+        $this->assertTrue($instance1->isNotEqualTo($object), 'isNotEqualTo with strict check');
     }
 
     public function testIsEqualToArrayEqualWithDifferentTypes() : void
@@ -438,8 +511,11 @@ class IntVOCollectionTest extends TestCase
         ]);
         $array = [402, 401];
 
-        $this->assertTrue($instance1->isEqualTo($array));
-        $this->assertFalse($instance1->isNotEqualTo($array));
+        $this->assertTrue($instance1->isEqualTo($array, false));
+        $this->assertFalse($instance1->isNotEqualTo($array, false));
+
+        $this->assertFalse($instance1->isEqualTo($array), 'isEqualTo with strict check');
+        $this->assertTrue($instance1->isNotEqualTo($array), 'isNotEqualTo with strict check');
     }
 
     public function testCount() : void
