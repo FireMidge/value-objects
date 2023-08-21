@@ -30,9 +30,6 @@ class NegativeFloatTest extends TestCase
 
     /**
      * @dataProvider validValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\NegativeFloatType::fromFloat
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\NegativeFloatType::toFloat
      */
     public function testFromFloatWithValidValue(float $value) : void
     {
@@ -42,14 +39,11 @@ class NegativeFloatTest extends TestCase
 
     /**
      * @dataProvider validValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\NegativeFloatType::fromFloatOrNull
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\NegativeFloatType::toFloat
      */
     public function testFromFloatOrNullWithValidValue(float $value) : void
     {
         $instance = NegativeFloatType::fromFloatOrNull($value);
-        $this->assertSame((float) $value, $instance->toFloat());
+        $this->assertSame($value, $instance->toFloat());
     }
 
     /**
@@ -59,7 +53,7 @@ class NegativeFloatTest extends TestCase
     {
         $value    = -575.59;
         $instance = NegativeFloatType::fromFloat($value);
-        $this->assertSame((float) $value, $instance->toFloat());
+        $this->assertSame($value, $instance->toFloat());
     }
 
     /**
@@ -70,5 +64,17 @@ class NegativeFloatTest extends TestCase
         $value    = -575.5901;
         $instance = NegativeFloatType::fromFloat($value);
         $this->assertSame('-575.5901', (string) $instance);
+    }
+
+    public function testFromStringWithNegativeNumber() : void
+    {
+        $instance = NegativeFloatType::fromString( '-5850.44');
+        $this->assertSame(-5850.44, $instance->toFloat());
+    }
+
+    public function testFromStringOrNullWithNegativeNumber() : void
+    {
+        $instance = NegativeFloatType::fromStringOrNull( '-5850.44');
+        $this->assertSame(-5850.44, $instance->toFloat());
     }
 }

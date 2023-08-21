@@ -91,7 +91,7 @@ trait IsCollectionType
      *
      * @throws InvalidValue  If validation checks have been set up and $value is invalid.
      */
-    public function withoutValue($value) : static
+    public function withoutValue(mixed $value) : static
     {
         $this->validateEach($value);
         $newValues = $this->cloneValues($this->values);
@@ -169,6 +169,50 @@ trait IsCollectionType
     {
         $this->validateEach($value);
         return (in_array($value, $this->values));
+    }
+
+    /**
+     * Finds a value within this collection based on a callback.
+     * Returns the value matching the criteria within the callback, or `null` if no match was found.
+     *
+     * @param callable $searchCallback A callback that will be applied to each element in the array,
+     *                                 until the callback returns `true` for the matching element.
+     *                                 E.g. fn($v) => $v.name === 'Susan'
+     *                                 or: fn($v, $k) => $k === 10
+     *
+     * @return mixed  The element matching the criteria, or `null` if no match was found.
+     */
+    public function find(callable $searchCallback) : mixed
+    {
+        foreach ($this->values as $k => $value) {
+            if ($searchCallback($value, $k) === true) {
+                return $value;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Finds the index of a value within this collection based on a callback.
+     * Returns the index matching the criteria within the callback, or `null` if no match was found.
+     *
+     * @param callable $searchCallback A callback that will be applied to each element in the array,
+     *                                 until the callback returns `true` for the matching element.
+     *                                 E.g. fn($v) => $v.name === 'Susan'
+     *                                 or: fn($v, $k) => $k === 10
+     *
+     * @return string|int|null  The element matching the criteria, or `null` if no match was found.
+     */
+    public function findIndex(callable $searchCallback) : string|int|null
+    {
+        foreach ($this->values as $k => $value) {
+            if ($searchCallback($value, $k) === true) {
+                return $k;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -272,7 +316,7 @@ trait IsCollectionType
      *
      * @throws InvalidValue  If the value is considered invalid.
      */
-    protected function validateEach($value) : void
+    protected function validateEach(mixed $value) : void
     {
         return;
     }

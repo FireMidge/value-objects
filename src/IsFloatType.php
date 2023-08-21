@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace FireMidge\ValueObject;
 
 use FireMidge\ValueObject\Exception\InvalidValue;
+use FireMidge\ValueObject\Helper\CanExtractValueOfType;
 
 /**
  * A trait for value objects that consist of a float value
@@ -14,6 +15,8 @@ use FireMidge\ValueObject\Exception\InvalidValue;
  */
 trait IsFloatType
 {
+    use CanExtractValueOfType;
+
     /**
      * @throws InvalidValue  If validation has been set up and $value is considered invalid.
      */
@@ -51,6 +54,155 @@ trait IsFloatType
         }
 
         return static::fromFloat($value);
+    }
+
+    /**
+     * Accepts a float (or integer) as a string and returns a new instance.
+     *
+     * @throws InvalidValue  If the value is not a float value in a string.
+     */
+    public static function fromString(string $value) : static
+    {
+        if (! is_numeric($value)) {
+            throw InvalidValue::invalidValue($value, 'Value is not numeric.');
+        }
+
+        return static::fromFloat((float) $value);
+    }
+
+    /**
+     * Same as `fromString`, but also accepts NULL values.
+     * Returns NULL instead of a new instance if NULL is passed into it.
+     *
+     * Useful to be able to do e.g. `fromStringOrNull($request->get('score'));`
+     * where you are not sure whether the value exists, and avoids having to
+     * do a NULL-check before instantiating.
+     *
+     * @throws InvalidValue  If validation has been set up and $value is considered invalid.
+     */
+    public static function fromStringOrNull(?string $value = null) : ?static
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        return static::fromString($value);
+    }
+
+    /**
+     * Turns a number (whether float or integer) into a new instance.
+     * Use this if you're not sure whether the number is typed as a float or an integer.
+     *
+     * @throws InvalidValue  If validation has been set up and $value is considered invalid.
+     */
+    public static function fromNumber(float|int $value) : static
+    {
+        return new static((float) $value);
+    }
+
+    /**
+     * Same as `fromNumber`, but also accepts NULL values.
+     * Returns NULL instead of a new instance if NULL is passed into it.
+     *
+     * Useful to be able to do e.g. `fromNumberOrNull($request->get('weight'));`
+     * where you are not sure whether the value exists, and avoids having to
+     * do a NULL-check before instantiating.
+     *
+     * @throws InvalidValue  If validation has been set up and $value is considered invalid.
+     */
+    public static function fromNumberOrNull(float|int|null $value) : ?static
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        return static::fromNumber($value);
+    }
+
+    /**
+     * Returns a new instance with the passed value added onto the value of the current instance.
+     */
+    public function add(float|int|object $valueToAdd) : static
+    {
+        return static::fromFloat($this->toFloat() + $this->getFloatValueOfOther($valueToAdd));
+    }
+
+    /**
+     * Returns a new instance with the passed value subtracted from the value of the current instance.
+     */
+    public function subtract(float|int|object $valueToSubtract) : static
+    {
+        return static::fromFloat($this->toFloat() - $this->getFloatValueOfOther($valueToSubtract));
+    }
+
+    /**
+     * Returns true if the value of the current instance is greater than the passed value.
+     */
+    public function isGreaterThan(float|int|object $other) : bool
+    {
+        return $this->toFloat() > $this->getFloatValueOfOther($other);
+    }
+
+    /**
+     * Returns true if the value of the current instance is greater than or equal to the passed value.
+     */
+    public function isGreaterThanOrEqualTo(float|int|object $other) : bool
+    {
+        return $this->toFloat() >= $this->getFloatValueOfOther($other);
+    }
+
+    /**
+     * Returns true if the value of the current instance is less than the passed value.
+     */
+    public function isLessThan(float|int|object $other) : bool
+    {
+        return $this->toFloat() < $this->getFloatValueOfOther($other);
+    }
+
+    /**
+     * Returns true if the value of the current instance is less than or equal to the passed value.
+     */
+    public function isLessThanOrEqualTo(float|int|object $other) : bool
+    {
+        return $this->toFloat() <= $this->getFloatValueOfOther($other);
+    }
+
+    /**
+     * If $strictCheck is true, this only returns true if $other is an object of the same class
+     * AND has the same value.
+     *
+     * If $strictCheck is false, see rules below:
+     *
+     * If $other is a float, this returns true if the values are equal.
+     * If $other is an integer, this returns true if the float-converted integer equals the float value of this instance.
+     * If $other is an object, this returns true if the value returned by "toFloat", "toDouble", "toInt"
+     * or "toNumber" can be converted into a float, and equal the float value of this instance.
+     *
+     * @param null|float|int|object $other        The value to compare to.
+     * @param bool                  $strictCheck  If false, $other does not have to be of the same class.
+     */
+    public function isEqualTo(null|float|int|object $other, bool $strictCheck = true) : bool
+    {
+        if ($other === null) {
+            return false;
+        }
+
+        if ($strictCheck && ! is_a($other, static::class)) {
+            return false;
+        }
+
+        return $this->toFloat() === $this->getFloatValueOfOther($other);
+    }
+
+    /**
+     * See isEqualTo for more details on the evaluation rules.
+     *
+     * @param float|int|object|null $other        The value to compare to.
+     * @param bool                  $strictCheck  If false, $other does not have to be of the same class.
+     */
+    public function isNotEqualTo(float|int|object|null $other, bool $strictCheck = true) : bool
+    {
+        return ! $this->isEqualTo($other, $strictCheck);
     }
 
     /**

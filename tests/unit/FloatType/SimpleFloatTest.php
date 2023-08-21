@@ -29,9 +29,6 @@ class SimpleFloatTest extends TestCase
 
     /**
      * @dataProvider validValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleFloatType::fromFloat
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleFloatType::toFloat
      */
     public function testFromFloatWithValidValue(float $value) : void
     {
@@ -41,9 +38,6 @@ class SimpleFloatTest extends TestCase
 
     /**
      * @dataProvider validValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleFloatType::fromFloatOrNull
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleFloatType::toFloat
      */
     public function testFromFloatOrNullWithValidValue(float $value) : void
     {
@@ -51,12 +45,44 @@ class SimpleFloatTest extends TestCase
         $this->assertSame($value, $instance->toFloat());
     }
 
+    public function validNumberProvider() : array
+    {
+        return array_merge($this->validValueProvider(), [
+           [ 10 ],
+           [ 255905 ],
+        ]);
+    }
+
     /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleFloatType::fromFloatOrNull
+     * @dataProvider validNumberProvider
      */
+    public function testFromNumberWithValidValue(float|int $value) : void
+    {
+        $instance = SimpleFloatType::fromNumber($value);
+        $this->assertSame((float) $value, $instance->toFloat());
+    }
+
+    /**
+     * @dataProvider validNumberProvider
+     */
+    public function testFromNumberOrNullWithValidValue(float|int $value) : void
+    {
+        $instance = SimpleFloatType::fromNumberOrNull($value);
+        $this->assertSame((float) $value, $instance->toFloat());
+    }
+
     public function testFromFloatOrNullWithNull() : void
     {
         $instance = SimpleFloatType::fromFloatOrNull(null);
+        $this->assertNull($instance);
+    }
+
+    /**
+     * @dataProvider validNumberProvider
+     */
+    public function testFromNumberOrNullWithNull() : void
+    {
+        $instance = SimpleFloatType::fromNumberOrNull(null);
         $this->assertNull($instance);
     }
 
@@ -73,8 +99,6 @@ class SimpleFloatTest extends TestCase
 
     /**
      * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleFloatType::fromFloat
      */
     public function testFromFloatWithInvalidValue(float $value) : void
     {
@@ -82,10 +106,16 @@ class SimpleFloatTest extends TestCase
         SimpleFloatType::fromFloat($value);
     }
 
+    public function invalidNumberProvider() : array
+    {
+        return array_merge($this->invalidValueProvider(), [
+           [ -10 ],
+           [ -1 ],
+        ]);
+    }
+
     /**
      * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleFloatType::fromFloat
      */
     public function testFromFloatWithInvalidValueErrorMessage(float $value) : void
     {
@@ -97,9 +127,28 @@ class SimpleFloatTest extends TestCase
     }
 
     /**
+     * @dataProvider invalidNumberProvider
+     */
+    public function testFromNumberWithInvalidValue(float|int $value) : void
+    {
+        $this->expectException(InvalidValue::class);
+        SimpleFloatType::fromNumber($value);
+    }
+
+    /**
+     * @dataProvider invalidNumberProvider
+     */
+    public function testFromNumberWithInvalidValueErrorMessage(float|int $value) : void
+    {
+        $this->expectExceptionMessage(sprintf(
+            'Value must be a positive number, value provided is %s.',
+            (string) $value
+        ));
+        SimpleFloatType::fromNumber($value);
+    }
+
+    /**
      * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleFloatType::fromFloatOrNull
      */
     public function testFromFloatOrNullWithInvalidValue(float $value) : void
     {
@@ -108,9 +157,16 @@ class SimpleFloatTest extends TestCase
     }
 
     /**
+     * @dataProvider invalidNumberProvider
+     */
+    public function testFromNumberOrNullWithInvalidValue(float|int $value) : void
+    {
+        $this->expectException(InvalidValue::class);
+        SimpleFloatType::fromNumberOrNull($value);
+    }
+
+    /**
      * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleFloatType::fromFloatOrNull
      */
     public function testFromFloatOrNullWithInvalidValueErrorMessage(float $value) : void
     {
@@ -119,5 +175,64 @@ class SimpleFloatTest extends TestCase
             (string) $value
         ));
         SimpleFloatType::fromFloatOrNull($value);
+    }
+
+    public function validStringValueProvider() : array
+    {
+        return [
+            [ '0', 0.0 ],
+            [ '1.59', 1.59 ],
+            [ '1', 1.0 ],
+            [ '700', 700.0 ],
+            [ '700.8', 700.8 ],
+            [ '58760.295', 58760.295 ],
+            [ '58.760295', 58.760295 ],
+        ];
+    }
+
+    /**
+     * @dataProvider validStringValueProvider
+     */
+    public function testFromStringWithValidValue(string $input, float $output) : void
+    {
+        $instance = SimpleFloatType::fromString($input);
+        $this->assertSame($output, $instance->toFloat());
+    }
+
+    /**
+     * @dataProvider validStringValueProvider
+     */
+    public function testFromStringOrNullWithValidValue(string $input, float $output) : void
+    {
+        $instance = SimpleFloatType::fromStringOrNull($input);
+        $this->assertSame($output, $instance->toFloat());
+    }
+
+    public function testFromStringOrNullWithNull() : void
+    {
+        $instance = SimpleFloatType::fromStringOrNull(null);
+        $this->assertNull($instance);
+    }
+
+    public function invalidStringValueProvider() : array
+    {
+        return [
+            [ '', 'Value "" is invalid. (Value is not numeric.)' ],
+            [ 'Hello1', 'Value "Hello1" is invalid. (Value is not numeric.)' ],
+            [ '1Hello', 'Value "1Hello" is invalid. (Value is not numeric.)' ],
+            [ '1 Hello', 'Value "1 Hello" is invalid. (Value is not numeric.)' ],
+            [ '87e', 'Value "87e" is invalid. (Value is not numeric.)' ],
+        ];
+    }
+
+    /**
+     * @dataProvider invalidStringValueProvider
+     */
+    public function testFromStringWithInvalidValue(string $input, string $expectedMessage) : void
+    {
+        $this->expectException(InvalidValue::class);
+        $this->expectExceptionMessage($expectedMessage);
+
+        SimpleFloatType::fromString($input);
     }
 }

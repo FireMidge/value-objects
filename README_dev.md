@@ -148,3 +148,7 @@ When pushing, don't forget to also push the tag(s):
 1. Delete the tag on the remote: `git push origin :refs/tags/v1.9`
 2. Then re-create the tag with the -f flag: `git tag -a v1.9 -m "Version 1.9: xyz" -f`
 3. Push the new commit with the updated tag to the remote: `git push origin HEAD --tags`
+
+#### Delete erroneous tag
+
+If you want to completely delete a tag (as opposed to re-assigning it to another commit), use `git tag --delete {tagName}`, e.g. `git tag --delete 2.4`, where `2.4` was the erroneous tag, as it is missing the "v" prefix.

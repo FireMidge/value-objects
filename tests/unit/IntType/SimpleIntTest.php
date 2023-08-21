@@ -115,6 +115,21 @@ class SimpleIntTest extends TestCase
         $this->assertSame($output, $instance->toInt());
     }
 
+    /**
+     * @dataProvider validStringValueProvider
+     */
+    public function testFromStringOrNullWithValidValue(string $input, int $output) : void
+    {
+        $instance = SimpleIntType::fromStringOrNull($input);
+        $this->assertSame($output, $instance->toInt());
+    }
+
+    public function testFromStringOrNullWithNullValue() : void
+    {
+        $instance = SimpleIntType::fromStringOrNull(null);
+        $this->assertSame(null, $instance);
+    }
+
     public function invalidStringValueProvider() : array
     {
         return [

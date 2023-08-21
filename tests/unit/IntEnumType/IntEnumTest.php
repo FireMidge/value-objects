@@ -113,4 +113,72 @@ class IntEnumTest extends TestCase
         ));
         IntEnumType::fromIntOrNull($value);
     }
+
+    public function validStringValueProvider() : array
+    {
+        return [
+            [ '1', 1 ],
+            [ '2', 2 ],
+            [ '3', 3 ],
+            [ '4', 4 ],
+        ];
+    }
+
+    /**
+     * @dataProvider validStringValueProvider
+     */
+    public function testFromStringWithValidValue(string $input, int $output) : void
+    {
+        $instance = IntEnumType::fromString($input);
+        $this->assertSame($output, $instance->toInt());
+    }
+
+    /**
+     * @dataProvider validStringValueProvider
+     */
+    public function testFromStringOrNullWithValidValue(string $input, int $output) : void
+    {
+        $instance = IntEnumType::fromStringOrNull($input);
+        $this->assertSame($output, $instance->toInt());
+    }
+
+    public function testFromStringOrNullWithNullValue() : void
+    {
+        $instance = IntEnumType::fromStringOrNull(null);
+        $this->assertSame(null, $instance);
+    }
+
+    /**
+     * @dataProvider validStringValueProvider
+     */
+    public function testMagicToString(string $expectedOutput, int $input) : void
+    {
+        $instance = IntEnumType::fromInt($input);
+        $this->assertSame($expectedOutput, (string) $instance);
+    }
+
+    public function invalidStringValueProvider() : array
+    {
+        return [
+            [ '', 'Value "" is invalid. (Value is not numeric.)' ],
+            [ 'Hello1', 'Value "Hello1" is invalid. (Value is not numeric.)' ],
+            [ '1Hello', 'Value "1Hello" is invalid. (Value is not numeric.)' ],
+            [ '87e', 'Value "87e" is invalid. (Value is not numeric.)' ],
+            [ '10.0', 'Value "10.0" is invalid. (Value is not an integer. Does not match expected "10".)' ],
+            [ '10.5', 'Value "10.5" is invalid. (Value is not an integer. Does not match expected "10".)' ],
+            [ '5', 'Value "5" is invalid. Must be one of: "1", "2", "3", "4"' ],
+            [ '0', 'Value "0" is invalid. Must be one of: "1", "2", "3", "4"' ],
+        ];
+    }
+
+    /**
+     * @dataProvider invalidStringValueProvider
+     */
+    public function testFromStringWithInvalidValue(string $input, string $expectedMessage) : void
+    {
+        $this->expectException(InvalidValue::class);
+        $this->expectExceptionMessage($expectedMessage);
+
+        IntEnumType::fromString($input);
+    }
 }

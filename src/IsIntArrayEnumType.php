@@ -20,7 +20,7 @@ trait IsIntArrayEnumType
 {
     use IsArrayEnumType;
 
-    protected function validateEach($value) : void
+    protected function validateEach(mixed $value) : void
     {
         if (! is_int($value)) {
             throw InvalidValue::invalidType($value, 'integer');
