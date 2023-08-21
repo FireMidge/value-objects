@@ -5,19 +5,22 @@ namespace FireMidge\ValueObject;
 
 use FireMidge\ValueObject\Exception\InvalidValue;
 use FireMidge\ValueObject\Helper\CanCreateInstance;
+use RuntimeException;
+use Throwable;
 
 /**
- * A trait for creating a type where each value must be an instance of a class,
- * and there is no fixed set of valid values.
+ * A trait for a class that can hold an array of values (as opposed to a single value), and:
+ * - where each array element has to be an instance of a specific value type class, and
+ * - where the value type class only considers a limited set of values valid.
  */
-trait IsClassCollectionType
+trait IsClassArrayEnumType
 {
-    use IsCollectionType, CanCreateInstance;
+    use IsArrayEnumType, CanCreateInstance;
 
     /**
-     * Create a new class collection from raw (non-target-class instance) values.
+     * Create a new array class from raw (non-target-class instance) values.
      * This method will try to convert each value inside the array to an object of the required class first,
-     * before adding it to this collection.
+     * before adding it to this array class.
      *
      * @param array         $rawValues       An array of values which are not yet of the required class,
      *                                       but can be converted to it.
@@ -57,6 +60,35 @@ trait IsClassCollectionType
     protected static function areValuesUnique() : bool
     {
         return true;
+    }
+
+    /**
+     * Override to provide a custom list of valid class instances, or where there is no public static all()
+     * method available on the target class.
+     *
+     * @return object[]
+     */
+    protected static function all() : array
+    {
+        if (! method_exists(static::className(), 'all') || ! is_callable([static::className(), 'all'])) {
+            throw new RuntimeException(sprintf('Method %s is not implemented', __METHOD__));
+        }
+
+        try {
+            $validValues = forward_static_call([static::className(), 'all']);
+        } catch (Throwable $ex) {
+            throw new RuntimeException(sprintf(
+                'Method %s requires a custom implementation, which is not provided. %s',
+                __METHOD__,
+                $ex->getMessage()
+            ), $ex->getCode(), $ex);
+        }
+
+        $all = [];
+        foreach ($validValues as $value) {
+            $all[] = static::convertIntoInstance($value, static::className());
+        }
+        return $all;
     }
 
     /**

@@ -118,9 +118,16 @@ class DynamicClassCollectionTest extends TestCase
             [ SimpleIntType::class, [3], 'Array(3)' ],
             [ SimpleIntType::class, [3, 5], 'Array(3, 5)' ],
             [ SimpleStringType::class, ['HelloWorld'], 'Array("HelloWorld")' ],
-            [ SimpleStringType::class, 385, '385' ],
             [ SimpleStringType::class, false, 'false' ],
-            [ SimpleStringType::class, 1.85, '1.85' ],
+        ];
+    }
+
+    public function nonConvertableValueWithoutStringConversionProvider() : array
+    {
+        return [
+            [ SimpleIntType::class, 3.0, '3', SimpleIntType::fromInt(3) ],
+            [ SimpleStringType::class, 385, '385', SimpleStringType::fromString('385') ],
+            [ SimpleStringType::class, 1.85, '1.85', SimpleStringType::fromString('1.85') ],
         ];
     }
 
@@ -143,6 +150,69 @@ class DynamicClassCollectionTest extends TestCase
         ));
 
         DynamicClassCollectionType::fromRawArray([$value]);
+    }
+
+    /**
+     * @dataProvider nonConvertableValueWithoutStringConversionProvider
+     */
+    public function testFromRawValuesArrayWithNonConvertableValueAndNoStringConversion(
+        string $classFqn,
+        mixed $value,
+        string $expectedRenderedValue,
+        object $_
+    ) : void
+    {
+        DynamicClassCollectionType::useClass($classFqn);
+
+        $this->expectException(ConversionError::class);
+        $this->expectExceptionMessage(sprintf(
+            'Could not convert value %s to %s',
+            $expectedRenderedValue,
+            $classFqn
+        ));
+
+        DynamicClassCollectionType::fromRawArray([$value]);
+    }
+
+    /**
+     * @dataProvider nonConvertableValueProvider
+     */
+    public function testFromRawValuesArrayWithNonConvertableValueAllowingStringConversion(
+        string $classFqn,
+        mixed $value,
+        string $expectedRenderedValue
+    ) : void
+    {
+        DynamicClassCollectionType::useClass($classFqn);
+        DynamicClassCollectionType::allowToStringConversion(true);
+
+        $this->expectException(ConversionError::class);
+        $this->expectExceptionMessage(sprintf(
+            'Could not convert value %s to %s',
+            $expectedRenderedValue,
+            $classFqn
+        ));
+
+        DynamicClassCollectionType::fromRawArray([$value]);
+        DynamicClassCollectionType::allowToStringConversion(false); // Reset
+    }
+
+    /**
+     * @dataProvider nonConvertableValueWithoutStringConversionProvider
+     */
+    public function testFromRawValuesArrayWhileAllowingStringConversion(
+        string $classFqn,
+        mixed $value,
+        string $_,
+        object $expectedResult
+    ) : void
+    {
+        DynamicClassCollectionType::useClass($classFqn);
+        DynamicClassCollectionType::allowToStringConversion(true);
+
+        $this->assertEquals([$expectedResult], DynamicClassCollectionType::fromRawArray([$value])->toArray());
+
+        DynamicClassCollectionType::allowToStringConversion(false); // Reset
     }
 
     public function testFromRawValuesWithCustomCallbackReturningInvalidType() : void
