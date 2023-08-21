@@ -3,13 +3,16 @@ declare(strict_types=1);
 
 namespace FireMidge\ValueObject\Exception;
 
+use OutOfBoundsException;
 use Throwable;
 
 /**
  * Exception used by value objects, if a value is passed that is not one of the enumerated valid ones.
  */
-class InvalidValue extends \OutOfBoundsException
+class InvalidValue extends OutOfBoundsException
 {
+    use RendersValue;
+
     public static function valueNotOneOfEnum(
         $value,
         array $validValues,
@@ -236,31 +239,5 @@ class InvalidValue extends \OutOfBoundsException
             $code,
             $previous
         );
-    }
-
-    protected static function renderValue($value) : string
-    {
-        if (is_string($value)) {
-            return sprintf('"%s"', $value);
-        }
-
-        if (is_scalar($value)) {
-            return (string) $value;
-        }
-
-        if (! is_object($value)) {
-            // This contains arrays...
-            return sprintf('"%s"', $value);
-        }
-
-        if (method_exists( $value, '__toString' )) {
-            return sprintf('"%s"', $value);
-        }
-
-        if (method_exists( $value, 'toString' )) {
-            return sprintf('"%s"', $value->toString());
-        }
-
-        return sprintf('of type %s', get_class($value));
     }
 }

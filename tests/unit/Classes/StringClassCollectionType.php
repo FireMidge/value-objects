@@ -11,7 +11,7 @@ class StringClassCollectionType
     use IsClassCollectionType;
     use CanBeConvertedToStringArray;
 
-    protected function className() : string
+    protected static function className() : string
     {
         return SimpleStringType::class;
     }

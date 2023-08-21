@@ -14,12 +14,12 @@ use FireMidge\ValueObject\Exception\InvalidValue;
  */
 trait IsIntStringMapType
 {
-    protected $map;
+    protected array $map;
 
     /**
      * @throws InvalidValue  If $value is not one of the allowed values.
      */
-    private function __construct(private int $value)
+    private function __construct(private readonly int $value)
     {
         $this->map = static::provideMap();
         static::validateIntValue($value, $this->allValidIntegers());

@@ -16,6 +16,7 @@ class ObjectArrayEnumType
             new SimpleObject('A'),
             new SimpleObject('B'),
             new SimpleObject('C'),
+            new SimpleObject('D'),
         ];
     }
 

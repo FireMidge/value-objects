@@ -18,9 +18,9 @@ class StringArrayEnumType
         // Aliasing the methods to be able to make them public.
         // This is ONLY to test them separately - otherwise this wouldn't make any sense,
         // especially not as non-static methods...
-        CanTransformStrings::trimAndUpperCase as _trimAndUpperCase;
-        CanTransformStrings::trimAndLowerCase as _trimAndLowerCase;
-        CanTransformStrings::trimAndCapitalise as _trimAndCapitalise;
+        CanTransformStrings::trimAndUpperCase as private _trimAndUpperCase;
+        CanTransformStrings::trimAndLowerCase as private _trimAndLowerCase;
+        CanTransformStrings::trimAndCapitalise as private _trimAndCapitalise;
     }
 
     public function trimAndUpperCase(string $value) : string

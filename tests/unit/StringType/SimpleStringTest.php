@@ -3,7 +3,11 @@ declare(strict_types=1);
 
 namespace FireMidge\Tests\ValueObject\Unit\StringType;
 
+use FireMidge\Tests\ValueObject\Unit\Classes\SimpleNonConvertableObject;
+use FireMidge\Tests\ValueObject\Unit\Classes\SimpleObject;
 use FireMidge\Tests\ValueObject\Unit\Classes\SimpleStringType;
+use FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType;
+use FireMidge\ValueObject\Exception\ConversionError;
 use FireMidge\ValueObject\Exception\InvalidValue;
 use LogicException;
 use PHPUnit\Framework\TestCase;
@@ -179,5 +183,95 @@ class SimpleStringTest extends TestCase
         $this->expectExceptionMessage($expectedErrorMessage);
 
         SimpleStringType::fromString('')->validateEmailAddress($value);
+    }
+
+    public function testIsEqualWithSameTypeSuccessful() : void
+    {
+        $instance1 = SimpleStringType::fromString('Arnø Åklænd');
+        $instance2 = SimpleStringType::fromString('Arnø Åklænd');
+
+        $this->assertTrue($instance1->isEqualTo($instance2, false));
+        $this->assertFalse($instance1->isNotEqualTo($instance2, false));
+
+        $this->assertTrue($instance1->isEqualTo($instance2), 'isEqualTo with strict check');
+        $this->assertFalse($instance2->isNotEqualTo($instance1), 'isNotEqualTo with strict check');
+    }
+
+    public function testIsEqualUnsuccessfulWithDifferentCharSets() : void
+    {
+        $instance1 = SimpleStringType::fromString('Arnø Åklænd');
+        $instance2 = SimpleStringType::fromString('Arno Akland');
+
+        $this->assertFalse($instance1->isEqualTo($instance2, false));
+        $this->assertTrue($instance1->isNotEqualTo($instance2, false));
+
+        $this->assertFalse($instance1->isEqualTo($instance2), 'isEqualTo with strict check');
+        $this->assertTrue($instance1->isNotEqualTo($instance2), 'isNotEqualTo with strict check');
+    }
+
+    public function successfulLooseCheckComparisonsProvider() : array
+    {
+        return [
+            [ StringEnumType::spring() ],
+            [ 'spring' ],
+            [ new SimpleObject('spring') ],
+        ];
+    }
+
+    /**
+     * @dataProvider successfulLooseCheckComparisonsProvider
+     */
+    public function testEqualsToOnlyWithLooseCheckSuccessful(mixed $other) : void
+    {
+        $instance1 = SimpleStringType::fromString('spring');
+        $instance2 = $other;
+
+        $this->assertTrue($instance1->isEqualTo($instance2, false));
+        $this->assertFalse($instance1->isNotEqualTo($instance2, false));
+
+        $this->assertFalse($instance1->isEqualTo($instance2), 'isEqualTo with strict check');
+        $this->assertTrue($instance1->isNotEqualTo($instance2), 'isNotEqualTo with strict check');
+    }
+
+    public function unsuccessfulLooseCheckComparisonsProvider() : array
+    {
+        return [
+            [ 'Spring' ],
+            [ ' spring' ],
+            [ 'spring ' ],
+            [ '1' ],
+            [ 'true' ],
+            [ null ],
+            [ new SimpleObject('Spring') ],
+        ];
+    }
+
+    /**
+     * @dataProvider unsuccessfulLooseCheckComparisonsProvider
+     */
+    public function testIsEqualEvenWithLooseCheckUnsuccessful(mixed $other) : void
+    {
+        $instance1 = SimpleStringType::fromString('spring');
+        $instance2 = $other;
+
+        $this->assertFalse($instance1->isEqualTo($instance2, false));
+        $this->assertTrue($instance1->isNotEqualTo($instance2, false));
+
+        $this->assertFalse($instance1->isEqualTo($instance2), 'isEqualTo with strict check');
+        $this->assertTrue($instance1->isNotEqualTo($instance2), 'isNotEqualTo with strict check');
+    }
+
+    public function testConversionErrorTriggered() : void
+    {
+        $instance1 = SimpleStringType::fromString('spring');
+        $instance2 = new SimpleNonConvertableObject('spring');
+
+        $this->expectException(ConversionError::class);
+        $this->expectExceptionMessage(sprintf(
+            'Could not convert value of type %s to string. Make sure the class has one of these methods: ',
+            SimpleNonConvertableObject::class
+        ));
+
+        $instance1->isEqualTo($instance2, false);
     }
 }

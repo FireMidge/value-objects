@@ -16,9 +16,9 @@ The following table is updated with each code update and is generated with the h
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Percentage               | Description                                                                                                                                                                                                                                                                                                                            |
 |:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Code Coverage                                                                                                                                                                                                                                                | ![100%](docs/img/cc.png) | How many methods have been fully covered by tests.                                                                                                                       |
-| Mutation Score Indicator                                                                                                                                                                                                                                     | ![95%](docs/img/msi.png) | Indicates how many generated mutants were detected. *Note that some mutants are false positives.*                                                                                                                                                                                                                                      |
+| Mutation Score Indicator                                                                                                                                                                                                                                     | ![94%](docs/img/msi.png) | Indicates how many generated mutants were detected. *Note that some mutants are false positives.*                                                                                                                                                                                                                                      |
 | Mutation Code Coverage                                                                                                                                                                                                                                       | ![98%](docs/img/mcc.png) | Should be in the same ballpark as the normal code coverage. Formula: `(TotalMutantsCount - NotCoveredByTestsCount) / TotalMutantsCount`                                                                                                                                                                                                |
-| Covered Code MSI                                                                                                                                                                                                                                             | ![97%](docs/img/ccm.png) | This is the MSI (Mutation Score Indicator) for code that is actually covered by tests. It shows how effective the tests really are. Formula: `TotalDefeatedMutants / (TotalMutantsCount - NotCoveredByTestsCount)`. *Note that for some reason, Infection reports some mutants not being covered by tests when they actually are.* |
+| Covered Code MSI                                                                                                                                                                                                                                             | ![95%](docs/img/ccm.png) | This is the MSI (Mutation Score Indicator) for code that is actually covered by tests. It shows how effective the tests really are. Formula: `TotalDefeatedMutants / (TotalMutantsCount - NotCoveredByTestsCount)`. *Note that for some reason, Infection reports some mutants not being covered by tests when they actually are.* |
 
 
 ## IsStringEnumType
@@ -105,7 +105,6 @@ class Email
 }
 ```
 
-Usage:
 Usage:
 ```php
 $email = Email::fromString('hello@there.co.uk');
@@ -456,7 +455,7 @@ When both `areValuesUnique` and `ignoreDuplicateValues` return `true`, `ignoreDu
 
 ### Validation
 
-You can provide custom validation by overriding `protected function validateEach($value) : void`, which is executed for each value separately, both when instantiating it and when calling `withValue`. Note that this validation will also run before `withoutValue`, `tryWithoutValue` and `contains`, so you are notified when passing something entirely invalid rather than it being silently swallowed.
+You can provide custom validation by overriding `protected function validateEach(mixed $value) : void`, which is executed for each value separately, both when instantiating it and when calling `withValue`. Note that this validation will also run before `withoutValue`, `tryWithoutValue` and `contains`, so you are notified when passing something entirely invalid rather than it being silently swallowed.
 
 Example:
 ```php
@@ -476,7 +475,7 @@ class StatusList
         }, Status::all());
     }
 
-    protected function validateEach($value) : void
+    protected function validateEach(mixed $value) : void
     {
         if (! is_object($value) || (! $value instanceof Status)) {
             throw InvalidValue::notInstanceOf($value, Status::class);
@@ -533,7 +532,7 @@ When both `areValuesUnique` and `ignoreDuplicateValues` return `true`, `ignoreDu
 
 ### Validation
 
-You can provide custom validation by overriding `protected function validateEach($value) : void`, which is executed for each value separately, both when instantiating it and when calling `withValue`. Note that this validation will also run before `withoutValue`, `tryWithoutValue` and `contains`, so you are notified when passing something entirely invalid rather than it being silently swallowed.
+You can provide custom validation by overriding `protected function validateEach(mixed $value) : void`, which is executed for each value separately, both when instantiating it and when calling `withValue`. Note that this validation will also run before `withoutValue`, `tryWithoutValue` and `contains`, so you are notified when passing something entirely invalid rather than it being silently swallowed.
 
 Example:
 
@@ -545,15 +544,84 @@ Example:
  */
 class EmailCollection
 {
-    use IsClassCollectionType;
-    use CanBeConvertedToStringArray;
+    use IsClassCollectionType, CanBeConvertedToStringArray;
 
-    protected function className() : string
+    protected static function className() : string
     {
         return Email::class;
     }
 }
 ```
+
+### From raw values
+
+If you want to instantiate your collection from "raw" values (as opposed to instances of a class) for convenience reasons (whilst internally converting them to the relevant instances), you can use `fromRawValues`.
+
+Example:
+```php
+$emails = EmailCollection::fromRawArray([
+    'hello@there.co.uk',
+    'lorem@ipsum.it',
+    'bass@player.at',
+]);
+```
+This works for a conversion to instances that implement `fromString`, `fromInt`, `fromBool`, `fromFloat`, `fromDouble` or `fromNumber`. *Note that input types are NOT converted. That means if you pass a `string`, only the `fromString` factory method will be attempted.*
+If none of the above are present or succeed, the trait will attempt to pass the value into the constructor of the target class. (Should this fail as well, a `ConversionError` is thrown.)
+
+
+#### Custom conversion
+
+If you would like to use the `fromRawValues` method but your target class has neither of the before-mentioned methods or ways of instantiating, you have three options:
+
+
+##### 1) Provide a custom callback
+
+If you only need to do a custom conversion once, you can provide a callback to the `fromRawValues` method directly.
+
+Example:
+```php
+$emails = CustomCollection::fromRawArray([
+    'hello@there.co.uk',
+    'lorem@ipsum.it',
+    'bass@player.at',
+], fn($v) => CustomClass::fromDomain(substr($v, strrpos($v, '.') + 1)));
+```
+
+
+###### 2) Override `convertFromRaw`
+
+If you use a custom conversion more than once on the class, you have the option of overriding `protected static function convertFromRaw(mixed $value) : object` to automatically use your custom converter every time `fromRawValues` is called.
+
+Example:
+
+```php
+class CustomCollection
+{
+    use IsClassCollectionType {
+        IsClassCollectionType::convertFromRaw as private _convertFromRaw;
+    }
+
+    protected static function className() : string
+    {
+        return CustomClass::class;
+    }
+
+    protected static function convertFromRaw(mixed $value) : object
+    {
+        try {
+            return static::_convertFromRaw($value);
+        } catch (ConversionError) {
+            return CustomClass::fromDomain(substr($value, strrpos($value, '.')+1));
+        }
+    }
+}
+```
+
+
+##### 3) Implement your own factory method
+
+Since everything is just a trait, you of course have the option of simply creating your own and replace `fromRawValues`. If you want to keep the same name for your own method and change the signature, just alias the trait's method and make it private.
+
 
 Usage:
 ```php
@@ -562,6 +630,14 @@ $emails = EmailCollection::fromArray([
     Email::fromString('lorem@ipsum.it'),
     Email::fromString('bass@player.at'),
 ]);
+
+// Alternative way of instantiating the collection, if the values
+// passed can be converted to the target class.
+$emails = EmailCollection::fromRawArray([
+    'hello@there.co.uk',
+    'lorem@ipsum.it',
+    'bass@player.at',
+];
 
 // Returns ['hello@there.co.uk', 'lorem@ipsum.it', 'bass@player.at']
 // This method is provided by the trait `CanBeConvertedToStringArray`
@@ -600,7 +676,7 @@ When both `areValuesUnique` and `ignoreDuplicateValues` return `true`, `ignoreDu
 
 ### Validation
 
-You can provide custom validation by overriding `protected function validateEach($value) : void`, which is executed for each value separately, both when instantiating it and when calling `withValue`. Note that this validation will also run before `withoutValue`, `tryWithoutValue` and `contains`, so you are notified when passing something entirely invalid rather than it being silently swallowed.
+You can provide custom validation by overriding `protected function validateEach(mixed $value) : void`, which is executed for each value separately, both when instantiating it and when calling `withValue`. Note that this validation will also run before `withoutValue`, `tryWithoutValue` and `contains`, so you are notified when passing something entirely invalid rather than it being silently swallowed.
 
 **It is recommended to set up validation, at least for the value type.**
 
@@ -627,7 +703,7 @@ class ProductNameCollection
     use IsCollectionType;
     use CanTransformStrings;
 
-    protected function validateEach($value) : void
+    protected function validateEach(mixed $value) : void
     {
         if (! is_string($value)) {
             throw InvalidValue::invalidType($value, 'string');

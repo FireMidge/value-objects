@@ -44,20 +44,20 @@ class ObjectArrayEnumTest extends TestCase
                 'Invalid value. Must be an object and an instance of "FireMidge\Tests\ValueObject\Unit\Classes\SimpleObject"'
             ],
             'd' => [
-                [ new SimpleObject('D') ],
-                'The following values are not valid: "D". Valid values are: "A", "B", "C"'
+                [ new SimpleObject('E') ],
+                'The following values are not valid: "E". Valid values are: "A", "B", "C", "D"'
             ],
             'a2' => [
                 [ 'A', new SimpleObject('C')],
                 'Invalid value. Must be an object and an instance of "FireMidge\Tests\ValueObject\Unit\Classes\SimpleObject"'
             ],
             'd2' => [
-                [ new SimpleObject('C'), new SimpleObject('B'), new SimpleObject('D') ],
-                'The following values are not valid: "D". Valid values are: "A", "B", "C"'
+                [ new SimpleObject('C'), new SimpleObject('B'), new SimpleObject('E') ],
+                'The following values are not valid: "E". Valid values are: "A", "B", "C", "D"'
             ],
             'x' => [
                 [new SimpleObject('B'), new SimpleObject('X'), new SimpleObject('B')],
-                'The following values are not valid: "X". Valid values are: "A", "B", "C"'
+                'The following values are not valid: "X". Valid values are: "A", "B", "C", "D"'
             ],
         ];
     }
@@ -79,6 +79,7 @@ class ObjectArrayEnumTest extends TestCase
             new SimpleObject('A'),
             new SimpleObject('B'),
             new SimpleObject('C'),
+            new SimpleObject('D'),
         ], $instance->toArray());
     }
 
@@ -94,6 +95,7 @@ class ObjectArrayEnumTest extends TestCase
             'a' => [ new SimpleObject('A') ],
             'b' => [ new SimpleObject('B') ],
             'c' => [ new SimpleObject('C') ],
+            'd' => [ new SimpleObject('D') ],
         ];
     }
 
@@ -119,8 +121,8 @@ class ObjectArrayEnumTest extends TestCase
                 'Invalid value. Must be an object and an instance of "FireMidge\Tests\ValueObject\Unit\Classes\SimpleObject"'
             ],
             'd' => [
-                new SimpleObject('D'),
-                'The following values are not valid: "D". Valid values are: "A", "B", "C"'
+                new SimpleObject('E'),
+                'The following values are not valid: "E". Valid values are: "A", "B", "C", "D"'
             ],
         ];
     }
@@ -278,6 +280,148 @@ class ObjectArrayEnumTest extends TestCase
 
         $instance = ObjectArrayEnumType::fromArray([new SimpleObject('B')]);
         $instance->withoutValue('B');
+    }
+
+    public function testWithValueClonesValue() : void
+    {
+        $objectInside = new SimpleObject('A');
+        $oldInstance = ObjectArrayEnumType::fromArray([$objectInside]);
+        $newInstance = $oldInstance->withValue(new SimpleObject('B'));
+
+        $objectInside->updateValue('C');
+
+        $this->assertEquals(
+            [new SimpleObject('C')],
+            $oldInstance->toArray(),
+            'Expected old instance to keep a reference to the original object'
+        );
+
+        $this->assertEquals(
+            [new SimpleObject('A'), new SimpleObject('B')],
+            $newInstance->toArray(),
+            'Expected new instance to have cloned the previous contained object before returning, hence not keeping the reference to the original object'
+        );
+    }
+
+    public function testWithoutValueClonesValue() : void
+    {
+        $objectInside = new SimpleObject('A');
+        $oldInstance = ObjectArrayEnumType::fromArray([$objectInside, new SimpleObject('B')]);
+        $newInstance = $oldInstance->withoutValue(new SimpleObject('B'));
+
+        $objectInside->updateValue('C');
+
+        $this->assertEquals(
+            [new SimpleObject('C'), new SimpleObject('B')],
+            $oldInstance->toArray(),
+            'Expected old instance to keep a reference to the original object'
+        );
+
+        $this->assertEquals(
+            [new SimpleObject('A')],
+            $newInstance->toArray(),
+            'Expected new instance to have cloned the previous contained object before returning, hence not keeping the reference to the original object'
+        );
+    }
+
+    public function testTryWithoutValueClonesValue() : void
+    {
+        $objectInside = new SimpleObject('A');
+        $oldInstance = ObjectArrayEnumType::fromArray([$objectInside, new SimpleObject('B')]);
+        $newInstance = $oldInstance->tryWithoutValue(new SimpleObject('B'));
+
+        $objectInside->updateValue('C');
+
+        $this->assertEquals(
+            [new SimpleObject('C'), new SimpleObject('B')],
+            $oldInstance->toArray(),
+            'Expected old instance to keep a reference to the original object'
+        );
+
+        $this->assertEquals(
+            [new SimpleObject('A')],
+            $newInstance->toArray(),
+            'Expected new instance to have cloned the previous contained object before returning, hence not keeping the reference to the original object'
+        );
+    }
+
+    public function testWithValuesClonesValue() : void
+    {
+        $objectInsideOld = new SimpleObject('A');
+        $objectInsideNew = new SimpleObject('B');
+        $oldInstance = ObjectArrayEnumType::fromArray([$objectInsideOld]);
+        $newInstance = $oldInstance->withValues([new SimpleObject('B'), $objectInsideNew]);
+
+        $objectInsideOld->updateValue('C');
+        $objectInsideNew->updateValue('D');
+
+        $this->assertEquals(
+            [new SimpleObject('C')],
+            $oldInstance->toArray(),
+            'Expected old instance to keep a reference to the original object'
+        );
+
+        $this->assertEquals(
+            [new SimpleObject('A'), new SimpleObject('B'), new SimpleObject('D')],
+            $newInstance->toArray(),
+            'Expected new instance to have cloned the previous contained object before returning, hence not keeping the reference to the original object. But it is supposed to keep a reference to the current new object (B->D)'
+        );
+    }
+
+    public function testWithoutValuesClonesValue() : void
+    {
+        $objectInsideOld = new SimpleObject('A');
+        $oldInstance = ObjectArrayEnumType::fromArray([
+            $objectInsideOld,
+            new SimpleObject('B'),
+            new SimpleObject('C')
+        ]);
+        $newInstance = $oldInstance->withoutValues([
+            new SimpleObject('B'),
+            new SimpleObject('C')
+        ]);
+
+        $objectInsideOld->updateValue('D');
+
+        $this->assertEquals(
+            [new SimpleObject('D'), new SimpleObject('B'), new SimpleObject('C')],
+            $oldInstance->toArray(),
+            'Expected old instance to keep a reference to the original object'
+        );
+
+        $this->assertEquals(
+            [new SimpleObject('A')],
+            $newInstance->toArray(),
+            'Expected new instance to have cloned the previous contained object before returning, hence not keeping the reference to the original object.'
+        );
+    }
+
+    public function testTryWithoutValuesClonesValue() : void
+    {
+        $objectInsideOld = new SimpleObject('A');
+        $oldInstance = ObjectArrayEnumType::fromArray([
+            $objectInsideOld,
+            new SimpleObject('B'),
+            new SimpleObject('C')
+        ]);
+        $newInstance = $oldInstance->tryWithoutValues([
+            new SimpleObject('B'),
+            new SimpleObject('C')
+        ]);
+
+        $objectInsideOld->updateValue('D');
+
+        $this->assertEquals(
+            [new SimpleObject('D'), new SimpleObject('B'), new SimpleObject('C')],
+            $oldInstance->toArray(),
+            'Expected old instance to keep a reference to the original object'
+        );
+
+        $this->assertEquals(
+            [new SimpleObject('A')],
+            $newInstance->toArray(),
+            'Expected new instance to have cloned the previous contained object before returning, hence not keeping the reference to the original object.'
+        );
     }
 
     public function testContains() : void

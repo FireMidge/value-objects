@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace FireMidge\ValueObject;
 
 use FireMidge\ValueObject\Exception\InvalidValue;
+use FireMidge\ValueObject\Helper\CanExtractValueOfType;
 
 /**
  * A trait for value objects that consist of a string value,
@@ -11,6 +12,8 @@ use FireMidge\ValueObject\Exception\InvalidValue;
  */
 trait IsStringEnumType
 {
+    use CanExtractValueOfType;
+
     /**
      * @throws InvalidValue  If $value is not one of the allowed values.
      */
@@ -55,6 +58,43 @@ trait IsStringEnumType
         }
 
         return static::fromString($value);
+    }
+
+    /**
+     * If $strictCheck is true, this only returns true if $other is an object of the same class
+     * AND has the same value.
+     *
+     * If $strictCheck is false, see rules below:
+     *
+     * If $other is a string, this returns true if $other equals the string value of this instance.
+     * If $other is an object, this returns true if the value returned by "toString", "toText" or
+     * the magic "__toString" equals the string value of this instance.
+     *
+     * @param string|object|null $other        The value to compare to.
+     * @param bool               $strictCheck  If false, $other does not have to be of the same class.
+     */
+    public function isEqualTo(string|object|null $other, bool $strictCheck = true) : bool
+    {
+        if ($other === null) {
+            return false;
+        }
+
+        if ($strictCheck && ! is_a($other, static::class)) {
+            return false;
+        }
+
+        return $this->value === $this->getStringValueOfOther($other);
+    }
+
+    /**
+     * See isEqualTo for more details on the evaluation rules.
+     *
+     * @param string|object|null $other        The value to compare to.
+     * @param bool               $strictCheck  If false, $other does not have to be of the same class.
+     */
+    public function isNotEqualTo(string|object|null $other, bool $strictCheck = true) : bool
+    {
+        return ! $this->isEqualTo($other, $strictCheck);
     }
 
     /**

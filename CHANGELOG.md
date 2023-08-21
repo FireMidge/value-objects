@@ -2,10 +2,35 @@
 
 Works with PHP 8.1.
 
+## v2.5
+
+**B/C-Breaking Change**: `isClassCollectionType::className()` is now a `static` abstract method. This means all existing classes using this trait will need to change it from `protected` to `protected static`. No further changes should be necessary.
+As a static, it can be used for a wider range of useful convenience methods, like the new `fromRawArray`.
+
+Feature: `IsClassCollectionType` now has a `fromRawArray` method, which allows creating a new array not from instances of the required class, but from raw values which are then automatically converted into the required class. A custom conversion callback can be provided. In order to globally (for that particular class) override the conversion of raw values into target class instances, you can override the protected static method `convertFromRaw(mixed $value) : object`.
+
+Feature: `IsCollectionType` now has `find` and `findIndex` methods, which allows returning a specific element (or index, respectively) based on a custom callback. This means it's no longer needed to convert the class back to an array for the sake of finding a specific element.
+
+Feature: `isEqualTo` and `isNotEqualTo` have been added to `IsStringEnumType`, `IsStringType`, `IsIntType`, `IsIntEnumType` and `IsFloatType`, to be consistent with other traits. `ConversionError` has been introduced, which is thrown when attempting to perform a loose comparison with a value that cannot be converted to the target type.
+
+Feature: Methods for mathematical operations (`add`, `subtract`) and comparisons (`isGreaterThan`, `isGreaterThanOrEqualTo`, `isLessThan`, `isLessThanOrEqualTo` have been added to `IsFloatType` and `IsIntType`.
+
+Feature: `IsFloatType` now has `fromString`, `fromStringOrNull`, `fromNumber`, `fromNumberOrNull`.
+
+Feature: `IsIntEnumType` now has a `fromString`, `fromStringOrNull`
+
+Feature: `isIntType` now has `fromStringOrNull` (besides the pre-existing `fromString`) in order to make it consistent with other traits.
+
+Feature: `IsIntEnumType` now implements the magic `__toString` method, which aids with comparisons and rendering.
+
+Dev: Tests to cover all of the above have been added. Some additional tests to improve pre-existing ones have been added. 
+
+Dev: Every single mutant in the `infection.log` has been checked - they are all false positives. Several came back as `escaped` when in fact, the same manual mutation causes tests to fail. The @covers annotation is correct. It may be a bug in how multi-layer trait inheritance is perceived as covered by Infection. MSI has fallen from 95% to 94% and Covered Code MSI has fallen from 97% to 95% - however, there is nothing that can be done to improve it.
+
 
 ## v2.4
 
-Change: `isEqualTo` and `isNotEqualTo` on `IntStringMapType` default to using a strict check, which means the item to compare it to must be of the same class. If you do not want a strict check to happen, you can continue to pass `false` for the `$strictCheck` parameter.
+Change: `isEqualTo` and `isNotEqualTo` on `IsIntStringMapType` default to using a strict check, which means the item to compare it to must be of the same class. If you do not want a strict check to happen, you can continue to pass `false` for the `$strictCheck` parameter.
 
 Change: `isEqualTo` and `isNotEqualTo` on `IsCollectionType` (which affects all array types) have a new `$strictCheck` parameter, defaulting to `true`. When it is true, the item to compare to must be of the same class. If you do not want a strict check to happen, you can pass `false` for the `$strictCheck` parameter.
 

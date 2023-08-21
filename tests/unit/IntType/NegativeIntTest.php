@@ -47,9 +47,6 @@ class NegativeIntTest extends TestCase
         $this->assertSame($value, $instance->toInt());
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\NegativeIntType::toInt
-     */
     public function testToIntWithNegativeNumber() : void
     {
         $value    = -575;
@@ -57,9 +54,18 @@ class NegativeIntTest extends TestCase
         $this->assertSame($value, $instance->toInt());
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\NegativeIntType::__toString
-     */
+    public function testFromStringWithNegativeNumber() : void
+    {
+        $instance = NegativeIntType::fromString('-575');
+        $this->assertSame(-575, $instance->toInt());
+    }
+
+    public function testFromStringOrNullWithNegativeNumber() : void
+    {
+        $instance = NegativeIntType::fromStringOrNull('-575');
+        $this->assertSame(-575, $instance->toInt());
+    }
+
     public function testMagicToStringWithNegativeNumber() : void
     {
         $value    = -575;

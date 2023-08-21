@@ -24,7 +24,7 @@ trait IsStringArrayEnumType
     use IsArrayEnumType;
     use CanTransformStrings;
 
-    protected function validateEach($value) : void
+    protected function validateEach(mixed $value) : void
     {
         if (! is_string($value)) {
             throw InvalidValue::invalidType($value, 'string');

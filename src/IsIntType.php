@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace FireMidge\ValueObject;
 
 use FireMidge\ValueObject\Exception\InvalidValue;
+use FireMidge\ValueObject\Helper\CanExtractValueOfType;
 
 /**
  * A trait for value objects that consist of an integer value
@@ -14,10 +15,12 @@ use FireMidge\ValueObject\Exception\InvalidValue;
  */
 trait IsIntType
 {
+    use CanExtractValueOfType;
+
     /**
      * @throws InvalidValue  If validation has been set up and $value is considered invalid.
      */
-    private function __construct(private int $value)
+    private function __construct(private readonly int $value)
     {
         $this->validate($value);
     }
@@ -72,6 +75,111 @@ trait IsIntType
         }
 
         return static::fromInt($value);
+    }
+
+    /**
+     * Same as `fromString`, but also accepts NULL values.
+     * Returns NULL instead of a new instance if NULL is passed into it.
+     *
+     * Useful to be able to do e.g. `fromStringOrNull($request->get('status'));`
+     * where you are not sure whether the value exists, and avoids having to
+     * do a NULL-check before instantiating.
+     *
+     * @throws InvalidValue  If validation has been set up and $value is considered invalid.
+     */
+    public static function fromStringOrNull(?string $value) : ?static
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        return static::fromString($value);
+    }
+
+    /**
+     * Returns a new instance with the passed value added onto the value of the current instance.
+     */
+    public function add(int|float|object $valueToAdd) : static
+    {
+        return static::fromInt($this->toInt() + $this->getIntValueOfOther($valueToAdd));
+    }
+
+    /**
+     * Returns a new instance with the passed value subtracted from the value of the current instance.
+     */
+    public function subtract(int|float|object $valueToSubtract) : static
+    {
+        return static::fromInt($this->toInt() - $this->getIntValueOfOther($valueToSubtract));
+    }
+
+    /**
+     * Returns true if the value of the current instance is greater than the passed value.
+     */
+    public function isGreaterThan(int|float|object $other) : bool
+    {
+        return $this->toInt() > $this->getIntValueOfOther($other);
+    }
+
+    /**
+     * Returns true if the value of the current instance is greater than or equal to the passed value.
+     */
+    public function isGreaterThanOrEqualTo(int|float|object $other) : bool
+    {
+        return $this->toInt() >= $this->getIntValueOfOther($other);
+    }
+
+    /**
+     * Returns true if the value of the current instance is less than the passed value.
+     */
+    public function isLessThan(int|float|object $other) : bool
+    {
+        return $this->toInt() < $this->getIntValueOfOther($other);
+    }
+
+    /**
+     * Returns true if the value of the current instance is less than or equal to the passed value.
+     */
+    public function isLessThanOrEqualTo(int|float|object $other) : bool
+    {
+        return $this->toInt() <= $this->getIntValueOfOther($other);
+    }
+
+    /**
+     * If $strictCheck is true, this only returns true if $other is an object of the same class
+     * AND has the same value.
+     *
+     * If $strictCheck is false, see rules below:
+     *
+     * If $other is an integer, this returns true if the values are equal.
+     * If $other is a float, this returns true if the int-converted float equals the integer value of this instance.
+     * If $other is an object, this returns true if the value returned by "toInt", "toFloat", "toDouble"
+     * or "toNumber" can be converted into an integer, and equal the integer value of this instance.
+     *
+     * @param int|float|object|null $other        The value to compare to.
+     * @param bool                  $strictCheck  If false, $other does not have to be of the same class.
+     */
+    public function isEqualTo(int|float|object|null $other, bool $strictCheck = true) : bool
+    {
+        if ($other === null) {
+            return false;
+        }
+
+        if ($strictCheck && ! is_a($other, static::class)) {
+            return false;
+        }
+
+        return $this->toInt() === $this->getIntValueOfOther($other);
+    }
+
+    /**
+     * See isEqualTo for more details on the evaluation rules.
+     *
+     * @param int|float|object|null $other        The value to compare to.
+     * @param bool                  $strictCheck  If false, $other does not have to be of the same class.
+     */
+    public function isNotEqualTo(int|float|object|null $other, bool $strictCheck = true) : bool
+    {
+        return ! $this->isEqualTo($other, $strictCheck);
     }
 
     /**

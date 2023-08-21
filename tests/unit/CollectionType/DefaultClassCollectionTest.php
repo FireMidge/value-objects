@@ -36,4 +36,24 @@ class DefaultClassCollectionTest extends TestCase
 
         $instance->withValue(SimpleIntType::fromInt(5));
     }
+
+    public function testFromRawValuesFromInt() : void
+    {
+        $instance = DefaultClassCollectionType::fromRawArray([5, 15]);
+
+        $this->assertEquals([
+            SimpleIntType::fromInt(5),
+            SimpleIntType::fromInt(15),
+        ], $instance->toArray());
+    }
+
+    public function testFromRawValuesFromString() : void
+    {
+        $instance = DefaultClassCollectionType::fromRawArray(['5', '15']);
+
+        $this->assertEquals([
+            SimpleIntType::fromInt(5),
+            SimpleIntType::fromInt(15),
+        ], $instance->toArray());
+    }
 }
