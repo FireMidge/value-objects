@@ -4,10 +4,10 @@ This library provides convenience methods for creating value objects.
 You may use the below table to decide which type is best for you.
 *"Single Value" means the object will hold a single value, whereas "Array of Values" means the object can hold more than one value.*
 
-|                             | Single Value                                                         | Array of Values                                                       |
-|:----------------------------|:---------------------------------------------------------------------|:----------------------------------------------------------------------|
-| List of Valid Values        | `IsStringEnumType`<br />`IsIntEnumType`<br/>`IsIntStringMapType`     | `IsStringArrayEnumType`<br />`IsIntArrayEnumType`<br/>`ArrayEnumType` |
-| Any Value/Custom Validation | `IsEmailType`<br/>`IsStringType`<br />`IsFloatType` <br/>`IsIntType` | `IsClassCollectionType`<br />`IsCollectionType`                       |
+|                             | Single Value                                                         | Array of Values                                                                                     |
+|:----------------------------|:---------------------------------------------------------------------|:----------------------------------------------------------------------------------------------------|
+| List of Valid Values        | `IsStringEnumType`<br />`IsIntEnumType`<br/>`IsIntStringMapType`     | `IsStringArrayEnumType`<br />`IsIntArrayEnumType`<br/>`IsArrayEnumType`<br />`IsClassArrayEnumType` |
+| Any Value/Custom Validation | `IsEmailType`<br/>`IsStringType`<br />`IsFloatType` <br/>`IsIntType` | `IsClassCollectionType`<br />`IsCollectionType`                                                     |
 
 ## Quality Control
 

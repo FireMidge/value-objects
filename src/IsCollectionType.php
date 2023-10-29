@@ -215,6 +215,11 @@ trait IsCollectionType
         return null;
     }
 
+    public function current() : mixed
+    {
+        return current($this->values);
+    }
+
     /**
      * Converts this list back into a primitive array.
      */
