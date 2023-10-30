@@ -86,4 +86,51 @@ class BasicStringCollectionTest extends TestCase
 
         $this->assertSame($expectedIndex, $instance->findIndex($callback));
     }
+
+    public function testCurrentNextAndPrevious() : void
+    {
+        $array = ['uno', 'due', 'tre', 'quattro', 'cinque', 'sei', 'sette', 'otto', 'nove', 'dieci'];
+
+        $instance = BasicStringCollectionType::fromArray($array);
+
+        $this->assertSame(
+            'uno',
+            $instance->current(),
+            'Expected the first "current" element to be uno'
+        );
+
+        $this->assertSame(
+            'due',
+            $instance->next(),
+            'Expected the next element to be due'
+        );
+
+        $this->assertSame(
+            'due',
+            $instance->current(),
+            'Expected the 2nd "current" element to be due'
+        );
+
+        $instance->next(); // tre
+        $instance->next(); // quattro
+        $instance->next(); // cinque
+
+        $this->assertSame(
+            'cinque',
+            $instance->current(),
+            'Expected the 3rd "current" element to be cinque'
+        );
+
+        $this->assertSame(
+            'quattro',
+            $instance->previous(),
+            'Expected the previous element to be quattro'
+        );
+
+        $this->assertSame(
+            'quattro',
+            $instance->current(),
+            'Expected the 4th "current" element to be quattro'
+        );
+    }
 }

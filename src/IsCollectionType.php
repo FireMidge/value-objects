@@ -220,6 +220,16 @@ trait IsCollectionType
         return current($this->values);
     }
 
+    public function next() : mixed
+    {
+        return next($this->values);
+    }
+
+    public function previous() : mixed
+    {
+        return prev($this->values);
+    }
+
     /**
      * Converts this list back into a primitive array.
      */

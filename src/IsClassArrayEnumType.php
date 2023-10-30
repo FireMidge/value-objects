@@ -78,7 +78,7 @@ trait IsClassArrayEnumType
             $validValues = forward_static_call([static::className(), 'all']);
         } catch (Throwable $ex) {
             throw new RuntimeException(sprintf(
-                'Method %s requires a custom implementation, which is not provided. %s',
+                'Method %s is not callable. Make sure it has no required parameters and it returns an array. %s',
                 __METHOD__,
                 $ex->getMessage()
             ), $ex->getCode(), $ex);
