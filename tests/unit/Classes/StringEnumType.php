@@ -3,11 +3,17 @@ declare(strict_types=1);
 
 namespace FireMidge\Tests\ValueObject\Unit\Classes;
 
+use FireMidge\ValueObject\Helper\CanExtractValueOfType;
 use FireMidge\ValueObject\IsStringEnumType;
 
 class StringEnumType
 {
     use IsStringEnumType;
+
+    /**
+     * Imported separately (to avoid additional false positives in mutation test result).
+     */
+    use CanExtractValueOfType;
 
     public const SPRING = 'spring';
     public const SUMMER = 'summer';

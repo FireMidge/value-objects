@@ -215,19 +215,48 @@ trait IsCollectionType
         return null;
     }
 
+    public function first() : mixed
+    {
+        reset($this->values);
+        return current($this->values);
+    }
+
+    public function last() : mixed
+    {
+        return end($this->values);
+    }
+
     public function current() : mixed
     {
-        return current($this->values);
+        $item = current($this->values);
+
+        if ($item === false) {
+            return null;
+        }
+
+        return $item;
     }
 
     public function next() : mixed
     {
-        return next($this->values);
+        $item = next($this->values);
+
+        if ($item === false) {
+            return null;
+        }
+
+        return $item;
     }
 
     public function previous() : mixed
     {
-        return prev($this->values);
+        $item = prev($this->values);
+
+        if ($item === false) {
+            return null;
+        }
+
+        return $item;
     }
 
     /**

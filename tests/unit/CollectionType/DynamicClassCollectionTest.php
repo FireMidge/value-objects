@@ -163,6 +163,7 @@ class DynamicClassCollectionTest extends TestCase
     ) : void
     {
         DynamicClassCollectionType::useClass($classFqn);
+        DynamicClassCollectionType::allowToStringConversion(false);
 
         $this->expectException(ConversionError::class);
         $this->expectExceptionMessage(sprintf(

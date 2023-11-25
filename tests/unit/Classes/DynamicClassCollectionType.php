@@ -3,11 +3,17 @@ declare(strict_types=1);
 
 namespace FireMidge\Tests\ValueObject\Unit\Classes;
 
+use FireMidge\ValueObject\Helper\CanCreateInstance;
 use FireMidge\ValueObject\IsClassCollectionType;
 
 class DynamicClassCollectionType
 {
     use IsClassCollectionType;
+
+    /**
+     * Imported separately (without this, there are more false positives in the mutation test result).
+     */
+    use CanCreateInstance;
 
     private static string $className = SimpleStringType::class;
     private static bool $allowStringConversion = false;

@@ -133,4 +133,57 @@ class BasicStringCollectionTest extends TestCase
             'Expected the 4th "current" element to be quattro'
         );
     }
+
+    public function testFirstAndLast() : void
+    {
+        $array = ['uno', 'due', 'tre', 'quattro', 'cinque', 'sei', 'sette', 'otto', 'nove', 'dieci'];
+
+        $instance = BasicStringCollectionType::fromArray($array);
+
+        $this->assertSame(
+            'uno',
+            $instance->first(),
+            'Expected the first element to be uno'
+        );
+
+        $instance->next();
+        $instance->next();
+
+        $this->assertSame(
+            'uno',
+            $instance->first(),
+            'Expected the first element to remain uno, regardless of number of next() calls.'
+        );
+
+        $this->assertSame(
+            'dieci',
+            $instance->last(),
+            'Expected the last element to be dieci.'
+        );
+    }
+
+    public function testPointersOutsideOfRange() : void
+    {
+        $array = ['uno', 'due', 'tre', 'quattro', 'cinque', 'sei', 'sette', 'otto', 'nove', 'dieci'];
+
+        $instance = BasicStringCollectionType::fromArray($array);
+
+        $this->assertSame(
+            'uno',
+            $instance->first(),
+            'Expected the first element to be uno'
+        );
+
+        $this->assertNull($instance->previous(), 'Expected element before first not to exist');
+
+        $this->assertSame(
+            'dieci',
+            $instance->last(),
+            'Expected the last element to be dieci.'
+        );
+
+        $this->assertNull($instance->next(), 'Expected element after last not to exist');
+
+        $this->assertNull($instance->current(), 'Expected current element outside range not to exist');
+    }
 }

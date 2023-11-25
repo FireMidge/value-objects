@@ -8,7 +8,23 @@ use FireMidge\ValueObject\Exception\InvalidValue;
 use PHPUnit\Framework\TestCase;
 
 /**
+ * Note: We are saying here that it also covers ObjectArrayEnumType, which isn't technically true.
+ * It's a bit of a hack in order to get a more accurate mutation test coverage.
+ *
+ * This test class right here tests (apart from others) methods that are inside IsArrayEnumType.
+ * TransformIntArrayEnumType is using the trait, but via a parent instead of directly.
+ * Infection does not recognise this and claims making certain changes to IsArrayEnumType causes
+ * escaped mutants, when in fact, they are covered here and lead to failing unit tests.
+ *
+ * In other classes, we've simply re-included the parent's traits in order for Infection to recognise
+ * them as covered, but in the case of IsIntArrayEnumType (which TransformIntArrayEnumType is using),
+ * it would lead to a clash due to an overridden method.
+ *
+ * So, we're saying that ObjectArrayEnumType, which directly includes IsArrayEnumType, is covered here,
+ * but only to "trick" Infection, as it won't recognise it in the conventional way.
+ *
  * @covers \FireMidge\Tests\ValueObject\Unit\Classes\TransformIntArrayEnumType
+ * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType
  */
 class TransformIntArrayEnumTest extends TestCase
 {

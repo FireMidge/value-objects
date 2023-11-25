@@ -24,6 +24,19 @@ class StringClassArrayEnumTest extends TestCase
         ]), StringClassArrayEnumType::withAll());
     }
 
+    public function testFromRawWithDuplicateValues() : void
+    {
+        $this->assertEquals(StringClassArrayEnumType::fromArray([
+            StringEnumType::summer(),
+            StringEnumType::summer(),
+            StringEnumType::autumn(),
+        ]), StringClassArrayEnumType::fromRawArray([
+            'summer',
+            'summer',
+            'autumn',
+        ]));
+    }
+
     public function testFromArrayWithNonObjectString() : void
     {
         $this->expectException(InvalidValue::class);

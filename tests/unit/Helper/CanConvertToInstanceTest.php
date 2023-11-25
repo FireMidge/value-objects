@@ -107,6 +107,8 @@ class CanConvertToInstanceTest extends TestCase
             IntEnumType::fromInt(4),
             DynamicClassArrayEnumType::convertIntoInstance('4', IntEnumType::class)
         );
+
+        DynamicClassArrayEnumType::allowToStringConversion(false); // Reset
     }
 
     public function invalidValueForStringConversionProvider() : array

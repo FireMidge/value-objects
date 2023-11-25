@@ -2,9 +2,19 @@
 
 Works with PHP 8.1.
 
+## v2.6
+
+Feature: Added new type `IsClassArrayEnumType`, which is a convenience type between `ArrayEnumType` and `ClassCollectionType`.
+It's used for collections of instances which in turn are enum types, i.e. there is a finite list of valid values. It also offers an easy way to create a new collection holding all valid variations of the underlying enum type (`withAll()`).
+
+Feature: Added methods to navigate through the values of `IsCollectionType` with `current`, `previous`, `next`, `first` and `last`. This is, by extension, also available to instances using the `IsClassCollectionType`, `IsArrayEnumType`, `IsClassArrayEnumType` and all other related traits. Unlike the equivalent built-in PHP methods, these new methods return `null` for non-existing elements instead of `false`.
+
+Dev: Improved `@covers` annotations and re-imported certain traits to improve accuracy of code coverage reports. Added tests for all new functionality as well as addressed all true positives in the Infection log. MSI improved from 94% to 97% and CCM from 95% to 98%.
+
+
 ## v2.5
 
-**B/C-Breaking Change**: `isClassCollectionType::className()` is now a `static` abstract method. This means all existing classes using this trait will need to change it from `protected` to `protected static`. No further changes should be necessary.
+**B/C-Breaking Change**: `IsClassCollectionType::className()` is now a `static` abstract method. This means all existing classes using this trait will need to change it from `protected` to `protected static`. No further changes should be necessary.
 As a static, it can be used for a wider range of useful convenience methods, like the new `fromRawArray`.
 
 Feature: `IsClassCollectionType` now has a `fromRawArray` method, which allows creating a new array not from instances of the required class, but from raw values which are then automatically converted into the required class. A custom conversion callback can be provided. In order to globally (for that particular class) override the conversion of raw values into target class instances, you can override the protected static method `convertFromRaw(mixed $value) : object`.

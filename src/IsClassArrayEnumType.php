@@ -22,7 +22,7 @@ trait IsClassArrayEnumType
      * This method will try to convert each value inside the array to an object of the required class first,
      * before adding it to this array class.
      *
-     * @param array         $rawValues       An array of values which are not yet of the required class,
+     * @param mixed[]       $rawValues       An array of values which are not yet of the required class,
      *                                       but can be converted to it.
      * @param callable|null $customCallback  A custom callback accepting each array element as an argument,
      *                                       and which transforms the raw array element into an object of the
@@ -55,14 +55,6 @@ trait IsClassArrayEnumType
     abstract protected static function className() : string;
 
     /**
-     * Override this to allow duplicate values.
-     */
-    protected static function areValuesUnique() : bool
-    {
-        return true;
-    }
-
-    /**
      * Override to provide a custom list of valid class instances, or where there is no public static all()
      * method available on the target class.
      *
@@ -71,15 +63,18 @@ trait IsClassArrayEnumType
     protected static function all() : array
     {
         if (! method_exists(static::className(), 'all') || ! is_callable([static::className(), 'all'])) {
-            throw new RuntimeException(sprintf('Method %s is not implemented', __METHOD__));
+            throw new RuntimeException(sprintf(
+                'Method %s::all is not implemented or is not callable. Make sure it is public.',
+                static::className()
+            ));
         }
 
         try {
             $validValues = forward_static_call([static::className(), 'all']);
         } catch (Throwable $ex) {
             throw new RuntimeException(sprintf(
-                'Method %s is not callable. Make sure it has no required parameters and it returns an array. %s',
-                __METHOD__,
+                'Method %s::all is not callable. Make sure it has no required parameters and it returns an array. %s',
+                static::className(),
                 $ex->getMessage()
             ), $ex->getCode(), $ex);
         }

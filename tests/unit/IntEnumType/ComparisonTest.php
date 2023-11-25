@@ -51,6 +51,16 @@ class ComparisonTest extends TestCase
         $this->assertFalse($original->isNotEqualTo($toCompare, false));
     }
 
+    /**
+     * @dataProvider looselyEqualDataProvider
+     */
+    public function testIsEqualToUsingStrictCheckByDefault(mixed $toCompare) : void
+    {
+        $original = IntEnumType::fromInt(1);
+        $this->assertFalse($original->isEqualTo($toCompare));
+        $this->assertTrue($original->isNotEqualTo($toCompare));
+    }
+
     public function testIsEqualToWithNull() : void
     {
         $original = IntEnumType::fromInt(4);
