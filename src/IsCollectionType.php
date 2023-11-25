@@ -215,6 +215,50 @@ trait IsCollectionType
         return null;
     }
 
+    public function first() : mixed
+    {
+        reset($this->values);
+        return current($this->values);
+    }
+
+    public function last() : mixed
+    {
+        return end($this->values);
+    }
+
+    public function current() : mixed
+    {
+        $item = current($this->values);
+
+        if ($item === false) {
+            return null;
+        }
+
+        return $item;
+    }
+
+    public function next() : mixed
+    {
+        $item = next($this->values);
+
+        if ($item === false) {
+            return null;
+        }
+
+        return $item;
+    }
+
+    public function previous() : mixed
+    {
+        $item = prev($this->values);
+
+        if ($item === false) {
+            return null;
+        }
+
+        return $item;
+    }
+
     /**
      * Converts this list back into a primitive array.
      */

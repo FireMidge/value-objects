@@ -182,6 +182,28 @@ class OperationsTest extends TestCase
         $this->assertSame(true, $original->isNotEqualTo($toCompare, true));
     }
 
+    /**
+     * @dataProvider equalDataProvider
+     */
+    public function testIsEqualToWithoutStrictCheckSuccessful(mixed $toCompare) : void
+    {
+        $original = NegativeFloatType::fromFloat(10.05);
+        $this->assertTrue($original->isEqualTo($toCompare, false));
+        $this->assertFalse($original->isNotEqualTo($toCompare, false));
+    }
+
+    /**
+     * @dataProvider equalDataProvider
+     *
+     * Same test as in testIsEqualToWithStrictCheckUnsuccessful.
+     */
+    public function testIsEqualToUsesStrictCheckByDefault(mixed $toCompare) : void
+    {
+        $original = NegativeFloatType::fromFloat(10.05);
+        $this->assertFalse($original->isEqualTo($toCompare));
+        $this->assertTrue($original->isNotEqualTo($toCompare));
+    }
+
     public function testIsEqualToWithNull() : void
     {
         $original = NegativeFloatType::fromFloat(10.05);

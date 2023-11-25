@@ -181,7 +181,6 @@ class OperationsTest extends TestCase
         $this->assertSame(true, $original->isNotEqualTo($toCompare, true));
     }
 
-
     /**
      * @dataProvider equalDataProvider
      */
@@ -190,6 +189,16 @@ class OperationsTest extends TestCase
         $original = NegativeIntType::fromInt(10);
         $this->assertTrue($original->isEqualTo($toCompare, false));
         $this->assertFalse($original->isNotEqualTo($toCompare, false));
+    }
+
+    /**
+     * @dataProvider equalDataProvider
+     */
+    public function testIsEqualToUsingStrictCheckByDefault(mixed $toCompare) : void
+    {
+        $original = NegativeIntType::fromInt(10);
+        $this->assertFalse($original->isEqualTo($toCompare));
+        $this->assertTrue($original->isNotEqualTo($toCompare));
     }
 
     public function testIsEqualToWithNull() : void

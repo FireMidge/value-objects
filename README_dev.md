@@ -61,11 +61,12 @@ Use the --dev option when requiring new dev dependencies via composer:
 
 ## Commits
 
-- Validate `composer.json`
-- Update `CHANGELOG.md` and briefly describe any additions/changes/backwards-compatibility-breaking changes
-- Update `README.md` with any new features. Change any text that is no longer accurate
-- Run PhpUnit and Infection - inspect the Infection log and fix any regressions. Make sure new code coverage isn't lower than previously.
-- Regenerate badges with new code coverage scores, and update the Alt text in the Quality Control section in `README.md` for blind developers
+- [Validate `composer.json`](#validate-composerjson)
+- [Update `CHANGELOG.md`](#update-changelogmd) and briefly describe any additions/changes/backwards-compatibility-breaking changes
+- Update `docs/README.md` with any new features. Change any text that is no longer accurate
+- [Run PhpUnit and Infection](#run-tests) - inspect the Infection log and fix any regressions. Make sure new code coverage isn't lower than previously.
+- [Regenerate badges](#regenerate-badges-with-new-code-coverage-scores) with new code coverage scores, and update the Alt text in the Quality Control section in `docs/README.md` for blind developers
+- [Regenerate the main `README.md` file](#regenerate-the-readmemd-file)
 - Create the PR
 - Use "squash & merge" as the merge option
 - After the branch has been merged into master, pull the latest `master` and tag the latest commit with the new version
@@ -115,12 +116,42 @@ ccm: Code Coverage MSI
 **Don't forget to also update the Alt text in `README.md` in the `Quality Control` table for each of the badges.** Using images was the only way to be able to display colour-coded stats but for them to remain accessible to blind developers, it's important to keep the "alt" text up-to-date.
 
 
+### Regenerate the README.md file
+
+Run this from the root project folder:
+`node_modules/.bin/markdown-include ./markdown.json`
+
+Make sure that you have run `npm i --production=false` first.
+
+The syntax to include other README files is as follows:
+```markdown
+#include "docs/YOUR_INCLUDED_FILE.md"
+```
+
+Any include paths inside `docs/README.md` must be relative to the **root** folder (i.e. prefixed with "docs").
+
+
 ### Tag your commit
 
 #### View existing tags
 You can see the list of current tags with `git tag`.
 
 You can also filter out tags, with `git tag -l "v1.8.5*"`
+
+To see the description of a specific tag (along with the description of the associated commit), use:
+```bash
+git show {TAG_NAME}
+```
+e.g.: `git show v2.1`
+
+
+##### View existing tags with their associated commits
+
+To see the list of tags with their associated commit and type, use:
+```bash
+git for-each-ref refs/tags 
+```
+The first column refers to the commit hash, the 2nd is the type. `tag` means it's an annotated tag, whereas `commit` means lightweight tag.
 
 
 #### Types of tags
@@ -148,6 +179,7 @@ When pushing, don't forget to also push the tag(s):
 1. Delete the tag on the remote: `git push origin :refs/tags/v1.9`
 2. Then re-create the tag with the -f flag: `git tag -a v1.9 -m "Version 1.9: xyz" -f`
 3. Push the new commit with the updated tag to the remote: `git push origin HEAD --tags`
+
 
 #### Delete erroneous tag
 

@@ -13,6 +13,7 @@ class TransformIntArrayEnumType
 {
     use IsIntArrayEnumType;
 
+
     protected static function all() : array
     {
         return [
@@ -30,6 +31,4 @@ class TransformIntArrayEnumType
 
         return (int) $value;
     }
-
-
 }

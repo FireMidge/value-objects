@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace FireMidge\Tests\ValueObject\Unit\StringEnumType;
 
+use FireMidge\Tests\ValueObject\Unit\Classes\SimpleBadObject;
 use FireMidge\Tests\ValueObject\Unit\Classes\SimpleNonConvertableObject;
 use FireMidge\Tests\ValueObject\Unit\Classes\SimpleObject;
 use FireMidge\Tests\ValueObject\Unit\Classes\SimpleStringType;
@@ -195,5 +196,15 @@ class StringEnumTest extends TestCase
         ));
 
         $instance1->isEqualTo($instance2, false);
+    }
+
+    public function testAutoHandlingOfBadToStringReturnType() : void
+    {
+        $instance1 = StringEnumType::spring();
+        $instance2 = new SimpleBadObject('spring');
+
+        $this->assertFalse(
+            $instance1->isEqualTo($instance2, false)
+        );
     }
 }

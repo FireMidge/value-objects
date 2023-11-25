@@ -108,9 +108,9 @@ class ValueExtractorTest extends TestCase
     /**
      * @dataProvider floatValueProvider
      */
-    public function testGetFloatValueSuccessful(mixed $input, float $extractedInt) : void
+    public function testGetFloatValueSuccessful(mixed $input, float $extractedFloat) : void
     {
-        $this->assertSame($extractedInt, (new ValueExtractor())->getFloatValueOfOther($input));
+        $this->assertSame($extractedFloat, (new ValueExtractor())->getFloatValueOfOther($input));
     }
 
     public function testGetFloatValueConversionErrorTriggered() : void

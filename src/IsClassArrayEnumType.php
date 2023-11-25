@@ -5,21 +5,24 @@ namespace FireMidge\ValueObject;
 
 use FireMidge\ValueObject\Exception\InvalidValue;
 use FireMidge\ValueObject\Helper\CanCreateInstance;
+use RuntimeException;
+use Throwable;
 
 /**
- * A trait for creating a type where each value must be an instance of a class,
- * and there is no fixed set of valid values.
+ * A trait for a class that can hold an array of values (as opposed to a single value), and:
+ * - where each array element has to be an instance of a specific value type class, and
+ * - where the value type class only considers a limited set of values valid.
  */
-trait IsClassCollectionType
+trait IsClassArrayEnumType
 {
-    use IsCollectionType, CanCreateInstance;
+    use IsArrayEnumType, CanCreateInstance;
 
     /**
-     * Create a new class collection from raw (non-target-class instance) values.
+     * Create a new array class from raw (non-target-class instance) values.
      * This method will try to convert each value inside the array to an object of the required class first,
-     * before adding it to this collection.
+     * before adding it to this array class.
      *
-     * @param array         $rawValues       An array of values which are not yet of the required class,
+     * @param mixed[]       $rawValues       An array of values which are not yet of the required class,
      *                                       but can be converted to it.
      * @param callable|null $customCallback  A custom callback accepting each array element as an argument,
      *                                       and which transforms the raw array element into an object of the
@@ -52,11 +55,35 @@ trait IsClassCollectionType
     abstract protected static function className() : string;
 
     /**
-     * Override this to allow duplicate values.
+     * Override to provide a custom list of valid class instances, or where there is no public static all()
+     * method available on the target class.
+     *
+     * @return object[]
      */
-    protected static function areValuesUnique() : bool
+    protected static function all() : array
     {
-        return true;
+        if (! method_exists(static::className(), 'all') || ! is_callable([static::className(), 'all'])) {
+            throw new RuntimeException(sprintf(
+                'Method %s::all is not implemented or is not callable. Make sure it is public.',
+                static::className()
+            ));
+        }
+
+        try {
+            $validValues = forward_static_call([static::className(), 'all']);
+        } catch (Throwable $ex) {
+            throw new RuntimeException(sprintf(
+                'Method %s::all is not callable. Make sure it has no required parameters and it returns an array. %s',
+                static::className(),
+                $ex->getMessage()
+            ), $ex->getCode(), $ex);
+        }
+
+        $all = [];
+        foreach ($validValues as $value) {
+            $all[] = static::convertIntoInstance($value, static::className());
+        }
+        return $all;
     }
 
     /**

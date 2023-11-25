@@ -10,7 +10,11 @@ use FireMidge\ValueObject\Exception\ValueNotFound;
 use PHPUnit\Framework\TestCase;
 
 /**
+ * Note: Read TransformIntArrayEnumTest for information on why we're saying that this test also covers BasicStringCollectionType.
+ * It's the same reason as to why we're saying something similar there. (For Infection mutation test coverage.)
+ *
  * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType
+ * @covers \FireMidge\Tests\ValueObject\Unit\Classes\BasicStringCollectionType
  */
 class ObjectArrayEnumTest extends TestCase
 {
