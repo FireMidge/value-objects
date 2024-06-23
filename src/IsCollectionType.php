@@ -11,6 +11,8 @@ use FireMidge\ValueObject\Exception\ValueNotFound;
  * A trait for creating a type that contains an array of values,
  * where there is no list of valid values available,
  * e.g. a list of e-mail addresses.
+ *
+ * You can implement \Iterator in your class.
  */
 trait IsCollectionType
 {
@@ -59,8 +61,7 @@ trait IsCollectionType
         $addedValue = $this->transformEach($addedValue);
 
         if ((static::areValuesUnique() || static::ignoreDuplicateValues()) && $this->contains($addedValue)) {
-            $this->handleDuplicateValue($addedValue);
-            return new static($this->values);
+            return new static($this->handleDuplicateValue($addedValue));
         }
 
         $newValues = array_merge($this->cloneValues($this->values), [ $addedValue ]);
@@ -259,6 +260,21 @@ trait IsCollectionType
         return $item;
     }
 
+    public function key() : mixed
+    {
+        return key($this->values);
+    }
+
+    public function valid() : bool
+    {
+        return $this->current() !== null;
+    }
+
+    public function rewind() : void
+    {
+        reset($this->values);
+    }
+
     /**
      * Converts this list back into a primitive array.
      */
@@ -383,6 +399,52 @@ trait IsCollectionType
         return $value;
     }
 
+    /**
+     * Override this to provide custom handling of duplicate values within an array.
+     *
+     * @param mixed $values The list of values to be added to the instance, which contain duplicates.
+     *
+     * @throws DuplicateValue If there is/are duplicate value(s) that cannot be accepted.
+     */
+    protected function handleDuplicateValues(array $values) : array
+    {
+        // @codeCoverageIgnoreStart
+        //  This is never going to be executed because the same check also happens in __construct (for performance reasons).
+        // But I don't want to remove it from here, just in case. It's an easy check.
+        if (! static::areValuesUnique() && (! static::ignoreDuplicateValues())) {
+            return $values;
+        }
+        // @codeCoverageIgnoreEnd
+
+        if (static::areValuesUnique() && (! static::ignoreDuplicateValues())) {
+            throw DuplicateValue::containsDuplicates($values);
+        }
+
+        return array_unique($values);
+    }
+
+    /**
+     * Override this to provide custom handling of adding a value that is a duplicate of an
+     * already existing value.
+     *
+     * @param mixed $value The new value to be added, which is a duplicate of one of the
+     *                     pre-existing values.
+     *
+     * @return array The full array of values to be stored against the object. You will have handled
+     *               the duplicate value by this point and either added it to the list
+     *               (maybe in a transformed state) or thrown an exception.
+     *
+     * @throws DuplicateValue If the duplicate value cannot be accepted.
+     */
+    protected function handleDuplicateValue(mixed $value) : array
+    {
+        if (static::areValuesUnique() && (! static::ignoreDuplicateValues())) {
+            throw DuplicateValue::duplicateValue($value, $this->values);
+        }
+
+        return $this->values;
+    }
+
     private function isEqualToArray(array $other) : bool
     {
         if (count($other) !== count($this->values)) {
@@ -432,29 +494,5 @@ trait IsCollectionType
         }
 
         return $index;
-    }
-
-    private function handleDuplicateValues(array $values) : array
-    {
-        // @codeCoverageIgnoreStart
-        //  This is never going to be executed because the same check also happens in __construct (for performance reasons).
-        // But I don't want to remove it from here, just in case. It's an easy check.
-        if (! static::areValuesUnique() && (! static::ignoreDuplicateValues())) {
-            return $values;
-        }
-        // @codeCoverageIgnoreEnd
-
-        if (static::areValuesUnique() && (! static::ignoreDuplicateValues())) {
-            throw DuplicateValue::containsDuplicates($values);
-        }
-
-        return array_unique($values);
-    }
-
-    private function handleDuplicateValue($value) : void
-    {
-        if (static::areValuesUnique() && (! static::ignoreDuplicateValues())) {
-            throw DuplicateValue::duplicateValue($value, $this->values);
-        }
     }
 }
