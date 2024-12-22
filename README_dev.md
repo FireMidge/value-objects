@@ -1,5 +1,19 @@
 # Development
 
+## Table of Contents
+
+- [Tests](#tests)
+  - [Set-up](#set-up)
+  - [Run tests](#run-tests)
+- [Dependencies](#dependencies)
+- [Commits](#commits)
+  - [Validate composer.json](#validate-composerjson)
+  - [Update CHANGELOG.md](#update-changelogmd)
+  - [Regenerate badges with new code coverage scores](#regenerate-badges-with-new-code-coverage-scores)
+  - [Regenerate the README.md file](#regenerate-the-readmemd-file)
+  - [Tag your commit](#tag-your-commit)
+
+
 ## Tests
 
 
@@ -22,17 +36,34 @@ In order to be able to run tests, go through the following steps to set up the D
 
 ### Run tests
 
+#### Multiple PHP versions
+
+Since version `2.7`, we have more than one Dockerfile, to run the tests against more than one PHP version.
+
+We haven't separated the `vendor` folder yet (which we could probably do by creating separate `vendor` directories for each container and then mounting them as `/src/vendor` volumes in the `docker-compose.yml`), as we're not increasing the minimum required PHP version dependency.
+
+In order to run the PHP 8.1 container, you'd use:
+`docker compose run --rm lib81 vendor/bin/phpunit`
+
+In order to run the PHP 8.4 container, you'd use:
+`docker compose run --rm lib84 vendor/bin/phpunit`
+
+A standalone "lib" service is no longer available, so wherever you see `run --rm lib84` in this file, update the last 2 numbers to run the relevant PHP version (if available), e.g. `run --rm lib81`. (The `--rm` flag makes sure that the container instance is removed once the command has finished executing, avoiding orphans).
+
+
+#### Commands to run tests
+
 To run mutation tests:
-`docker compose run lib{v} php infection.phar`
+`docker compose run --rm lib84 php infection.phar`
 
 To run the unit tests:
-`docker compose run lib{v} vendor/bin/phpunit`
+`docker compose run --rm lib84 vendor/bin/phpunit`
 
 To create a code coverage report in HTML style:
-`docker compose run lib{v} vendor/bin/phpunit --coverage-html ./coverage-report`
+`docker compose run --rm lib84 vendor/bin/phpunit --coverage-html ./coverage-report`
 
 To create a quick code coverage overview in the CLI:
-`docker compose run lib{v} vendor/bin/phpunit --coverage-text`
+`docker compose run --rm lib84 vendor/bin/phpunit --coverage-text`
 
 *Replace `{v}` with the relevant PHP version number.*
 
@@ -40,7 +71,7 @@ To create a quick code coverage overview in the CLI:
 
 To run a specific class, or method, run:
 
-`docker compose run lib{v} vendor/bin/phpunit --filter testWithValueDoesNotChangePreExisting`
+`docker compose run --rm lib84 vendor/bin/phpunit --filter testWithValueDoesNotChangePreExisting`
 
 where `testWithValueDoesNotChangePreExisting` is the name of the method. You can also use the name of a class instead.
 
@@ -48,7 +79,7 @@ and `{v}` is the PHP version number.
 
 To run a specific data set (when using data providers), you can use the name of the data set after the `@`, e.g.:
 
-` docker compose run lib{v} vendor/bin/phpunit --filter testWithValueDoesNotChangePreExisting@invalidNumber`
+` docker compose run --rm lib84 vendor/bin/phpunit --filter testWithValueDoesNotChangePreExisting@invalidNumber`
 
 where `testWithValueDoesNotChangePreExisting` is the name of the method, and `invalidNumber` is the name of the data set. Note that this only works with non-numeric data set names.
 
@@ -58,12 +89,26 @@ where `testWithValueDoesNotChangePreExisting` is the name of the method, and `in
 Remember that each test method name needs to start with "test", otherwise it will be ignored by PhpUnit.
 
 
+#### Removing orphaned containers
+
+If you see a lot of container names when running tests and the error message `If you removed or renamed this service in your compose file, you can run this command with the --remove-orphans flag to clean it up.`, you'll probably trust the message and run the same command again but with the `--remove-orphans` flag.
+This then results in you seeing `Unknown option "--remove-orphans"`, and thinking "...Wtf?"
+
+Despite the message telling you otherwise, the `--remove-orphans` flag is only available on the `docker compose up` and `docker compose down` command, so just run the following to clear them:
+
+```bash
+docker compose up --remove-orphans
+```
+
+In order to avoid orphans in the first place, run all commands with `--rm`, which removes the container automatically once it's finished executing. 
+
+
 ## Dependencies
 
 ### Adding new dev dependencies
 
 Use the --dev option when requiring new dev dependencies via composer:
-`docker compose run lib{v} composer require --dev phpunit/phpunit ^9`
+`docker compose run --rm lib84 composer require --dev phpunit/phpunit ^9`
 
 
 ## Commits
@@ -83,7 +128,7 @@ Any slightly more "complex" tasks have been detailed below.
 
 ### Validate composer.json
 
-Run `docker compose run lib composer validate` to make sure `composer.json` is still valid.
+Run `docker compose run --rm lib84 composer validate` to make sure `composer.json` is still valid.
 
 
 ### Update CHANGELOG.md
@@ -104,15 +149,15 @@ If there are versions missing in CHANGELOG, add them. These commands should help
 ### Regenerate badges with new code coverage scores
 
 Run this command (but don't forget substituting values with the current values):
-`docker compose run lib php docs/generateBadges.php --cc=0 --msi=0 --mcc=0 --ccm=0`
+`docker compose run --rm lib84 php docs/generateBadges.php --cc=0 --msi=0 --mcc=0 --ccm=0`
 
 *Round all percentages to 0 decimals. Round down until .49, round up from .5.*
 
 #### cc
-`cc` is the Code Coverage percentage of covered methods. You get this value by running `docker compose run lib vendor/bin/phpunit --coverage-text` and taking the "Methods" percentage from the summary section.
+`cc` is the Code Coverage percentage of covered methods. You get this value by running `docker compose run --rm lib84vendor/bin/phpunit --coverage-text` and taking the "Methods" percentage from the summary section.
 
 #### msi, mcc, ccm
-All of these values are taken from the Infection summary. Run `docker compose run lib php infection.phar`, which gives you a "Metrics" section, from which you take the following percentages:
+All of these values are taken from the Infection summary. Run `docker compose run --rm lib84php infection.phar`, which gives you a "Metrics" section, from which you take the following percentages:
 
 msi: Mutation Score Indicator
 

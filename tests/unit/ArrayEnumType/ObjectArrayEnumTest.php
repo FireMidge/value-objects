@@ -3,22 +3,26 @@ declare(strict_types=1);
 
 namespace FireMidge\Tests\ValueObject\Unit\ArrayEnumType;
 
+use FireMidge\Tests\ValueObject\Unit\Classes\BasicStringCollectionType;
 use FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType;
 use FireMidge\Tests\ValueObject\Unit\Classes\SimpleObject;
 use FireMidge\ValueObject\Exception\InvalidValue;
 use FireMidge\ValueObject\Exception\ValueNotFound;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Note: Read TransformIntArrayEnumTest for information on why we're saying that this test also covers BasicStringCollectionType.
+ * Note: Read TransformIntArrayEnumTest for information on why we're saying that this test also covers
+ * BasicStringCollectionType.
  * It's the same reason as to why we're saying something similar there. (For Infection mutation test coverage.)
- *
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\BasicStringCollectionType
  */
+#[CoversClass(ObjectArrayEnumType::class)]
+#[CoversClass(BasicStringCollectionType::class)]
 class ObjectArrayEnumTest extends TestCase
 {
-    public function validValueProvider() : array
+    public static function validValueProvider() : array
     {
         return [
             [ [] ],
@@ -31,16 +35,14 @@ class ObjectArrayEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validValueProvider
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromArrayWithValidValue(array $values) : void
     {
         $instance = ObjectArrayEnumType::fromArray($values);
         $this->assertSame($values, $instance->toArray());
     }
 
-    public function invalidValueProvider() : array
+    public static function invalidValueProvider() : array
     {
         return [
             'a' => [
@@ -66,9 +68,7 @@ class ObjectArrayEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromArrayWithInvalidValue(array $values, string $expectedExceptionMessage) : void
     {
         $this->expectException(InvalidValue::class);
@@ -93,7 +93,7 @@ class ObjectArrayEnumTest extends TestCase
         $this->assertSame([], $instance->toArray());
     }
 
-    public function singleValidValueProvider() : array
+    public static function singleValidValueProvider() : array
     {
         return [
             'a' => [ new SimpleObject('A') ],
@@ -103,11 +103,8 @@ class ObjectArrayEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider singleValidValueProvider
-     *
-     * @depends testFromArrayWithEmptyArray
-     */
+    #[DataProvider('singleValidValueProvider')]
+    #[Depends('testFromArrayWithEmptyArray')]
     public function testWithValueWithValidValue(SimpleObject $value) : void
     {
         $instance    = ObjectArrayEnumType::fromArray([]);
@@ -117,7 +114,7 @@ class ObjectArrayEnumTest extends TestCase
         $this->assertSame([], $instance->toArray(), 'Expected old instance to have remained unchanged'); // Make sure the previous instance hasn't been changed
     }
 
-    public function singleInvalidValueProvider() : array
+    public static function singleInvalidValueProvider() : array
     {
         return [
             'a' => [
@@ -131,11 +128,8 @@ class ObjectArrayEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider singleInvalidValueProvider
-     *
-     * @depends testFromArrayWithEmptyArray
-     */
+    #[DataProvider('singleInvalidValueProvider')]
+    #[Depends('testFromArrayWithEmptyArray')]
     public function testWithValueWithInvalidValue($invalidValue, string $expectedExceptionMessage) : void
     {
         $this->expectException(InvalidValue::class);
@@ -145,9 +139,7 @@ class ObjectArrayEnumTest extends TestCase
         $instance->withValue($invalidValue);
     }
 
-    /**
-     * @dataProvider singleValidValueProvider
-     */
+    #[DataProvider('singleValidValueProvider')]
     public function testWithValueDoesNotChangePreExisting(SimpleObject $value) : void
     {
         $instance = ObjectArrayEnumType::fromArray([
@@ -164,7 +156,7 @@ class ObjectArrayEnumTest extends TestCase
         ], $instance->toArray(), 'Expected old instance to have remained unchanged');
     }
 
-    public function withoutValidValueProvider() : array
+    public static function withoutValidValueProvider() : array
     {
         return [
             'a-a' => [
@@ -200,9 +192,7 @@ class ObjectArrayEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider withoutValidValueProvider
-     */
+    #[DataProvider('withoutValidValueProvider')]
     public function testTryWithoutValueDoesNotChangePreExisting(
         array $stateBefore,
         SimpleObject $valueToBeRemoved,
@@ -216,9 +206,7 @@ class ObjectArrayEnumTest extends TestCase
         $this->assertEquals($stateBefore, $instance->toArray(), 'Expected old instance to have remained unchanged');
     }
 
-    /**
-     * @dataProvider withoutValidValueProvider
-     */
+    #[DataProvider('withoutValidValueProvider')]
     public function testWithoutValueDoesNotChangePreExisting(
         array $stateBefore,
         SimpleObject $valueToBeRemoved,
@@ -232,7 +220,7 @@ class ObjectArrayEnumTest extends TestCase
         $this->assertEquals($stateBefore, $instance->toArray(), 'Expected old instance to have remained unchanged');
     }
 
-    public function withoutInvalidValueProvider() : array
+    public static function withoutInvalidValueProvider() : array
     {
         return [
             'a-a' => [
@@ -250,11 +238,8 @@ class ObjectArrayEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider withoutInvalidValueProvider
-     *
-     * @depends testFromArrayWithEmptyArray
-     */
+    #[DataProvider('withoutInvalidValueProvider')]
+    #[Depends('testFromArrayWithEmptyArray')]
     public function testTryWithoutValueWithInvalidValue(
         array $stateBefore,
         $valueToBeRemoved,

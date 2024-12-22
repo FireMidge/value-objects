@@ -2,7 +2,6 @@ services:
   lib81:
     build:
       context: docker/8.1
-      dockerfile: "Dockerfile"
       args:
         UID: ${USER_ID}
     container_name: ${LIBRARY_NAME}-lib81
@@ -15,7 +14,6 @@ services:
   lib84:
     build:
       context: docker/8.4
-      dockerfile: "Dockerfile"
       args:
         UID: ${USER_ID}
     container_name: ${LIBRARY_NAME}-lib84

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace FireMidge\Tests\ValueObject\Unit\CollectionType;
 
 use FireMidge\Tests\ValueObject\Unit\Classes\SimpleObject;
+use FireMidge\Tests\ValueObject\Unit\Classes\SimpleStringType;
 use FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumUpperCaseType;
 use FireMidge\Tests\ValueObject\Unit\Classes\BasicStringCollectionType;
 use FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType;
@@ -12,16 +13,17 @@ use FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType;
 use FireMidge\ValueObject\Exception\DuplicateValue;
 use FireMidge\ValueObject\Exception\InvalidValue;
 use FireMidge\ValueObject\Exception\ValueNotFound;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
-/**
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringCollectionType
- * @uses \FireMidge\Tests\ValueObject\Unit\Classes\SimpleStringType
- */
+#[CoversClass(StringCollectionType::class)]
+#[UsesClass(SimpleStringType::class)]
 class StringCollectionTest extends TestCase
 {
-    public function validValueProvider() : array
+    public static function validValueProvider() : array
     {
         return [
             [ [], [] ],
@@ -33,16 +35,14 @@ class StringCollectionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validValueProvider
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromArrayWithValidValue(array $input, array $output) : void
     {
         $instance = StringCollectionType::fromArray($input);
         $this->assertSame($output, $instance->toArray());
     }
 
-    public function invalidValueProvider() : array
+    public static function invalidValueProvider() : array
     {
         return [
             [ [ 'two', 'three', 'two' ], 'Values contain duplicates. Only unique values allowed. Values passed: "Two", "Three", "Two"' ],
@@ -55,9 +55,7 @@ class StringCollectionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromArrayWithInvalidValue(array $input, string $errorMessage) : void
     {
         $this->expectException(InvalidValue::class);
@@ -102,7 +100,7 @@ class StringCollectionTest extends TestCase
         $this->assertFalse($instance->contains(50));
     }
 
-    public function singleValidValueProvider() : array
+    public static function singleValidValueProvider() : array
     {
         return [
             'name'   => ['Name'],
@@ -111,9 +109,7 @@ class StringCollectionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider singleValidValueProvider
-     */
+    #[DataProvider('singleValidValueProvider')]
     public function testWithValueWithValidValue(string $value) : void
     {
         $instance    = StringCollectionType::fromArray([
@@ -133,7 +129,7 @@ class StringCollectionTest extends TestCase
         ], $instance->toArray(), 'Expected old instance to have remained unchanged');
     }
 
-    public function singleInvalidValueProvider() : array
+    public static function singleInvalidValueProvider() : array
     {
         return [
             'duplicate' => ['SOME-VALUE', 'Value "Some-value" cannot be used as it already exists within array. Existing values: "Some-value".'],
@@ -143,9 +139,7 @@ class StringCollectionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider singleInvalidValueProvider
-     */
+    #[DataProvider('singleInvalidValueProvider')]
     public function testWithValueWithInvalidValue($invalidValue, string $expectedExceptionMessage) : void
     {
         $this->expectException(InvalidValue::class);
@@ -157,7 +151,7 @@ class StringCollectionTest extends TestCase
         $instance->withValue($invalidValue);
     }
 
-    public function invalidWithoutValueProvider() : array
+    public static function invalidWithoutValueProvider() : array
     {
         return [
             'invalidOne' => [
@@ -193,9 +187,7 @@ class StringCollectionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidWithoutValueProvider
-     */
+    #[DataProvider('invalidWithoutValueProvider')]
     public function testTryWithoutValueWithInvalidValue(
         array $stateBefore,
         $valueToBeRemoved,
@@ -210,7 +202,7 @@ class StringCollectionTest extends TestCase
         $instance->tryWithoutValue($valueToBeRemoved);
     }
 
-    public function withoutValidValueProvider() : array
+    public static function withoutValidValueProvider() : array
     {
         return [
             'one' => [
@@ -241,9 +233,7 @@ class StringCollectionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider withoutValidValueProvider
-     */
+    #[DataProvider('withoutValidValueProvider')]
     public function testTryWithoutValueDoesNotChangePreExisting(
         array $stateBefore,
         string $valueToBeRemoved,
@@ -531,7 +521,7 @@ class StringCollectionTest extends TestCase
         );
     }
 
-    public function notEqualProvider() : array
+    public static function notEqualProvider() : array
     {
         return [
             'differentCount'  => [ ['Hello', 'H3llo'] ],
@@ -539,9 +529,7 @@ class StringCollectionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider notEqualProvider
-     */
+    #[DataProvider('notEqualProvider')]
     public function testIsEqualToArrayNotEqual(array $valuesToCompareTo) : void
     {
         $instance2 = StringCollectionType::fromArray(['Hello', 'H3llo', ' _Hello']);
@@ -553,9 +541,7 @@ class StringCollectionTest extends TestCase
         $this->assertTrue($instance2->isNotEqualTo($valuesToCompareTo), 'isNotEqualTo with strict check');
     }
 
-    /**
-     * @dataProvider notEqualProvider
-     */
+    #[DataProvider('notEqualProvider')]
     public function testIsEqualToStandardObjectNotEqual(array $valuesToCompareTo) : void
     {
         $instance = StringCollectionType::fromArray(['Hello', 'H3llo', ' _Hello']);

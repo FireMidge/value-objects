@@ -4,12 +4,11 @@ declare(strict_types=1);
 namespace FireMidge\Tests\ValueObject\Unit\CollectionType;
 
 use FireMidge\ValueObject\Generic\AnyCollection;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \FireMidge\ValueObject\Generic\AnyCollection
- */
+#[CoversClass(AnyCollection::class)]
 class GenericCollectionTest extends TestCase
 {
     public static function successfulMergeProvider() : array

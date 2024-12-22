@@ -4,14 +4,14 @@ declare(strict_types=1);
 namespace FireMidge\Tests\ValueObject\Unit\FloatType;
 
 use FireMidge\Tests\ValueObject\Unit\Classes\NegativeFloatType;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\NegativeFloatType
- */
+#[CoversClass(NegativeFloatType::class)]
 class NegativeFloatTest extends TestCase
 {
-    public function validValueProvider() : array
+    public static function validValueProvider() : array
     {
         return [
             [ 0 ],
@@ -28,27 +28,20 @@ class NegativeFloatTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validValueProvider
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromFloatWithValidValue(float $value) : void
     {
         $instance = NegativeFloatType::fromFloat($value);
         $this->assertSame($value, $instance->toFloat());
     }
 
-    /**
-     * @dataProvider validValueProvider
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromFloatOrNullWithValidValue(float $value) : void
     {
         $instance = NegativeFloatType::fromFloatOrNull($value);
         $this->assertSame($value, $instance->toFloat());
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\NegativeFloatType::toFloat
-     */
     public function testToFloatWithNegativeNumber() : void
     {
         $value    = -575.59;
@@ -56,9 +49,6 @@ class NegativeFloatTest extends TestCase
         $this->assertSame($value, $instance->toFloat());
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\NegativeFloatType::__toString
-     */
     public function testMagicToStringWithNegativeNumber() : void
     {
         $value    = -575.5901;

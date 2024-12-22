@@ -11,14 +11,14 @@ use FireMidge\Tests\ValueObject\Unit\Classes\SimpleFloatType;
 use FireMidge\Tests\ValueObject\Unit\Classes\SimpleIntType;
 use FireMidge\Tests\ValueObject\Unit\Classes\SimpleStringType;
 use FireMidge\ValueObject\Exception\ConversionError;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleFloatType
- */
+#[CoversClass(SimpleFloatType::class)]
 class OperationsTest extends TestCase
 {
-    public function successfulAddOperationsProvider() : array
+    public static function successfulAddOperationsProvider() : array
     {
         return [
             [ 5, 20.5 ],
@@ -32,9 +32,7 @@ class OperationsTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider successfulAddOperationsProvider
-     */
+    #[DataProvider('successfulAddOperationsProvider')]
     public function testAddSuccessful(mixed $thingToAdd, float $expectedResult) : void
     {
         $original = SimpleFloatType::fromFloat(15.5);
@@ -52,7 +50,7 @@ class OperationsTest extends TestCase
         SimpleFloatType::fromFloat(20.6)->add(SimpleStringType::fromString('hello'));
     }
 
-    public function successfulSubtractOperationsProvider() : array
+    public static function successfulSubtractOperationsProvider() : array
     {
         return [
             [ 5, 10.5 ],
@@ -66,9 +64,7 @@ class OperationsTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider successfulSubtractOperationsProvider
-     */
+    #[DataProvider('successfulSubtractOperationsProvider')]
     public function testSubtractSuccessful(mixed $thingToSubtract, float $expectedResult) : void
     {
         $original = NegativeFloatType::fromFloat(15.5);
@@ -78,7 +74,7 @@ class OperationsTest extends TestCase
         $this->assertSame($expectedResult, $new->toFloat(), 'New instance does not match expected.');
     }
 
-    public function successfulGreaterThanComparisonProvider() : array
+    public static function successfulGreaterThanComparisonProvider() : array
     {
         return [
             [ 5, true ],
@@ -108,25 +104,21 @@ class OperationsTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider successfulGreaterThanComparisonProvider
-     */
+    #[DataProvider('successfulGreaterThanComparisonProvider')]
     public function testGreaterThanComparisonSuccessful(mixed $toCompare, bool $expectedResult) : void
     {
         $original = NegativeFloatType::fromFloat(10.05);
         $this->assertSame($expectedResult, $original->isGreaterThan($toCompare));
     }
 
-    /**
-     * @dataProvider successfulGreaterThanComparisonProvider
-     */
+    #[DataProvider('successfulGreaterThanComparisonProvider')]
     public function testLessThanComparisonSuccessful(mixed $toCompare, bool $expectedResult) : void
     {
         $original = NegativeFloatType::fromFloat(10.05);
         $this->assertSame(! $expectedResult, $original->isLessThan($toCompare));
     }
 
-    public function equalDataProvider() : array
+    public static function equalDataProvider() : array
     {
         return [
             [ 10.05 ],
@@ -136,45 +128,35 @@ class OperationsTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider equalDataProvider
-     */
+    #[DataProvider('equalDataProvider')]
     public function testGreaterThanComparisonWithEqualValue(mixed $toCompare) : void
     {
         $original = NegativeFloatType::fromFloat(10.05);
         $this->assertSame(false, $original->isGreaterThan($toCompare));
     }
 
-    /**
-     * @dataProvider equalDataProvider
-     */
+    #[DataProvider('equalDataProvider')]
     public function testLessThanComparisonWithEqualValue(mixed $toCompare) : void
     {
         $original = NegativeFloatType::fromFloat(10.05);
         $this->assertSame(false, $original->isLessThan($toCompare));
     }
 
-    /**
-     * @dataProvider equalDataProvider
-     */
+    #[DataProvider('equalDataProvider')]
     public function testGreaterThanOrEqualToComparisonWithEqualValue(mixed $toCompare) : void
     {
         $original = NegativeFloatType::fromFloat(10.05);
         $this->assertSame(true, $original->isGreaterThanOrEqualTo($toCompare));
     }
 
-    /**
-     * @dataProvider equalDataProvider
-     */
+    #[DataProvider('equalDataProvider')]
     public function testLessThanOrEqualToComparisonWithEqualValue(mixed $toCompare) : void
     {
         $original = NegativeFloatType::fromFloat(10.05);
         $this->assertSame(true, $original->isLessThanOrEqualTo($toCompare));
     }
 
-    /**
-     * @dataProvider equalDataProvider
-     */
+    #[DataProvider('equalDataProvider')]
     public function testIsEqualToWithStrictCheckUnsuccessful(mixed $toCompare) : void
     {
         $original = NegativeFloatType::fromFloat(10.05);
@@ -182,9 +164,7 @@ class OperationsTest extends TestCase
         $this->assertSame(true, $original->isNotEqualTo($toCompare, true));
     }
 
-    /**
-     * @dataProvider equalDataProvider
-     */
+    #[DataProvider('equalDataProvider')]
     public function testIsEqualToWithoutStrictCheckSuccessful(mixed $toCompare) : void
     {
         $original = NegativeFloatType::fromFloat(10.05);
@@ -192,11 +172,10 @@ class OperationsTest extends TestCase
         $this->assertFalse($original->isNotEqualTo($toCompare, false));
     }
 
-    /**
-     * @dataProvider equalDataProvider
-     *
+     /**
      * Same test as in testIsEqualToWithStrictCheckUnsuccessful.
      */
+    #[DataProvider('equalDataProvider')]
     public function testIsEqualToUsesStrictCheckByDefault(mixed $toCompare) : void
     {
         $original = NegativeFloatType::fromFloat(10.05);

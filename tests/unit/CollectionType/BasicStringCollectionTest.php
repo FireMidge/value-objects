@@ -4,11 +4,11 @@ declare(strict_types=1);
 namespace FireMidge\Tests\ValueObject\Unit\CollectionType;
 
 use FireMidge\Tests\ValueObject\Unit\Classes\BasicStringCollectionType;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\BasicStringCollectionType
- */
+#[CoversClass(BasicStringCollectionType::class)]
 class BasicStringCollectionTest extends TestCase
 {
     public function testFromArrayDuplicateValuesAllowed() : void
@@ -41,7 +41,7 @@ class BasicStringCollectionTest extends TestCase
         ], $instance->toArray(), 'Expected original instance to have remained unchanged');
     }
 
-    public function findValueProvider() : array
+    public static function findValueProvider() : array
     {
         return [
             [ fn($v) => $v === 'HELLO', null, null ],
@@ -53,9 +53,7 @@ class BasicStringCollectionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider findValueProvider
-     */
+    #[DataProvider('findValueProvider')]
     public function testFindValue(callable $callback, mixed $expectedValue, ?int $_) : void
     {
         $instance = BasicStringCollectionType::fromArray([
@@ -70,9 +68,7 @@ class BasicStringCollectionTest extends TestCase
         $this->assertSame($expectedValue, $instance->find($callback));
     }
 
-    /**
-     * @dataProvider findValueProvider
-     */
+    #[DataProvider('findValueProvider')]
     public function testFindIndex(callable $callback, mixed $_, ?int $expectedIndex) : void
     {
         $instance = BasicStringCollectionType::fromArray([

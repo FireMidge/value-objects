@@ -11,14 +11,14 @@ use FireMidge\Tests\ValueObject\Unit\Classes\SimpleTextObject;
 use FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType;
 use FireMidge\ValueObject\Exception\ConversionError;
 use FireMidge\ValueObject\Exception\InvalidValue;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType
- */
+#[CoversClass(StringEnumType::class)]
 class StringEnumTest extends TestCase
 {
-    public function validValueProvider() : array
+    public static function validValueProvider() : array
     {
         return [
             [StringEnumType::SPRING ],
@@ -28,34 +28,28 @@ class StringEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validValueProvider
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromStringWithValidValue(string $value) : void
     {
         $instance = StringEnumType::fromString($value);
         $this->assertSame($value, $instance->toString());
     }
 
-    /**
-     * @dataProvider validValueProvider
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromStringOrNullWithValidValue(string $value) : void
     {
         $instance = StringEnumType::fromStringOrNull($value);
         $this->assertSame($value, $instance->toString());
     }
 
-    /**
-     * @dataProvider validValueProvider
-     */
+    #[DataProvider('validValueProvider')]
     public function testMagicToString(string $value) : void
     {
         $instance = StringEnumType::fromString($value);
         $this->assertEquals($value, $instance);
     }
 
-    public function invalidValueProvider() : array
+    public static function invalidValueProvider() : array
     {
         return [
             [ '0' ],
@@ -75,18 +69,14 @@ class StringEnumTest extends TestCase
         $this->assertNull($instance);
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromStringWithInvalidValue(string $value) : void
     {
         $this->expectException(InvalidValue::class);
         StringEnumType::fromString($value);
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromStringWithInvalidValueErrorMessage(string $value) : void
     {
         $this->expectExceptionMessage(sprintf(
@@ -96,18 +86,14 @@ class StringEnumTest extends TestCase
         StringEnumType::fromString($value);
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromStringOrNullWithInvalidValue(string $value) : void
     {
         $this->expectException(InvalidValue::class);
         StringEnumType::fromStringOrNull($value);
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromStringOrNullWithInvalidValueErrorMessage(string $value) : void
     {
         $this->expectExceptionMessage(sprintf(
@@ -116,7 +102,6 @@ class StringEnumTest extends TestCase
         ));
         StringEnumType::fromStringOrNull($value);
     }
-
 
     public function testIsEqualWithSameTypeSuccessful() : void
     {
@@ -130,7 +115,7 @@ class StringEnumTest extends TestCase
         $this->assertFalse($instance2->isNotEqualTo($instance1), 'isNotEqualTo with strict check');
     }
 
-    public function successfulLooseCheckComparisonsProvider() : array
+    public static function successfulLooseCheckComparisonsProvider() : array
     {
         return [
             [ SimpleStringType::fromString('spring') ],
@@ -140,9 +125,7 @@ class StringEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider successfulLooseCheckComparisonsProvider
-     */
+    #[DataProvider('successfulLooseCheckComparisonsProvider')]
     public function testEqualsToOnlyWithLooseCheckSuccessful(mixed $other) : void
     {
         $instance1 = StringEnumType::spring();
@@ -155,7 +138,7 @@ class StringEnumTest extends TestCase
         $this->assertTrue($instance1->isNotEqualTo($instance2), 'isNotEqualTo with strict check');
     }
 
-    public function unsuccessfulLooseCheckComparisonsProvider() : array
+    public static function unsuccessfulLooseCheckComparisonsProvider() : array
     {
         return [
             [ 'Spring' ],
@@ -169,9 +152,7 @@ class StringEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider unsuccessfulLooseCheckComparisonsProvider
-     */
+    #[DataProvider('unsuccessfulLooseCheckComparisonsProvider')]
     public function testIsEqualEvenWithLooseCheckUnsuccessful(mixed $other) : void
     {
         $instance1 = StringEnumType::spring();

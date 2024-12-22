@@ -4,14 +4,14 @@ declare(strict_types=1);
 namespace FireMidge\Tests\ValueObject\Unit\IntType;
 
 use FireMidge\Tests\ValueObject\Unit\Classes\NegativeIntType;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\NegativeIntType
- */
+#[CoversClass(NegativeIntType::class)]
 class NegativeIntTest extends TestCase
 {
-    public function validValueProvider() : array
+    public static function validValueProvider() : array
     {
         return [
             [ 0 ],
@@ -23,24 +23,14 @@ class NegativeIntTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\NegativeIntType::fromInt
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\NegativeIntType::toInt
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromIntWithValidValue(int $value) : void
     {
         $instance = NegativeIntType::fromInt($value);
         $this->assertSame($value, $instance->toInt());
     }
 
-    /**
-     * @dataProvider validValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\NegativeIntType::fromIntOrNull
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\NegativeIntType::toInt
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromIntOrNullWithValidValue(int $value) : void
     {
         $instance = NegativeIntType::fromIntOrNull($value);

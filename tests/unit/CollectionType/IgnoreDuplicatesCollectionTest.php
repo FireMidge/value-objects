@@ -4,11 +4,10 @@ declare(strict_types=1);
 namespace FireMidge\Tests\ValueObject\Unit\CollectionType;
 
 use FireMidge\Tests\ValueObject\Unit\Classes\IgnoreDuplicatesCollectionType;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IgnoreDuplicatesCollectionType
- */
+#[CoversClass(IgnoreDuplicatesCollectionType::class)]
 class IgnoreDuplicatesCollectionTest extends TestCase
 {
     public function testDefaultValidation() : void

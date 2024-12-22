@@ -6,14 +6,15 @@ namespace FireMidge\Tests\ValueObject\Unit\ArrayEnumType;
 use FireMidge\Tests\ValueObject\Unit\Classes\IntArrayEnumType;
 use FireMidge\ValueObject\Exception\InvalidValue;
 use FireMidge\ValueObject\Exception\ValueNotFound;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntArrayEnumType
- */
+#[CoversClass(IntArrayEnumType::class)]
 class IntArrayEnumTest extends TestCase
 {
-    public function validValueProvider() : array
+    public static function validValueProvider() : array
     {
         return [
             [ [] ],
@@ -26,19 +27,14 @@ class IntArrayEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntArrayEnumType::fromArray
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntArrayEnumType::toArray
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromArrayWithValidValue(array $values) : void
     {
         $instance = IntArrayEnumType::fromArray($values);
         $this->assertSame($values, $instance->toArray());
     }
 
-    public function invalidValueProvider() : array
+    public static function invalidValueProvider() : array
     {
         return [
             'asFloat' => [
@@ -64,12 +60,7 @@ class IntArrayEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntArrayEnumType::fromArray
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntArrayEnumType::toArray
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromArrayWithInvalidValue(array $values, string $expectedExceptionMessage) : void
     {
         $this->expectException(InvalidValue::class);
@@ -77,10 +68,6 @@ class IntArrayEnumTest extends TestCase
         IntArrayEnumType::fromArray($values);
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntArrayEnumType::withAll
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntArrayEnumType::toArray
-     */
     public function testWithAll() : void
     {
         $instance = IntArrayEnumType::withAll();
@@ -91,17 +78,14 @@ class IntArrayEnumTest extends TestCase
         ], $instance->toArray());
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntArrayEnumType::fromArray
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntArrayEnumType::toArray
-     */
     public function testFromArrayWithEmptyArray() : void
     {
         $instance = IntArrayEnumType::fromArray([]);
         $this->assertSame([], $instance->toArray());
     }
 
-    public function singleValidValueProvider() : array
+
+    public static function singleValidValueProvider() : array
     {
         return [
             '11' => [ 11 ],
@@ -110,13 +94,8 @@ class IntArrayEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider singleValidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntArrayEnumType::withValue
-     *string
-     * @depends testFromArrayWithEmptyArray
-     */
+    #[Depends('testFromArrayWithEmptyArray')]
+    #[DataProvider('singleValidValueProvider')]
     public function testWithValueWithValidValue(int $value) : void
     {
         $instance    = IntArrayEnumType::fromArray([
@@ -136,7 +115,7 @@ class IntArrayEnumTest extends TestCase
         ], $instance->toArray(), 'Expected old instance to have remained unchanged'); // Make sure the previous instance hasn't been changed
     }
 
-    public function singleInvalidValueProvider() : array
+    public static function singleInvalidValueProvider() : array
     {
         return  [
             '11.1'    => [ 11.1, 'Invalid value. Must be of type "integer" but got "double"' ],
@@ -154,13 +133,8 @@ class IntArrayEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider singleInvalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntArrayEnumType::withValue
-     *
-     * @depends testFromArrayWithEmptyArray
-     */
+    #[DataProvider('singleInvalidValueProvider')]
+    #[Depends('testFromArrayWithEmptyArray')]
     public function testWithValueWithInvalidValue($invalidValue, string $expectedExceptionMessage) : void
     {
         $this->expectException(InvalidValue::class);
@@ -170,7 +144,7 @@ class IntArrayEnumTest extends TestCase
         $instance->withValue($invalidValue);
     }
 
-    public function withoutInvalidValueProvider() : array
+    public static function withoutInvalidValueProvider() : array
     {
         return [
             'invalidOne' => [
@@ -206,13 +180,8 @@ class IntArrayEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider withoutInvalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntArrayEnumType::tryWithoutValue
-     *
-     * @depends testFromArrayWithEmptyArray
-     */
+    #[DataProvider('withoutInvalidValueProvider')]
+    #[Depends('testFromArrayWithEmptyArray')]
     public function testTryWithoutValueWithInvalidValue(
         array $stateBefore,
         $valueToBeRemoved,
@@ -227,7 +196,7 @@ class IntArrayEnumTest extends TestCase
         $instance->tryWithoutValue($valueToBeRemoved);
     }
 
-    public function withoutValidValueProvider() : array
+    public static function withoutValidValueProvider() : array
     {
         return [
             'one' => [
@@ -258,12 +227,7 @@ class IntArrayEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider withoutValidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntArrayEnumType::tryWithoutValue
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntArrayEnumType::toArray
-     */
+    #[DataProvider('withoutValidValueProvider')]
     public function testTryWithoutValueDoesNotChangePreExisting(
         array $stateBefore,
         int $valueToBeRemoved,
@@ -277,10 +241,6 @@ class IntArrayEnumTest extends TestCase
         $this->assertEquals($stateBefore, $instance->toArray(), 'Expected old instance to have remained unchanged');
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntArrayEnumType::withoutValue
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntArrayEnumType::toArray
-     */
     public function testWithoutValueNotThrowingExceptionIfValueDidNotExist() : void
     {
         $instance = IntArrayEnumType::fromArray([11]);
@@ -289,10 +249,6 @@ class IntArrayEnumTest extends TestCase
         $this->assertEquals([11], $newInstance->toArray());
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntArrayEnumType::withoutValue
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntArrayEnumType::toArray
-     */
     public function testWithoutValueThrowingExceptionIfValueInvalid() : void
     {
         $this->expectException(InvalidValue::class);
@@ -302,10 +258,6 @@ class IntArrayEnumTest extends TestCase
         $instance->withoutValue('11');
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntArrayEnumType::contains
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntArrayEnumType::fromArray
-     */
     public function testContains() : void
     {
         $instance = IntArrayEnumType::fromArray([
@@ -318,10 +270,6 @@ class IntArrayEnumTest extends TestCase
         $this->assertFalse($instance->contains(33), 'Expected not to contain 33');
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntArrayEnumType::contains
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntArrayEnumType::fromArray
-     */
     public function testContainsThrowingError() : void
     {
         $instance = IntArrayEnumType::fromArray([

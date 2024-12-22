@@ -5,14 +5,17 @@ namespace FireMidge\Tests\ValueObject\Unit\IntEnumType;
 
 use FireMidge\Tests\ValueObject\Unit\Classes\IntEnumType;
 use FireMidge\ValueObject\Exception\InvalidValue;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntEnumType
  */
+#[CoversClass(IntEnumType::class)]
 class IntEnumTest extends TestCase
 {
-    public function validValueProvider() : array
+    public static function validValueProvider() : array
     {
         return [
             [IntEnumType::SPRING ],
@@ -22,40 +25,27 @@ class IntEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntEnumType::fromInt
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntEnumType::toInt
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromIntWithValidValue(int $value) : void
     {
         $instance = IntEnumType::fromInt($value);
         $this->assertSame($value, $instance->toInt());
     }
 
-    /**
-     * @dataProvider validValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntEnumType::fromIntOrNull
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntEnumType::toInt
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromIntOrNullWithValidValue(int $value) : void
     {
         $instance = IntEnumType::fromIntOrNull($value);
         $this->assertSame($value, $instance->toInt());
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntEnumType::fromIntOrNull
-     */
     public function testFromIntOrNullWithNull() : void
     {
         $instance = IntEnumType::fromIntOrNull(null);
         $this->assertNull($instance);
     }
 
-    public function invalidValueProvider() : array
+    public static function invalidValueProvider() : array
     {
         return [
             [ 0 ],
@@ -64,22 +54,14 @@ class IntEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntEnumType::fromInt
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromIntWithInvalidValue(int $value) : void
     {
         $this->expectException(InvalidValue::class);
         IntEnumType::fromInt($value);
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntEnumType::fromInt
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromIntWithInvalidValueErrorMessage(int $value) : void
     {
         $this->expectExceptionMessage(sprintf(
@@ -89,22 +71,14 @@ class IntEnumTest extends TestCase
         IntEnumType::fromInt($value);
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntEnumType::fromIntOrNull
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromIntOrNullWithInvalidValue(int $value) : void
     {
         $this->expectException(InvalidValue::class);
         IntEnumType::fromIntOrNull($value);
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntEnumType::fromIntOrNull
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromIntOrNullWithInvalidValueErrorMessage(int $value) : void
     {
         $this->expectExceptionMessage(sprintf(
@@ -114,7 +88,7 @@ class IntEnumTest extends TestCase
         IntEnumType::fromIntOrNull($value);
     }
 
-    public function validStringValueProvider() : array
+    public static function validStringValueProvider() : array
     {
         return [
             [ '1', 1 ],
@@ -124,18 +98,14 @@ class IntEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validStringValueProvider
-     */
+    #[DataProvider('validStringValueProvider')]
     public function testFromStringWithValidValue(string $input, int $output) : void
     {
         $instance = IntEnumType::fromString($input);
         $this->assertSame($output, $instance->toInt());
     }
 
-    /**
-     * @dataProvider validStringValueProvider
-     */
+    #[DataProvider('validStringValueProvider')]
     public function testFromStringOrNullWithValidValue(string $input, int $output) : void
     {
         $instance = IntEnumType::fromStringOrNull($input);
@@ -148,16 +118,14 @@ class IntEnumTest extends TestCase
         $this->assertSame(null, $instance);
     }
 
-    /**
-     * @dataProvider validStringValueProvider
-     */
+    #[DataProvider('validStringValueProvider')]
     public function testMagicToString(string $expectedOutput, int $input) : void
     {
         $instance = IntEnumType::fromInt($input);
         $this->assertSame($expectedOutput, (string) $instance);
     }
 
-    public function invalidStringValueProvider() : array
+    public static function invalidStringValueProvider() : array
     {
         return [
             [ '', 'Value "" is invalid. (Value is not numeric.)' ],
@@ -171,9 +139,7 @@ class IntEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidStringValueProvider
-     */
+    #[DataProvider('invalidStringValueProvider')]
     public function testFromStringWithInvalidValue(string $input, string $expectedMessage) : void
     {
         $this->expectException(InvalidValue::class);

@@ -6,11 +6,10 @@ namespace FireMidge\Tests\ValueObject\Unit\CollectionType;
 use FireMidge\Tests\ValueObject\Unit\Classes\DefaultClassCollectionType;
 use FireMidge\Tests\ValueObject\Unit\Classes\SimpleIntType;
 use FireMidge\ValueObject\Exception\DuplicateValue;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\DefaultClassCollectionType
- */
+#[CoversClass(DefaultClassCollectionType::class)]
 class DefaultClassCollectionTest extends TestCase
 {
     public function testFromArrayThrowsOnDuplicateValuesProvided() : void

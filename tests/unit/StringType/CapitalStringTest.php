@@ -5,14 +5,14 @@ namespace FireMidge\Tests\ValueObject\Unit\StringType;
 
 use FireMidge\Tests\ValueObject\Unit\Classes\CapitalStringType;
 use FireMidge\ValueObject\Exception\InvalidValue;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\CapitalStringType
- */
+#[CoversClass(CapitalStringType::class)]
 class CapitalStringTest extends TestCase
 {
-    public function validValueProvider() : array
+    public static function validValueProvider() : array
     {
         return [
             [ ' at', 'At' ],
@@ -31,25 +31,21 @@ class CapitalStringTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validValueProvider
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromStringWithValidValue(string $raw, string $value) : void
     {
         $instance = CapitalStringType::fromString($raw);
         $this->assertSame($value, $instance->toString());
     }
 
-    /**
-     * @dataProvider validValueProvider
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromStringOrNullWithValidValue(string $raw, string $value) : void
     {
         $instance = CapitalStringType::fromStringOrNull($value);
         $this->assertSame($value, $instance->toString());
     }
 
-    public function invalidValueProvider() : array
+    public static function invalidValueProvider() : array
     {
         return [
             [ ' AUTR', 'Value "Autr" is invalid. Length must be between 2 and 3 characters.' ],
@@ -60,9 +56,7 @@ class CapitalStringTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromStringWithInvalidValue(string $value, string $expectedExceptionMessagePart) : void
     {
         $this->expectException(InvalidValue::class);
@@ -70,9 +64,7 @@ class CapitalStringTest extends TestCase
         CapitalStringType::fromString($value);
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromStringOrNullWithInvalidValue(string $value, string $expectedExceptionMessagePart) : void
     {
         $this->expectException(InvalidValue::class);

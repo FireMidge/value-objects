@@ -4,11 +4,10 @@ declare(strict_types=1);
 namespace FireMidge\Tests\ValueObject\Unit\FloatType;
 
 use FireMidge\ValueObject\Generic\Percentage;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \FireMidge\ValueObject\Generic\Percentage
- */
+#[CoversClass(Percentage::class)]
 class PercentageTest extends TestCase
 {
     public function testMaximumErrorMessage() : void

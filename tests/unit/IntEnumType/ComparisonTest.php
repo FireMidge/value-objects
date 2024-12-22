@@ -8,15 +8,14 @@ use FireMidge\Tests\ValueObject\Unit\Classes\IntEnumType;
 use FireMidge\Tests\ValueObject\Unit\Classes\NumberObject;
 use FireMidge\Tests\ValueObject\Unit\Classes\SimpleFloatType;
 use FireMidge\Tests\ValueObject\Unit\Classes\SimpleIntType;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntEnumType
- */
+#[CoversClass(IntEnumType::class)]
 class ComparisonTest extends TestCase
 {
-
-    public function looselyEqualDataProvider() : array
+    public static function looselyEqualDataProvider() : array
     {
         return [
             [ 1 ],
@@ -31,9 +30,7 @@ class ComparisonTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider looselyEqualDataProvider
-     */
+    #[DataProvider('looselyEqualDataProvider')]
     public function testIsEqualToWithStrictCheckUnsuccessful(mixed $toCompare) : void
     {
         $original = IntEnumType::fromInt(1);
@@ -41,9 +38,7 @@ class ComparisonTest extends TestCase
         $this->assertSame(true, $original->isNotEqualTo($toCompare, true));
     }
 
-    /**
-     * @dataProvider looselyEqualDataProvider
-     */
+    #[DataProvider('looselyEqualDataProvider')]
     public function testIsEqualToWithLooseCheckSuccessful(mixed $toCompare) : void
     {
         $original = IntEnumType::fromInt(1);
@@ -51,9 +46,7 @@ class ComparisonTest extends TestCase
         $this->assertFalse($original->isNotEqualTo($toCompare, false));
     }
 
-    /**
-     * @dataProvider looselyEqualDataProvider
-     */
+    #[DataProvider('looselyEqualDataProvider')]
     public function testIsEqualToUsingStrictCheckByDefault(mixed $toCompare) : void
     {
         $original = IntEnumType::fromInt(1);

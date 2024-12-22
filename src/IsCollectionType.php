@@ -288,7 +288,7 @@ trait IsCollectionType
             $poppedElement = $this->pop();
 
             if ($poppedElement === null) {
-                break;
+                break; // Breaking for performance reasons, as we already know all future pops won't work either
             }
 
             $poppedCards = $poppedCards->withValue($poppedElement);
@@ -317,10 +317,6 @@ trait IsCollectionType
         $numberOfValuesToRemove = $numberOfValuesToKeep < 0
             ? abs($numberOfValuesToKeep)
             : count($this->values) - $numberOfValuesToKeep;
-
-        if ($numberOfValuesToRemove <= 0) {
-            return static::empty();
-        }
 
         return $this->popMultiple($numberOfValuesToRemove)->withReversedOrder();
     }

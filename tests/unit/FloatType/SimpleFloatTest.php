@@ -5,14 +5,14 @@ namespace FireMidge\Tests\ValueObject\Unit\FloatType;
 
 use FireMidge\Tests\ValueObject\Unit\Classes\SimpleFloatType;
 use FireMidge\ValueObject\Exception\InvalidValue;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleFloatType
- */
+#[CoversClass(SimpleFloatType::class)]
 class SimpleFloatTest extends TestCase
 {
-    public function validValueProvider() : array
+    public static function validValueProvider() : array
     {
         return [
             [ 0 ],
@@ -27,44 +27,36 @@ class SimpleFloatTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validValueProvider
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromFloatWithValidValue(float $value) : void
     {
         $instance = SimpleFloatType::fromFloat($value);
         $this->assertSame($value, $instance->toFloat());
     }
 
-    /**
-     * @dataProvider validValueProvider
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromFloatOrNullWithValidValue(float $value) : void
     {
         $instance = SimpleFloatType::fromFloatOrNull($value);
         $this->assertSame($value, $instance->toFloat());
     }
 
-    public function validNumberProvider() : array
+    public static function validNumberProvider() : array
     {
-        return array_merge($this->validValueProvider(), [
+        return array_merge(static::validValueProvider(), [
            [ 10 ],
            [ 255905 ],
         ]);
     }
 
-    /**
-     * @dataProvider validNumberProvider
-     */
+    #[DataProvider('validNumberProvider')]
     public function testFromNumberWithValidValue(float|int $value) : void
     {
         $instance = SimpleFloatType::fromNumber($value);
         $this->assertSame((float) $value, $instance->toFloat());
     }
 
-    /**
-     * @dataProvider validNumberProvider
-     */
+    #[DataProvider('validNumberProvider')]
     public function testFromNumberOrNullWithValidValue(float|int $value) : void
     {
         $instance = SimpleFloatType::fromNumberOrNull($value);
@@ -77,16 +69,14 @@ class SimpleFloatTest extends TestCase
         $this->assertNull($instance);
     }
 
-    /**
-     * @dataProvider validNumberProvider
-     */
+    #[DataProvider('validNumberProvider')]
     public function testFromNumberOrNullWithNull() : void
     {
         $instance = SimpleFloatType::fromNumberOrNull(null);
         $this->assertNull($instance);
     }
 
-    public function invalidValueProvider() : array
+    public static function invalidValueProvider() : array
     {
         return [
             [ -1 ],
@@ -97,26 +87,22 @@ class SimpleFloatTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromFloatWithInvalidValue(float $value) : void
     {
         $this->expectException(InvalidValue::class);
         SimpleFloatType::fromFloat($value);
     }
 
-    public function invalidNumberProvider() : array
+    public static function invalidNumberProvider() : array
     {
-        return array_merge($this->invalidValueProvider(), [
+        return array_merge(static::invalidValueProvider(), [
            [ -10 ],
            [ -1 ],
         ]);
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromFloatWithInvalidValueErrorMessage(float $value) : void
     {
         $this->expectExceptionMessage(sprintf(
@@ -126,18 +112,14 @@ class SimpleFloatTest extends TestCase
         SimpleFloatType::fromFloat($value);
     }
 
-    /**
-     * @dataProvider invalidNumberProvider
-     */
+    #[DataProvider('invalidNumberProvider')]
     public function testFromNumberWithInvalidValue(float|int $value) : void
     {
         $this->expectException(InvalidValue::class);
         SimpleFloatType::fromNumber($value);
     }
 
-    /**
-     * @dataProvider invalidNumberProvider
-     */
+    #[DataProvider('invalidNumberProvider')]
     public function testFromNumberWithInvalidValueErrorMessage(float|int $value) : void
     {
         $this->expectExceptionMessage(sprintf(
@@ -147,27 +129,21 @@ class SimpleFloatTest extends TestCase
         SimpleFloatType::fromNumber($value);
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromFloatOrNullWithInvalidValue(float $value) : void
     {
         $this->expectException(InvalidValue::class);
         SimpleFloatType::fromFloatOrNull($value);
     }
 
-    /**
-     * @dataProvider invalidNumberProvider
-     */
+    #[DataProvider('invalidNumberProvider')]
     public function testFromNumberOrNullWithInvalidValue(float|int $value) : void
     {
         $this->expectException(InvalidValue::class);
         SimpleFloatType::fromNumberOrNull($value);
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromFloatOrNullWithInvalidValueErrorMessage(float $value) : void
     {
         $this->expectExceptionMessage(sprintf(
@@ -177,7 +153,7 @@ class SimpleFloatTest extends TestCase
         SimpleFloatType::fromFloatOrNull($value);
     }
 
-    public function validStringValueProvider() : array
+    public static function validStringValueProvider() : array
     {
         return [
             [ '0', 0.0 ],
@@ -190,18 +166,14 @@ class SimpleFloatTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validStringValueProvider
-     */
+    #[DataProvider('validStringValueProvider')]
     public function testFromStringWithValidValue(string $input, float $output) : void
     {
         $instance = SimpleFloatType::fromString($input);
         $this->assertSame($output, $instance->toFloat());
     }
 
-    /**
-     * @dataProvider validStringValueProvider
-     */
+    #[DataProvider('validStringValueProvider')]
     public function testFromStringOrNullWithValidValue(string $input, float $output) : void
     {
         $instance = SimpleFloatType::fromStringOrNull($input);
@@ -214,7 +186,7 @@ class SimpleFloatTest extends TestCase
         $this->assertNull($instance);
     }
 
-    public function invalidStringValueProvider() : array
+    public static function invalidStringValueProvider() : array
     {
         return [
             [ '', 'Value "" is invalid. (Value is not numeric.)' ],
@@ -225,14 +197,41 @@ class SimpleFloatTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidStringValueProvider
-     */
+    #[DataProvider('invalidStringValueProvider')]
     public function testFromStringWithInvalidValue(string $input, string $expectedMessage) : void
     {
         $this->expectException(InvalidValue::class);
         $this->expectExceptionMessage($expectedMessage);
 
         SimpleFloatType::fromString($input);
+    }
+
+    /**
+     * This is a scenario where the class only has a min value but no max value.
+     */
+    public function testErrorMessageBelowMin() : void
+    {
+        $instance = SimpleFloatType::fromFloat(150);
+
+        $this->expectExceptionMessage(
+            'Cannot subtract value 151 from 150 as it brings the total (-1) below the minimum value of 0'
+        );
+        $instance->subtract(151);
+    }
+
+    public function testCanSubtractUntilMinValue() : void
+    {
+        $instance = SimpleFloatType::fromNumber(150.5);
+        $result = $instance->subtract(150.5);
+
+        $this->assertSame(0.0, $result->toFloat());
+    }
+
+    public function testCanAddUntilMinValue() : void
+    {
+        $instance = SimpleFloatType::fromNumber(150.5);
+        $result = $instance->add(-150.5);
+
+        $this->assertSame(0.0, $result->toFloat());
     }
 }

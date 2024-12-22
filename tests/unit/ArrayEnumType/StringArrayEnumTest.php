@@ -7,14 +7,15 @@ use FireMidge\Tests\ValueObject\Unit\Classes\SimpleObject;
 use FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumType;
 use FireMidge\ValueObject\Exception\InvalidValue;
 use FireMidge\ValueObject\Exception\ValueNotFound;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumType
- */
+#[CoversClass(StringArrayEnumType::class)]
 class StringArrayEnumTest extends TestCase
 {
-    public function validValueProvider() : array
+    public static function validValueProvider() : array
     {
         return [
             [ [] ],
@@ -27,19 +28,14 @@ class StringArrayEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumType::fromArray
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumType::toArray
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromArrayWithValidValue(array $values) : void
     {
         $instance = StringArrayEnumType::fromArray($values);
         $this->assertSame($values, $instance->toArray());
     }
 
-    public function invalidValueProvider() : array
+    public static function invalidValueProvider() : array
     {
         return [
             'asObject' => [
@@ -61,12 +57,7 @@ class StringArrayEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumType::fromArray
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumType::toArray
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromArrayWithInvalidValue(array $values, string $expectedExceptionMessage) : void
     {
         $this->expectException(InvalidValue::class);
@@ -74,10 +65,6 @@ class StringArrayEnumTest extends TestCase
         StringArrayEnumType::fromArray($values);
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumType::withAll
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumType::toArray
-     */
     public function testWithAll() : void
     {
         $instance = StringArrayEnumType::withAll();
@@ -88,17 +75,13 @@ class StringArrayEnumTest extends TestCase
         ], $instance->toArray());
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumType::fromArray
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumType::toArray
-     */
     public function testFromArrayWithEmptyArray() : void
     {
         $instance = StringArrayEnumType::fromArray([]);
         $this->assertSame([], $instance->toArray());
     }
 
-    public function singleValidValueProvider() : array
+    public static function singleValidValueProvider() : array
     {
         return [
             'name' => [ 'name' ],
@@ -107,11 +90,7 @@ class StringArrayEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider singleValidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumType::withValue
-     */
+    #[DataProvider('singleValidValueProvider')]
     public function testWithValueWithValidValue(string $value) : void
     {
         $instance    = StringArrayEnumType::fromArray([
@@ -131,7 +110,7 @@ class StringArrayEnumTest extends TestCase
         ], $instance->toArray(), 'Expected old instance to have remained unchanged');
     }
 
-    public function singleInvalidValueProvider() : array
+    public static function singleInvalidValueProvider() : array
     {
         return [
             'nam'     => ['nam', 'The following values are not valid: "nam". Valid values are: "name", "email", "status"'],
@@ -144,13 +123,8 @@ class StringArrayEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider singleInvalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumType::withValue
-     *
-     * @depends testFromArrayWithEmptyArray
-     */
+    #[DataProvider('singleInvalidValueProvider')]
+    #[Depends('testFromArrayWithEmptyArray')]
     public function testWithValueWithInvalidValue($invalidValue, string $expectedExceptionMessage) : void
     {
         $this->expectException(InvalidValue::class);
@@ -160,7 +134,7 @@ class StringArrayEnumTest extends TestCase
         $instance->withValue($invalidValue);
     }
 
-    public function invalidWithoutValueProvider() : array
+    public static function invalidWithoutValueProvider() : array
     {
         return [
             'invalidOne' => [
@@ -196,11 +170,7 @@ class StringArrayEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidWithoutValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumType::tryWithoutValue
-     */
+    #[DataProvider('invalidWithoutValueProvider')]
     public function testTryWithoutValueWithInvalidValue(
         array $stateBefore,
         $valueToBeRemoved,
@@ -215,7 +185,7 @@ class StringArrayEnumTest extends TestCase
         $instance->tryWithoutValue($valueToBeRemoved);
     }
 
-    public function withoutValidValueProvider() : array
+    public static function withoutValidValueProvider() : array
     {
         return [
             'one' => [
@@ -246,12 +216,7 @@ class StringArrayEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider withoutValidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumType::tryWithoutValue
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumType::toArray
-     */
+    #[DataProvider('withoutValidValueProvider')]
     public function testTryWithoutValueDoesNotChangePreExisting(
         array $stateBefore,
         string $valueToBeRemoved,
@@ -265,10 +230,6 @@ class StringArrayEnumTest extends TestCase
         $this->assertEquals($stateBefore, $instance->toArray(), 'Expected old instance to have remained unchanged');
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumType::withoutValue
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumType::toArray
-     */
     public function testWithoutValueNotThrowingExceptionIfValueDidNotExist() : void
     {
         $instance = StringArrayEnumType::fromArray(['name']);
@@ -277,10 +238,6 @@ class StringArrayEnumTest extends TestCase
         $this->assertEquals(['name'], $newInstance->toArray());
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumType::withoutValue
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumType::toArray
-     */
     public function testWithoutValueThrowingExceptionIfValueInvalid() : void
     {
         $this->expectException(InvalidValue::class);
@@ -290,10 +247,6 @@ class StringArrayEnumTest extends TestCase
         $instance->withoutValue(new SimpleObject('name'));
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumType::contains
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumType::fromArray
-     */
     public function testContains() : void
     {
         $instance = StringArrayEnumType::fromArray([
@@ -306,10 +259,6 @@ class StringArrayEnumTest extends TestCase
         $this->assertFalse($instance->contains('status'), 'Expected not to contain status');
     }
 
-    /**
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumType::contains
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringArrayEnumType::fromArray
-     */
     public function testContainsThrowingError() : void
     {
         $instance = StringArrayEnumType::fromArray([
@@ -324,7 +273,7 @@ class StringArrayEnumTest extends TestCase
         $instance->contains(true);
     }
 
-    public function trimAndLowerCaseProvider() : array
+    public static function trimAndLowerCaseProvider() : array
     {
         return [
             [ '      United KINGDOM    ', 'united kingdom' ],
@@ -336,15 +285,13 @@ class StringArrayEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider trimAndLowerCaseProvider
-     */
+    #[DataProvider('trimAndLowerCaseProvider')]
     public function testTrimAndLowerCase(string $input, string $output) : void
     {
         $this->assertSame($output, StringArrayEnumType::empty()->trimAndLowerCase($input));
     }
 
-    public function trimAndUpperCaseProvider() : array
+    public static function trimAndUpperCaseProvider() : array
     {
         return [
             [ '      United KINGDOM    ', 'UNITED KINGDOM' ],
@@ -356,15 +303,13 @@ class StringArrayEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider trimAndUpperCaseProvider
-     */
+    #[DataProvider('trimAndUpperCaseProvider')]
     public function testTrimAndUpperCase(string $input, string $output) : void
     {
         $this->assertSame($output, StringArrayEnumType::empty()->trimAndUpperCase($input));
     }
 
-    public function trimAndCapitaliseProvider() : array
+    public static function trimAndCapitaliseProvider() : array
     {
         return [
             [ '      United KINGDOM    ', 'United kingdom' ],
@@ -376,9 +321,7 @@ class StringArrayEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider trimAndCapitaliseProvider
-     */
+    #[DataProvider('trimAndCapitaliseProvider')]
     public function testTrimAndCapitalise(string $input, string $output) : void
     {
         $this->assertSame($output, StringArrayEnumType::empty()->trimAndCapitalise($input));

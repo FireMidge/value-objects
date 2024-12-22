@@ -6,6 +6,12 @@ Works with PHP 8.4.
 
 ## v2.7
 
+### Breaking changes
+
+1) `next()` and `previous()` on `IsCollectionType` no longer return a value.
+    - This is because of `\Iterator` requiring `next` to return `void`, and it makes sense for `next` and `previous` to function in the same way.
+
+
 ### Features
 
 1) Added default classes to be able to use some of the traits instantly without having to create an empty new class each time. The classes added are:
@@ -19,9 +25,24 @@ Works with PHP 8.4.
    - `\FireMidge\ValueObject\Generic\Email`
    
 3) New methods on `IsCollectionType`:
-    - Hello
+    - `merge`
+    - `withMerged`
+    - `pop`
+    - `popMultiple`
+    - `split`
+    - `shuffle`
+    - `withReversedOrder`
 
 
+### Improvements
+
+1) Added Psalm annotations in the collection type.
+   - This allows for better IDE-internal type hints for methods like `toArray()`, `first()`, `last()` etc. 
+   - Usage is documented in `README.md`
+2) More specific error messages for adding or subtracting a value from a float or integer type beyond allowed min/max values.
+3) Option to return `$reasons` from a `ConversionError`
+4) `InvalidValue` renders different types better, e.g. non-strings are no longer wrapped in double quotes
+5) Library is tested against **PHP 8.4**. Worked without changes to the code.
 
 
 ## v2.6
