@@ -103,7 +103,7 @@ class DynamicClassCollectionTest extends TestCase
         DynamicClassCollectionType::useClass(IntArrayEnumType::class);
 
         $this->expectException(InvalidValue::class);
-        $this->expectExceptionMessage('The following values are not valid: "44".');
+        $this->expectExceptionMessage('The following values are not valid: 44.');
 
         DynamicClassCollectionType::fromRawArray([
             [11, 44],

@@ -1,13 +1,24 @@
-version: '3.7'
-
 services:
-  lib:
-    image: fire-midge-php-cli-test-8.1
+  lib81:
     build:
-      context: docker
+      context: docker/8.1
+      dockerfile: "Dockerfile"
       args:
         UID: ${USER_ID}
-    container_name: ${LIBRARY_NAME}-lib
+    container_name: ${LIBRARY_NAME}-lib81
+    working_dir: /src
+    volumes:
+      - ./:/src
+    env_file:
+      - .env
+
+  lib84:
+    build:
+      context: docker/8.4
+      dockerfile: "Dockerfile"
+      args:
+        UID: ${USER_ID}
+    container_name: ${LIBRARY_NAME}-lib84
     working_dir: /src
     volumes:
       - ./:/src

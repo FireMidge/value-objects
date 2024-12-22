@@ -51,11 +51,11 @@ class IntArrayEnumTest extends TestCase
             ],
             'invalidInt' => [
                 [ 44 ],
-                'The following values are not valid: "44". Valid values are: "11", "22", "33"'
+                'The following values are not valid: 44. Valid values are: 11, 22, 33'
             ],
             'mixedValidAndInvalid' => [
                 [ 33, 44, 11, 55 ],
-                'The following values are not valid: "44", "55". Valid values are: "11", "22", "33"'
+                'The following values are not valid: 44, 55. Valid values are: 11, 22, 33'
             ],
             'mixedInvalidAndInvalidType' => [
                 [ 33, 44, 11, 22.1 ],
@@ -142,10 +142,10 @@ class IntArrayEnumTest extends TestCase
             '11.1'    => [ 11.1, 'Invalid value. Must be of type "integer" but got "double"' ],
             '11.0001' => [ 11.0001, 'Invalid value. Must be of type "integer" but got "double"' ],
             'float'   => [ (float) 11.001, 'Invalid value. Must be of type "integer" but got "double"' ], // Yep, it comes back as double even when passing float
-            '44'      => [ 44, 'The following values are not valid: "44". Valid values are: "11", "22", "33"' ],
-            '1'       => [ 1, 'The following values are not valid: "1". Valid values are: "11", "22", "33"' ],
-            '0'       => [ 0, 'The following values are not valid: "0". Valid values are: "11", "22", "33"' ],
-            '-11'     => [ -11, 'The following values are not valid: "-11". Valid values are: "11", "22", "33"' ],
+            '44'      => [ 44, 'The following values are not valid: 44. Valid values are: 11, 22, 33' ],
+            '1'       => [ 1, 'The following values are not valid: 1. Valid values are: 11, 22, 33' ],
+            '0'       => [ 0, 'The following values are not valid: 0. Valid values are: 11, 22, 33' ],
+            '-11'     => [ -11, 'The following values are not valid: -11. Valid values are: 11, 22, 33' ],
             'empty'   => [ '', 'Invalid value. Must be of type "integer" but got "string"' ],
             'string'  => [ '11', 'Invalid value. Must be of type "integer" but got "string"' ],
             'bool'    => [ false, 'Invalid value. Must be of type "integer" but got "boolean"' ],

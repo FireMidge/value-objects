@@ -196,7 +196,10 @@ class IntStringMapTest extends TestCase
      */
     public function testFromIntOrNullWithInvalidValueExceptionMessage(int $int) : void
     {
-        $this->expectExceptionMessage(sprintf('Value "%d" is invalid. Must be one of: "1", "2", "3", "4"', $int));
+        $this->expectExceptionMessage(sprintf(
+            'Value %d is invalid. Must be one of: 1, 2, 3, 4',
+            $int
+        ));
         IntStringMapType::fromIntOrNull($int);
     }
 
@@ -218,7 +221,10 @@ class IntStringMapTest extends TestCase
      */
     public function testFromIntWithInvalidValueExceptionMessage(int $int) : void
     {
-        $this->expectExceptionMessage(sprintf('Value "%d" is invalid. Must be one of: "1", "2", "3", "4"', $int));
+        $this->expectExceptionMessage(sprintf(
+            'Value %d is invalid. Must be one of: 1, 2, 3, 4',
+            $int
+        ));
         IntStringMapType::fromInt($int);
     }
 

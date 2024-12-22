@@ -1,6 +1,28 @@
 # v2
 
-Works with PHP 8.1.
+Requires a minimum of PHP 8.1.
+Works with PHP 8.4.
+
+
+## v2.7
+
+### Features
+
+1) Added default classes to be able to use some of the traits instantly without having to create an empty new class each time. The classes added are:
+   - `\FireMidge\ValueObject\Generic\AnyCollection`
+   - `\FireMidge\ValueObject\Generic\AnyFloat`
+   - `\FireMidge\ValueObject\Generic\AnyInteger`
+   - `\FireMidge\ValueObject\Generic\AnyString`
+   
+2) Added default `Percentage` and `Email` classes
+   - `\FireMidge\ValueObject\Generic\Percentage`
+   - `\FireMidge\ValueObject\Generic\Email`
+   
+3) New methods on `IsCollectionType`:
+    - Hello
+
+
+
 
 ## v2.6
 

@@ -22,9 +22,12 @@ class InvalidValue extends OutOfBoundsException
     {
         return new static(
             sprintf(
-                'Value "%s" is invalid. Must be one of: "%s"',
-                (string) $value,
-                implode('", "', $validValues)
+                'Value %s is invalid. Must be one of: %s',
+                static::renderValue($value),
+                implode(', ', array_map(
+                    fn(mixed $validValue) => static::renderValue($validValue),
+                    $validValues
+                ))
             ),
             $code,
             $previous
@@ -40,9 +43,15 @@ class InvalidValue extends OutOfBoundsException
     {
         return new static(
             sprintf(
-                'The following values are not valid: "%s". Valid values are: "%s"',
-                implode('", "', $values),
-                implode('", "', $validValues)
+                'The following values are not valid: %s. Valid values are: %s',
+                implode(', ', array_map(
+                    fn(mixed $value) => static::renderValue($value),
+                    $values
+                )),
+                implode(', ', array_map(
+                    fn(mixed $validValue) => static::renderValue($validValue),
+                    $validValues
+                ))
             ),
             $code,
             $previous
@@ -50,7 +59,7 @@ class InvalidValue extends OutOfBoundsException
     }
 
     public static function invalidValue(
-        $value,
+        mixed $value,
         ?string $message = null,
         int $code = 0,
         ?Throwable $previous = null
@@ -58,8 +67,8 @@ class InvalidValue extends OutOfBoundsException
     {
         return new static(
             sprintf(
-                'Value "%s" is invalid.%s',
-                (string) $value,
+                'Value %s is invalid.%s',
+                static::renderValue($value),
                 $message === null ? '' : sprintf(' (%s)', $message)
             ),
             $code,
@@ -181,7 +190,11 @@ class InvalidValue extends OutOfBoundsException
         );
     }
 
-    public static function invalidValues(array $invalidValues, int $code = 0, ?Throwable $previous = null) : static
+    public static function invalidValues(
+        array $invalidValues,
+        int $code = 0,
+        ?Throwable $previous = null
+    ) : static
     {
         return new static(
             sprintf('The following values are invalid: "%s"', implode('", "', $invalidValues)),
@@ -190,7 +203,12 @@ class InvalidValue extends OutOfBoundsException
         );
     }
 
-    public static function notInstanceOf($value, string $class, int $code = 0, ?Throwable $previous = null) : static
+    public static function notInstanceOf(
+        mixed $value,
+        string $class,
+        int $code = 0,
+        ?Throwable $previous = null
+    ) : static
     {
         $message = is_object($value)
             ? sprintf(
@@ -199,8 +217,9 @@ class InvalidValue extends OutOfBoundsException
                 get_class($value)
             )
             : sprintf(
-                'Invalid value. Must be an object and an instance of "%s"',
-                $class
+                'Invalid value. Must be an object and an instance of "%s"; found type %s',
+                $class,
+                gettype($value)
             );
 
         return new static(
@@ -210,7 +229,12 @@ class InvalidValue extends OutOfBoundsException
         );
     }
 
-    public static function invalidType($value, string $type, int $code = 0, ?Throwable $previous = null) : static
+    public static function invalidType(
+        mixed $value,
+        string $type,
+        int $code = 0,
+        ?Throwable $previous = null
+    ) : static
     {
         return new static(
             sprintf(

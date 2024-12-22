@@ -8,40 +8,47 @@ In order to be able to run tests, go through the following steps to set up the D
 
 
 #### Download and build the Docker image
-`docker-compose build --build-arg UID=`id -u` lib`
+`docker-compose build --build-arg UID=`id -u` lib{v}`
+
+*Replace `{v}` with the relevant PHP version number.*
 
 
 #### Install dependencies
 
-`docker-compose run lib composer install`
+`docker-compose run lib{v} composer install`
+
+*Replace `{v}` with the relevant PHP version number.*
 
 
 ### Run tests
 
 To run mutation tests:
-`docker-compose run lib php infection.phar`
+`docker compose run lib{v} php infection.phar`
 
 To run the unit tests:
-`docker-compose run lib vendor/bin/phpunit`
+`docker compose run lib{v} vendor/bin/phpunit`
 
 To create a code coverage report in HTML style:
-`docker-compose run lib vendor/bin/phpunit --coverage-html ./coverage-report`
+`docker compose run lib{v} vendor/bin/phpunit --coverage-html ./coverage-report`
 
 To create a quick code coverage overview in the CLI:
-`docker-compose run lib vendor/bin/phpunit --coverage-text`
+`docker compose run lib{v} vendor/bin/phpunit --coverage-text`
 
+*Replace `{v}` with the relevant PHP version number.*
 
 #### Run a specific test
 
 To run a specific class, or method, run:
 
-`docker-compose run lib vendor/bin/phpunit --filter testWithValueDoesNotChangePreExisting`
+`docker compose run lib{v} vendor/bin/phpunit --filter testWithValueDoesNotChangePreExisting`
 
 where `testWithValueDoesNotChangePreExisting` is the name of the method. You can also use the name of a class instead.
 
+and `{v}` is the PHP version number.
+
 To run a specific data set (when using data providers), you can use the name of the data set after the `@`, e.g.:
 
-` docker-compose run lib vendor/bin/phpunit --filter testWithValueDoesNotChangePreExisting@invalidNumber`
+` docker compose run lib{v} vendor/bin/phpunit --filter testWithValueDoesNotChangePreExisting@invalidNumber`
 
 where `testWithValueDoesNotChangePreExisting` is the name of the method, and `invalidNumber` is the name of the data set. Note that this only works with non-numeric data set names.
 
@@ -56,7 +63,7 @@ Remember that each test method name needs to start with "test", otherwise it wil
 ### Adding new dev dependencies
 
 Use the --dev option when requiring new dev dependencies via composer:
-`docker-compose run lib composer require --dev phpunit/phpunit ^9`
+`docker compose run lib{v} composer require --dev phpunit/phpunit ^9`
 
 
 ## Commits
@@ -76,7 +83,7 @@ Any slightly more "complex" tasks have been detailed below.
 
 ### Validate composer.json
 
-Run `docker-compose run lib composer validate` to make sure `composer.json` is still valid.
+Run `docker compose run lib composer validate` to make sure `composer.json` is still valid.
 
 
 ### Update CHANGELOG.md
@@ -97,15 +104,15 @@ If there are versions missing in CHANGELOG, add them. These commands should help
 ### Regenerate badges with new code coverage scores
 
 Run this command (but don't forget substituting values with the current values):
-`docker-compose run lib php docs/generateBadges.php --cc=0 --msi=0 --mcc=0 --ccm=0`
+`docker compose run lib php docs/generateBadges.php --cc=0 --msi=0 --mcc=0 --ccm=0`
 
 *Round all percentages to 0 decimals. Round down until .49, round up from .5.*
 
 #### cc
-`cc` is the Code Coverage percentage of covered methods. You get this value by running `docker-compose run lib vendor/bin/phpunit --coverage-text` and taking the "Methods" percentage from the summary section.
+`cc` is the Code Coverage percentage of covered methods. You get this value by running `docker compose run lib vendor/bin/phpunit --coverage-text` and taking the "Methods" percentage from the summary section.
 
 #### msi, mcc, ccm
-All of these values are taken from the Infection summary. Run `docker-compose run lib php infection.phar`, which gives you a "Metrics" section, from which you take the following percentages:
+All of these values are taken from the Infection summary. Run `docker compose run lib php infection.phar`, which gives you a "Metrics" section, from which you take the following percentages:
 
 msi: Mutation Score Indicator
 

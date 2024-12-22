@@ -83,7 +83,7 @@ class IntEnumTest extends TestCase
     public function testFromIntWithInvalidValueErrorMessage(int $value) : void
     {
         $this->expectExceptionMessage(sprintf(
-            'Value "%s" is invalid. Must be one of: "1", "2", "3", "4"',
+            'Value %s is invalid. Must be one of: 1, 2, 3, 4',
             $value
         ));
         IntEnumType::fromInt($value);
@@ -108,8 +108,8 @@ class IntEnumTest extends TestCase
     public function testFromIntOrNullWithInvalidValueErrorMessage(int $value) : void
     {
         $this->expectExceptionMessage(sprintf(
-            'Value "%s" is invalid. Must be one of: "1", "2", "3", "4"',
-            $value
+            'Value %s is invalid. Must be one of: 1, 2, 3, 4',
+            (string) $value
         ));
         IntEnumType::fromIntOrNull($value);
     }
@@ -166,8 +166,8 @@ class IntEnumTest extends TestCase
             [ '87e', 'Value "87e" is invalid. (Value is not numeric.)' ],
             [ '10.0', 'Value "10.0" is invalid. (Value is not an integer. Does not match expected "10".)' ],
             [ '10.5', 'Value "10.5" is invalid. (Value is not an integer. Does not match expected "10".)' ],
-            [ '5', 'Value "5" is invalid. Must be one of: "1", "2", "3", "4"' ],
-            [ '0', 'Value "0" is invalid. Must be one of: "1", "2", "3", "4"' ],
+            [ '5', 'Value 5 is invalid. Must be one of: 1, 2, 3, 4' ],
+            [ '0', 'Value 0 is invalid. Must be one of: 1, 2, 3, 4' ],
         ];
     }
 

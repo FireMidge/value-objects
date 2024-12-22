@@ -57,19 +57,19 @@ class TransformIntArrayEnumTest extends TestCase
         return [
             'floatRoundedDown' => [
                 [ 10.9 ],
-                'The following values are not valid: "10". Valid values are: "11", "22", "33"'
+                'The following values are not valid: 10. Valid values are: 11, 22, 33'
             ],
             'invalidString' => [
                 [ '35' ],
-                'The following values are not valid: "35". Valid values are: "11", "22", "33"'
+                'The following values are not valid: 35. Valid values are: 11, 22, 33'
             ],
             'invalidInt' => [
                 [ 44 ],
-                'The following values are not valid: "44". Valid values are: "11", "22", "33"'
+                'The following values are not valid: 44. Valid values are: 11, 22, 33'
             ],
             'mixedValidAndInvalid' => [
                 [ 33, 44, 11, '55' ],
-                'The following values are not valid: "44", "55". Valid values are: "11", "22", "33"'
+                'The following values are not valid: 44, 55. Valid values are: 11, 22, 33'
             ],
             'mixedInvalidAndInvalidType' => [
                 [ 33, 11, [ 44 ] ],

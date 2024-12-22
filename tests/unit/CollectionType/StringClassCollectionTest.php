@@ -8,6 +8,8 @@ use FireMidge\Tests\ValueObject\Unit\Classes\SimpleStringType;
 use FireMidge\Tests\ValueObject\Unit\Classes\StringClassCollectionType;
 use FireMidge\ValueObject\Exception\InvalidValue;
 use FireMidge\ValueObject\Exception\ValueNotFound;
+use FireMidge\ValueObject\Generic\AnyCollection;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -516,5 +518,92 @@ class StringClassCollectionTest extends TestCase
             'World',
             'hello',
         ], $instance->toStringArray());
+    }
+
+    public static function successfulMergeProvider() : array
+    {
+        return [
+            'sameClass' => [
+                StringClassCollectionType::fromArray([
+                    SimpleStringType::fromString('d'),
+                    SimpleStringType::fromString('z'),
+                    SimpleStringType::fromString('c'),
+                    SimpleStringType::fromString('C'),
+                ])
+            ],
+            'differentClass' => [ AnyCollection::fromArray([
+                SimpleStringType::fromString('d'),
+                SimpleStringType::fromString('z'),
+                SimpleStringType::fromString('c'),
+                SimpleStringType::fromString('C'),
+            ])],
+            'nativeArray' => [[
+                  SimpleStringType::fromString('d'),
+                  SimpleStringType::fromString('z'),
+                  SimpleStringType::fromString('c'),
+                  SimpleStringType::fromString('C'),
+            ]],
+        ];
+    }
+
+    #[DataProvider('successfulMergeProvider')]
+    public function testMergeSuccessful(array|object $coll2) : void
+    {
+        $coll1 = StringClassCollectionType::fromRawArray(['a', 'b', 'c']);
+
+        $coll1->merge($coll2);
+        $this->assertEquals(['a', 'b', 'c', 'd', 'z', 'C'], $coll1->toArray());
+
+        if (is_object($coll2)) {
+            $this->assertEquals(
+                ['d', 'z', 'c', 'C'],
+                method_exists($coll2, 'toStringArray')
+                    ? $coll2->toStringArray()
+                    : $coll2->toArray(),
+                'Expected the other collection to be unchanged'
+            );
+        }
+    }
+
+    #[DataProvider('successfulMergeProvider')]
+    public function testWithMergedSuccessful(array|object $coll2) : void
+    {
+        $coll1 = StringClassCollectionType::fromRawArray(['a', 'b', 'c']);
+
+        $coll3 = $coll1->withMerged($coll2);
+        $this->assertEquals(['a', 'b', 'c', 'd', 'z', 'C'], $coll3->toArray());
+        $this->assertEquals(
+            ['a', 'b', 'c'],
+            $coll1->toArray(),
+            'Source collection should not have been modified'
+        );
+
+        if (is_object($coll2)) {
+            $this->assertEquals(
+                ['d', 'z', 'c', 'C'],
+                method_exists($coll2, 'toStringArray')
+                    ? $coll2->toStringArray()
+                    : $coll2->toArray(),
+                'Expected the other collection to be unmodified'
+            );
+        }
+    }
+
+    public static function unsuccessfulMergeWithInvalidTypeProvider() : array
+    {
+        // These cause errors because the array values are not instances of SimpleString
+        return [
+            [ AnyCollection::fromArray(['d', 'z', 'c', 'C']) ],
+            [ ['d', 'z', 'c', 'C'] ],
+        ];
+    }
+
+    #[DataProvider('unsuccessfulMergeWithInvalidTypeProvider')]
+    public function testMergeUnsuccessfulWithInvalidType(array|object $coll2) : void
+    {
+        $coll1 = StringClassCollectionType::fromRawArray(['a', 'b', 'c']);
+
+        $this->expectExceptionMessage('Invalid value. Must be of type "object" but got "string"');
+        $coll1->merge($coll2);
     }
 }

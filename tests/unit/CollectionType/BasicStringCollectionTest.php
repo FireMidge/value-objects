@@ -99,16 +99,11 @@ class BasicStringCollectionTest extends TestCase
             'Expected the first "current" element to be uno'
         );
 
-        $this->assertSame(
-            'due',
-            $instance->next(),
-            'Expected the next element to be due'
-        );
-
+        $instance->next();
         $this->assertSame(
             'due',
             $instance->current(),
-            'Expected the 2nd "current" element to be due'
+            'Expected the next element to be due'
         );
 
         $instance->next(); // tre
@@ -121,11 +116,7 @@ class BasicStringCollectionTest extends TestCase
             'Expected the 3rd "current" element to be cinque'
         );
 
-        $this->assertSame(
-            'quattro',
-            $instance->previous(),
-            'Expected the previous element to be quattro'
-        );
+        $instance->previous();
 
         $this->assertSame(
             'quattro',
@@ -162,6 +153,45 @@ class BasicStringCollectionTest extends TestCase
         );
     }
 
+    public function testRewindAndKey() : void
+    {
+        $array = ['uno', 'due', 'tre', 'quattro', 'cinque', 'sei', 'sette', 'otto', 'nove', 'dieci'];
+
+        $instance = BasicStringCollectionType::fromArray($array);
+
+        $this->assertSame(0, $instance->key(), 'Expected first key to be 0');
+
+        $instance->next();
+        $instance->next();
+
+        $this->assertSame(
+            'tre',
+            $instance->current(),
+            'Expected current element to return the 3rd element'
+        );
+
+        $this->assertSame(
+            2,
+            $instance->key(),
+            'Expected current key to have moved with the pointer'
+        );
+
+        $instance->rewind();
+
+        $this->assertSame(
+            'uno',
+            $instance->current(),
+            'Expected the current element to be the first one again since we rewound the pointer.'
+        );
+
+        $this->assertSame(0, $instance->key(), 'Expected key to have been rewound as well');
+
+        $this->assertTrue(
+            $instance->valid(),
+            'Expected true because the pointer is still within a valid range'
+        );
+    }
+
     public function testPointersOutsideOfRange() : void
     {
         $array = ['uno', 'due', 'tre', 'quattro', 'cinque', 'sei', 'sette', 'otto', 'nove', 'dieci'];
@@ -174,16 +204,18 @@ class BasicStringCollectionTest extends TestCase
             'Expected the first element to be uno'
         );
 
-        $this->assertNull($instance->previous(), 'Expected element before first not to exist');
+        $instance->previous();
+        $this->assertNull($instance->current(), 'Expected element before first not to exist');
 
         $this->assertSame(
             'dieci',
             $instance->last(),
             'Expected the last element to be dieci.'
         );
+        $this->assertTrue($instance->valid());
 
-        $this->assertNull($instance->next(), 'Expected element after last not to exist');
-
-        $this->assertNull($instance->current(), 'Expected current element outside range not to exist');
+        $instance->next();
+        $this->assertNull($instance->current(), 'Expected element after last not to exist');
+        $this->assertFalse($instance->valid());
     }
 }
