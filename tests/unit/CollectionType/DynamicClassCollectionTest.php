@@ -12,16 +12,17 @@ use FireMidge\Tests\ValueObject\Unit\Classes\SimpleIntType;
 use FireMidge\Tests\ValueObject\Unit\Classes\SimpleStringType;
 use FireMidge\ValueObject\Exception\ConversionError;
 use FireMidge\ValueObject\Exception\InvalidValue;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\DynamicClassCollectionType
- * @covers \FireMidge\ValueObject\Exception\InvalidValue
- * @uses \FireMidge\Tests\ValueObject\Unit\Classes\SimpleIntType
- * @uses \FireMidge\Tests\ValueObject\Unit\Classes\SimpleStringType
- * @uses \FireMidge\Tests\ValueObject\Unit\Classes\SimpleFloatType
- * @uses \FireMidge\Tests\ValueObject\Unit\Classes\IntArrayEnumType
- */
+#[CoversClass(DynamicClassCollectionType::class)]
+#[CoversClass(InvalidValue::class)]
+#[UsesClass(SimpleIntType::class)]
+#[UsesClass(SimpleStringType::class)]
+#[UsesClass(SimpleFloatType::class)]
+#[UsesClass(IntArrayEnumType::class)]
 class DynamicClassCollectionTest extends TestCase
 {
     public function testFromRawValuesArrayWithBoolType() : void
@@ -103,14 +104,14 @@ class DynamicClassCollectionTest extends TestCase
         DynamicClassCollectionType::useClass(IntArrayEnumType::class);
 
         $this->expectException(InvalidValue::class);
-        $this->expectExceptionMessage('The following values are not valid: "44".');
+        $this->expectExceptionMessage('The following values are not valid: 44.');
 
         DynamicClassCollectionType::fromRawArray([
             [11, 44],
         ]);
     }
 
-    public function nonConvertableValueProvider() : array
+    public static function nonConvertableValueProvider() : array
     {
         return [
             [ SimpleIntType::class, 3.1, '3.1' ],
@@ -122,7 +123,7 @@ class DynamicClassCollectionTest extends TestCase
         ];
     }
 
-    public function nonConvertableValueWithoutStringConversionProvider() : array
+    public static function nonConvertableValueWithoutStringConversionProvider() : array
     {
         return [
             [ SimpleIntType::class, 3.0, '3', SimpleIntType::fromInt(3) ],
@@ -131,9 +132,7 @@ class DynamicClassCollectionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider nonConvertableValueProvider
-     */
+    #[DataProvider('nonConvertableValueProvider')]
     public function testFromRawValuesArrayWithNonConvertableValue(
         string $classFqn,
         mixed $value,
@@ -152,9 +151,7 @@ class DynamicClassCollectionTest extends TestCase
         DynamicClassCollectionType::fromRawArray([$value]);
     }
 
-    /**
-     * @dataProvider nonConvertableValueWithoutStringConversionProvider
-     */
+    #[DataProvider('nonConvertableValueWithoutStringConversionProvider')]
     public function testFromRawValuesArrayWithNonConvertableValueAndNoStringConversion(
         string $classFqn,
         mixed $value,
@@ -175,9 +172,7 @@ class DynamicClassCollectionTest extends TestCase
         DynamicClassCollectionType::fromRawArray([$value]);
     }
 
-    /**
-     * @dataProvider nonConvertableValueProvider
-     */
+    #[DataProvider('nonConvertableValueProvider')]
     public function testFromRawValuesArrayWithNonConvertableValueAllowingStringConversion(
         string $classFqn,
         mixed $value,
@@ -198,9 +193,7 @@ class DynamicClassCollectionTest extends TestCase
         DynamicClassCollectionType::allowToStringConversion(false); // Reset
     }
 
-    /**
-     * @dataProvider nonConvertableValueWithoutStringConversionProvider
-     */
+    #[DataProvider('nonConvertableValueWithoutStringConversionProvider')]
     public function testFromRawValuesArrayWhileAllowingStringConversion(
         string $classFqn,
         mixed $value,

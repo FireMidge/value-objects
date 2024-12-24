@@ -7,6 +7,9 @@ use FireMidge\ValueObject\Exception\InvalidValue;
 use FireMidge\ValueObject\Helper\CanTransformStrings;
 use FireMidge\ValueObject\IsCollectionType;
 
+/**
+ * @extends IsCollectionType<string>
+ */
 class StringCollectionType
 {
     use IsCollectionType;
@@ -19,7 +22,7 @@ class StringCollectionType
         }
     }
 
-    protected function transformEach($value)
+    protected function transformEach(mixed $value) : mixed
     {
         if (! is_string($value)) {
             return $value;

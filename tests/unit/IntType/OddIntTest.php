@@ -5,14 +5,14 @@ namespace FireMidge\Tests\ValueObject\Unit\IntType;
 
 use FireMidge\Tests\ValueObject\Unit\Classes\OddIntType;
 use FireMidge\ValueObject\Exception\InvalidValue;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\OddIntType
- */
+#[CoversClass(OddIntType::class)]
 class OddIntTest extends TestCase
 {
-    public function validValueProvider() : array
+    public static function validValueProvider() : array
     {
         return [
             [ 123 ],
@@ -24,31 +24,21 @@ class OddIntTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validValueProvider
-     *
-     * @covers       \FireMidge\Tests\ValueObject\Unit\Classes\OddIntType::fromInt
-     * @covers       \FireMidge\Tests\ValueObject\Unit\Classes\OddIntType::toInt
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromIntWithValidValue(int $value) : void
     {
         $instance = OddIntType::fromInt($value);
         $this->assertSame($value, $instance->toInt());
     }
 
-    /**
-     * @dataProvider validValueProvider
-     *
-     * @covers       \FireMidge\Tests\ValueObject\Unit\Classes\OddIntType::fromIntOrNull
-     * @covers       \FireMidge\Tests\ValueObject\Unit\Classes\OddIntType::toInt
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromIntOrNullWithValidValue(int $value) : void
     {
         $instance = OddIntType::fromIntOrNull($value);
         $this->assertSame($value, $instance->toInt());
     }
 
-    public function invalidValueProvider() : array
+    public static function invalidValueProvider() : array
     {
         return [
             [ -2, 'Only odd values allowed. Value provided: -2' ],
@@ -60,44 +50,28 @@ class OddIntTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\OddIntType::fromInt
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromIntWithInvalidValue(int $value) : void
     {
         $this->expectException(InvalidValue::class);
         OddIntType::fromInt($value);
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\OddIntType::fromInt
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromIntWithInvalidValueErrorMessage(int $value, string $expectedException) : void
     {
         $this->expectExceptionMessage($expectedException);
         OddIntType::fromInt($value);
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\OddIntType::fromIntOrNull
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromIntOrNullWithInvalidValue(int $value) : void
     {
         $this->expectException(InvalidValue::class);
         OddIntType::fromIntOrNull($value);
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\OddIntType::fromIntOrNull
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromIntOrNullWithInvalidValueErrorMessage(int $value, string $expectedException) : void
     {
         $this->expectExceptionMessage($expectedException);

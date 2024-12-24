@@ -4,7 +4,11 @@ declare(strict_types=1);
 namespace FireMidge\Tests\ValueObject\Unit\Classes;
 
 use FireMidge\ValueObject\IsClassArrayEnumType;
+use FireMidge\ValueObject\IsCollectionType;
 
+/**
+ * @extends IsCollectionType<StringEnumType>
+ */
 class StringClassArrayEnumType
 {
     use IsClassArrayEnumType {

@@ -3,25 +3,30 @@ declare(strict_types=1);
 
 namespace FireMidge\Tests\ValueObject\Unit\CollectionType;
 
+use FireMidge\Tests\ValueObject\Unit\Classes\BasicStringCollectionType;
 use FireMidge\Tests\ValueObject\Unit\Classes\SimpleObject;
 use FireMidge\Tests\ValueObject\Unit\Classes\SimpleStringType;
 use FireMidge\Tests\ValueObject\Unit\Classes\StringClassCollectionType;
 use FireMidge\ValueObject\Exception\InvalidValue;
 use FireMidge\ValueObject\Exception\ValueNotFound;
+use FireMidge\ValueObject\Generic\AnyCollection;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
 /**
- * Note: Read TransformIntArrayEnumTest for information on why we're saying that this test also covers BasicStringCollectionType.
+ * Note: Read TransformIntArrayEnumTest for information on why we're saying that this test also covers
+ * BasicStringCollectionType.
  *  It's the same reason as to why we're saying something similar there. (For Infection mutation test coverage.)
- *
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringClassCollectionType
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\BasicStringCollectionType
- * @uses \FireMidge\Tests\ValueObject\Unit\Classes\SimpleStringType
  */
+#[CoversClass(StringClassCollectionType::class)]
+#[CoversClass(BasicStringCollectionType::class)]
+#[UsesClass(SimpleStringType::class)]
 class StringClassCollectionTest extends TestCase
 {
-    public function validValueProvider() : array
+    public static function validValueProvider() : array
     {
         return [
             [ [], [] ],
@@ -44,16 +49,14 @@ class StringClassCollectionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validValueProvider
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromArrayWithValidValue(array $input, array $output) : void
     {
         $instance = StringClassCollectionType::fromArray($input);
         $this->assertEquals($output, $instance->toArray());
     }
 
-    public function invalidValueProvider() : array
+    public static function invalidValueProvider() : array
     {
         return [
             [ [ 1 ], 'Invalid value. Must be of type "object" but got "integer"' ],
@@ -79,9 +82,7 @@ class StringClassCollectionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromArrayWithInvalidValue(array $input, string $errorMessage) : void
     {
         $this->expectException(InvalidValue::class);
@@ -123,7 +124,7 @@ class StringClassCollectionTest extends TestCase
         $this->assertFalse($instance->contains(50));
     }
 
-    public function singleValidValueProvider() : array
+    public static function singleValidValueProvider() : array
     {
         return [
             'name'   => [SimpleStringType::fromString('name')],
@@ -132,9 +133,7 @@ class StringClassCollectionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider singleValidValueProvider
-     */
+    #[DataProvider('singleValidValueProvider')]
     public function testWithValueWithValidValue(SimpleStringType $value) : void
     {
         $instance    = StringClassCollectionType::fromArray([
@@ -172,7 +171,7 @@ class StringClassCollectionTest extends TestCase
         ], $instance->toArray(), 'Expected old instance to have remained unchanged');
     }
 
-    public function singleInvalidValueProvider() : array
+    public static function singleInvalidValueProvider() : array
     {
         return [
             'int'    => [1, 'Invalid value. Must be of type "object" but got "integer"'],
@@ -185,9 +184,7 @@ class StringClassCollectionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider singleInvalidValueProvider
-     */
+    #[DataProvider('singleInvalidValueProvider')]
     public function testWithValueWithInvalidValue($invalidValue, string $expectedExceptionMessage) : void
     {
         $this->expectException(InvalidValue::class);
@@ -199,7 +196,7 @@ class StringClassCollectionTest extends TestCase
         $instance->withValue($invalidValue);
     }
 
-    public function invalidWithoutValueProvider() : array
+    public static function invalidWithoutValueProvider() : array
     {
         return [
             'invalidOne' => [
@@ -236,9 +233,7 @@ class StringClassCollectionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidWithoutValueProvider
-     */
+    #[DataProvider('invalidWithoutValueProvider')]
     public function testTryWithoutValueWithInvalidValue(
         array $stateBefore,
         $valueToBeRemoved,
@@ -253,7 +248,7 @@ class StringClassCollectionTest extends TestCase
         $instance->tryWithoutValue($valueToBeRemoved);
     }
 
-    public function withoutValidValueProvider() : array
+    public static function withoutValidValueProvider() : array
     {
         return [
             'one' => [
@@ -324,9 +319,7 @@ class StringClassCollectionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider withoutValidValueProvider
-     */
+    #[DataProvider('withoutValidValueProvider')]
     public function testTryWithoutValueDoesNotChangePreExisting(
         array $stateBefore,
         SimpleStringType $valueToBeRemoved,
@@ -516,5 +509,102 @@ class StringClassCollectionTest extends TestCase
             'World',
             'hello',
         ], $instance->toStringArray());
+    }
+
+    public static function successfulMergeProvider() : array
+    {
+        return [
+            'sameClass' => [
+                StringClassCollectionType::fromArray([
+                    SimpleStringType::fromString('d'),
+                    SimpleStringType::fromString('z'),
+                    SimpleStringType::fromString('c'),
+                    SimpleStringType::fromString('C'),
+                ])
+            ],
+            'differentClass' => [ AnyCollection::fromArray([
+                SimpleStringType::fromString('d'),
+                SimpleStringType::fromString('z'),
+                SimpleStringType::fromString('c'),
+                SimpleStringType::fromString('C'),
+            ])],
+            'nativeArray' => [[
+                  SimpleStringType::fromString('d'),
+                  SimpleStringType::fromString('z'),
+                  SimpleStringType::fromString('c'),
+                  SimpleStringType::fromString('C'),
+            ]],
+        ];
+    }
+
+    #[DataProvider('successfulMergeProvider')]
+    public function testMergeSuccessful(array|object $coll2) : void
+    {
+        $coll1 = StringClassCollectionType::fromRawArray(['a', 'b', 'c']);
+
+        $coll1->merge($coll2);
+        $this->assertEquals(['a', 'b', 'c', 'd', 'z', 'C'], $coll1->toArray());
+
+        if (is_object($coll2)) {
+            $this->assertEquals(
+                ['d', 'z', 'c', 'C'],
+                method_exists($coll2, 'toStringArray')
+                    ? $coll2->toStringArray()
+                    : $coll2->toArray(),
+                'Expected the other collection to be unchanged'
+            );
+        }
+    }
+
+    #[DataProvider('successfulMergeProvider')]
+    public function testWithMergedSuccessful(array|object $coll2) : void
+    {
+        $coll1 = StringClassCollectionType::fromRawArray(['a', 'b', 'c']);
+
+        $coll3 = $coll1->withMerged($coll2);
+        $this->assertEquals(['a', 'b', 'c', 'd', 'z', 'C'], $coll3->toArray());
+        $this->assertEquals(
+            ['a', 'b', 'c'],
+            $coll1->toArray(),
+            'Source collection should not have been modified'
+        );
+
+        if (is_object($coll2)) {
+            $this->assertEquals(
+                ['d', 'z', 'c', 'C'],
+                method_exists($coll2, 'toStringArray')
+                    ? $coll2->toStringArray()
+                    : $coll2->toArray(),
+                'Expected the other collection to be unmodified'
+            );
+        }
+    }
+
+    public static function unsuccessfulMergeWithInvalidTypeProvider() : array
+    {
+        // These cause errors because the array values are not instances of SimpleString
+        return [
+            [ AnyCollection::fromArray(['d', 'z', 'c', 'C']) ],
+            [ ['d', 'z', 'c', 'C'] ],
+        ];
+    }
+
+    #[DataProvider('unsuccessfulMergeWithInvalidTypeProvider')]
+    public function testMergeUnsuccessfulWithInvalidType(array|object $coll2) : void
+    {
+        $coll1 = StringClassCollectionType::fromRawArray(['a', 'b', 'c']);
+
+        $this->expectExceptionMessage('Invalid value. Must be of type "object" but got "string"');
+        $coll1->merge($coll2);
+    }
+
+    public function testContainsWithFqn() : void
+    {
+        $coll = StringClassCollectionType::fromArray([
+            SimpleStringType::fromString('Summer')
+        ]);
+
+        $this->expectExceptionMessage('Invalid value. Must be of type "object" but got "string"');
+        $coll->contains(SimpleStringType::class);
     }
 }

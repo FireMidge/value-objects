@@ -5,14 +5,14 @@ namespace FireMidge\Tests\ValueObject\Unit\IntType;
 
 use FireMidge\Tests\ValueObject\Unit\Classes\SimpleIntType;
 use FireMidge\ValueObject\Exception\InvalidValue;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleIntType
- */
+#[CoversClass(SimpleIntType::class)]
 class SimpleIntTest extends TestCase
 {
-    public function validValueProvider() : array
+    public static function validValueProvider() : array
     {
         return [
             [ 0 ],
@@ -22,18 +22,14 @@ class SimpleIntTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validValueProvider
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromIntWithValidValue(int $value) : void
     {
         $instance = SimpleIntType::fromInt($value);
         $this->assertSame($value, $instance->toInt());
     }
 
-    /**
-     * @dataProvider validValueProvider
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromIntOrNullWithValidValue(int $value) : void
     {
         $instance = SimpleIntType::fromIntOrNull($value);
@@ -46,7 +42,7 @@ class SimpleIntTest extends TestCase
         $this->assertNull($instance);
     }
 
-    public function invalidValueProvider() : array
+    public static function invalidValueProvider() : array
     {
         return [
             [ -1 ],
@@ -54,18 +50,14 @@ class SimpleIntTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromIntWithInvalidValue(int $value) : void
     {
         $this->expectException(InvalidValue::class);
         SimpleIntType::fromInt($value);
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromIntWithInvalidValueErrorMessage(int $value) : void
     {
         $this->expectExceptionMessage(sprintf(
@@ -75,18 +67,14 @@ class SimpleIntTest extends TestCase
         SimpleIntType::fromInt($value);
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromIntOrNullWithInvalidValue(int $value) : void
     {
         $this->expectException(InvalidValue::class);
         SimpleIntType::fromIntOrNull($value);
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromIntOrNullWithInvalidValueErrorMessage(int $value) : void
     {
         $this->expectExceptionMessage(sprintf(
@@ -96,7 +84,7 @@ class SimpleIntTest extends TestCase
         SimpleIntType::fromIntOrNull($value);
     }
 
-    public function validStringValueProvider() : array
+    public static function validStringValueProvider() : array
     {
         return [
             [ '0', 0 ],
@@ -106,18 +94,14 @@ class SimpleIntTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validStringValueProvider
-     */
+    #[DataProvider('validStringValueProvider')]
     public function testFromStringWithValidValue(string $input, int $output) : void
     {
         $instance = SimpleIntType::fromString($input);
         $this->assertSame($output, $instance->toInt());
     }
 
-    /**
-     * @dataProvider validStringValueProvider
-     */
+    #[DataProvider('validStringValueProvider')]
     public function testFromStringOrNullWithValidValue(string $input, int $output) : void
     {
         $instance = SimpleIntType::fromStringOrNull($input);
@@ -130,7 +114,7 @@ class SimpleIntTest extends TestCase
         $this->assertSame(null, $instance);
     }
 
-    public function invalidStringValueProvider() : array
+    public static function invalidStringValueProvider() : array
     {
         return [
             [ '', 'Value "" is invalid. (Value is not numeric.)' ],
@@ -142,14 +126,41 @@ class SimpleIntTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidStringValueProvider
-     */
+    #[DataProvider('invalidStringValueProvider')]
     public function testFromStringWithInvalidValue(string $input, string $expectedMessage) : void
     {
         $this->expectException(InvalidValue::class);
         $this->expectExceptionMessage($expectedMessage);
 
         SimpleIntType::fromString($input);
+    }
+
+    /**
+     * This is a scenario where the class only has a min value but no max value.
+     */
+    public function testErrorMessageBelowMin() : void
+    {
+        $instance = SimpleIntType::fromInt(150);
+
+        $this->expectExceptionMessage(
+            'Cannot subtract value 151 from 150 as it brings the total (-1) below the minimum value of 0'
+        );
+        $instance->subtract(151);
+    }
+
+    public function testCanSubtractUntilMinValue() : void
+    {
+        $instance = SimpleIntType::fromInt(150);
+        $result = $instance->subtract(150);
+
+        $this->assertSame(0, $result->toInt());
+    }
+
+    public function testCanAddUntilMinValue() : void
+    {
+        $instance = SimpleIntType::fromInt(150);
+        $result = $instance->add(-150);
+
+        $this->assertSame(0, $result->toInt());
     }
 }

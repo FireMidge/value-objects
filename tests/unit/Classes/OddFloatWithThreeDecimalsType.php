@@ -17,7 +17,9 @@ class OddFloatWithThreeDecimalsType
 
     protected function validate(float $value) : void
     {
-        if ($value % 2 === 0) {
+        // Using the modulus operand (%) only works with integers. Floats are implicitly cast to integers.
+        // fmod() allows us to keep the values as a float without integer conversion.
+        if (fmod($value, 2.0) === 0.0) {
             throw new InvalidValue(sprintf('Only odd values allowed. Value provided: "%g"', $value));
         }
     }

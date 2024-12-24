@@ -3,23 +3,24 @@ declare(strict_types=1);
 
 namespace FireMidge\Tests\ValueObject\Unit\CollectionType;
 
+use FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType;
 use FireMidge\Tests\ValueObject\Unit\Classes\MinMaxIntType;
 use FireMidge\Tests\ValueObject\Unit\Classes\OddIntType;
 use FireMidge\Tests\ValueObject\Unit\Classes\SimpleIntType;
 use FireMidge\Tests\ValueObject\Unit\Classes\SimpleObject;
-use FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType;
 use FireMidge\ValueObject\Exception\InvalidValue;
 use FireMidge\ValueObject\Exception\ValueNotFound;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
-/**
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\IntVOCollectionType
- * @uses \FireMidge\Tests\ValueObject\Unit\Classes\MinMaxIntType
- */
+#[CoversClass(IntVOCollectionType::class)]
+#[UsesClass(MinMaxIntType::class)]
 class IntVOCollectionTest extends TestCase
 {
-    public function validValueProvider() : array
+    public static function validValueProvider() : array
     {
         return [
             [ [], [] ],
@@ -29,16 +30,14 @@ class IntVOCollectionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validValueProvider
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromArrayWithValidValue(array $values) : void
     {
         $instance = IntVOCollectionType::fromArray($values);
         $this->assertSame($values, $instance->toArray());
     }
 
-    public function invalidValueProvider() : array
+    public static function invalidValueProvider() : array
     {
         return [
             [ [ 1 ], 'Invalid value. Must be an object and an instance of "FireMidge\Tests\ValueObject\Unit\Classes\MinMaxIntType"' ],
@@ -51,9 +50,7 @@ class IntVOCollectionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromArrayWithInvalidValue(array $input, string $errorMessage) : void
     {
         $this->expectException(InvalidValue::class);
@@ -103,7 +100,7 @@ class IntVOCollectionTest extends TestCase
         $this->assertFalse($instance->contains(400));
     }
 
-    public function singleValidValueProvider() : array
+    public static function singleValidValueProvider() : array
     {
         return [
             '400' => [ MinMaxIntType::fromInt(400) ],
@@ -112,9 +109,7 @@ class IntVOCollectionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider singleValidValueProvider
-     */
+    #[DataProvider('singleValidValueProvider')]
     public function testWithValueWithValidValue(MinMaxIntType $value) : void
     {
         $instance    = IntVOCollectionType::fromArray([
@@ -137,7 +132,7 @@ class IntVOCollectionTest extends TestCase
         ], $instance->toArray(), 'Expected old instance to have remained unchanged');
     }
 
-    public function singleInvalidValueProvider() : array
+    public static function singleInvalidValueProvider() : array
     {
         return [
             'string' => [
@@ -160,9 +155,7 @@ class IntVOCollectionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider singleInvalidValueProvider
-     */
+    #[DataProvider('singleInvalidValueProvider')]
     public function testWithValueWithInvalidValue($invalidValue, string $expectedExceptionMessage) : void
     {
         $this->expectException(InvalidValue::class);
@@ -174,7 +167,7 @@ class IntVOCollectionTest extends TestCase
         $instance->withValue($invalidValue);
     }
 
-    public function invalidWithoutValueProvider() : array
+    public static function invalidWithoutValueProvider() : array
     {
         return [
             'invalidOne' => [
@@ -217,9 +210,7 @@ class IntVOCollectionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidWithoutValueProvider
-     */
+    #[DataProvider('invalidWithoutValueProvider')]
     public function testTryWithoutValueWithInvalidValue(
         array $stateBefore,
         $valueToBeRemoved,
@@ -234,7 +225,7 @@ class IntVOCollectionTest extends TestCase
         $instance->tryWithoutValue($valueToBeRemoved);
     }
 
-    public function withoutValidValueProvider() : array
+    public static function withoutValidValueProvider() : array
     {
         return [
             'one' => [
@@ -265,9 +256,7 @@ class IntVOCollectionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider withoutValidValueProvider
-     */
+    #[DataProvider('withoutValidValueProvider')]
     public function testTryWithoutValueDoesNotChangePreExisting(
         array $stateBefore,
         MinMaxIntType $valueToBeRemoved,
@@ -419,7 +408,7 @@ class IntVOCollectionTest extends TestCase
         $this->assertTrue($instance1->isNotEqualTo($array), 'isNotEqualTo with strict check');
     }
 
-    public function notEqualProvider() : array
+    public static function notEqualProvider() : array
     {
         return [
             'differentCount'  => [[MinMaxIntType::fromInt(402)]],
@@ -427,9 +416,7 @@ class IntVOCollectionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider notEqualProvider
-     */
+    #[DataProvider('notEqualProvider')]
     public function testIsEqualToArrayNotEqual(array $valuesToCompareTo) : void
     {
         $instance1 = IntVOCollectionType::fromArray([
@@ -444,9 +431,7 @@ class IntVOCollectionTest extends TestCase
         $this->assertTrue($instance1->isNotEqualTo($valuesToCompareTo), 'isNotEqualTo with strict check');
     }
 
-    /**
-     * @dataProvider notEqualProvider
-     */
+    #[DataProvider('notEqualProvider')]
     public function testIsEqualToStandardObjectNotEqual(array $valuesToCompareTo) : void
     {
         $instance1 = IntVOCollectionType::fromArray([

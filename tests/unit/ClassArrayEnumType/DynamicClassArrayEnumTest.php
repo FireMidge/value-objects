@@ -7,12 +7,11 @@ use FireMidge\Tests\ValueObject\Unit\Classes\CustomEnumType;
 use FireMidge\Tests\ValueObject\Unit\Classes\CustomEnumWithPrivateAllType;
 use FireMidge\Tests\ValueObject\Unit\Classes\DynamicClassArrayEnumType;
 use FireMidge\Tests\ValueObject\Unit\Classes\SimpleObject;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
-/**
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\DynamicClassArrayEnumType
- */
+#[CoversClass(DynamicClassArrayEnumType::class)]
 class DynamicClassArrayEnumTest extends TestCase
 {
     public function testAllMethodNotImplemented() : void

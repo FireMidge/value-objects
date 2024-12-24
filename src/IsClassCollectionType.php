@@ -9,6 +9,9 @@ use FireMidge\ValueObject\Helper\CanCreateInstance;
 /**
  * A trait for creating a type where each value must be an instance of a class,
  * and there is no fixed set of valid values.
+ *
+ * @template T of object
+ * @extends IsCollectionType<T>
  */
 trait IsClassCollectionType
 {
@@ -48,6 +51,7 @@ trait IsClassCollectionType
 
     /**
      * Returns the FQN of the class that each value of this collection needs to be an instance of.
+     * @returns class-string<T>
      */
     abstract protected static function className() : string;
 
@@ -62,9 +66,9 @@ trait IsClassCollectionType
     /**
      * Override this to gain more control over the conversion.
      *
-     * @param mixed $value  The raw value to convert into the target class.
+     * @param mixed $value The raw value to convert into the target class.
      *
-     * @return object  An instance of the target class. Has to equal the class returned by static::className().
+     * @return T An instance of the target class. Has to equal the class returned by static::className().
      */
     protected static function convertFromRaw(mixed $value) : object
     {

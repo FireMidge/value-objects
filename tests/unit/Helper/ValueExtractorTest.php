@@ -11,19 +11,19 @@ use FireMidge\Tests\ValueObject\Unit\Classes\SimpleNonConvertableObject;
 use FireMidge\Tests\ValueObject\Unit\Classes\SimpleObject;
 use FireMidge\Tests\ValueObject\Unit\Classes\SimpleStringType;
 use FireMidge\Tests\ValueObject\Unit\Classes\SimpleTextObject;
-use FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType;
 use FireMidge\Tests\ValueObject\Unit\Classes\ValueExtractor;
 use FireMidge\ValueObject\Exception\ConversionError;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Tests CanExtractValueOfType trait.
- *
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ValueExtractor
  */
+#[CoversClass(ValueExtractor::class)]
 class ValueExtractorTest extends TestCase
 {
-    public function stringValueProvider() : array
+    public static function stringValueProvider() : array
     {
         return [
             'isStringValue' => ['Aquí hay algun texto', 'Aquí hay algun texto'],
@@ -36,9 +36,7 @@ class ValueExtractorTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider stringValueProvider
-     */
+    #[DataProvider('stringValueProvider')]
     public function testGetStringValueSuccessful(mixed $input, string $extractedText) : void
     {
         $this->assertSame($extractedText, (new ValueExtractor())->getStringValueOfOther($input));
@@ -57,7 +55,7 @@ class ValueExtractorTest extends TestCase
         (new ValueExtractor())->getStringValueOfOther($instance);
     }
 
-    public function intValueProvider() : array
+    public static function intValueProvider() : array
     {
         return [
             'isIntValue'    => [15, 15],
@@ -70,9 +68,7 @@ class ValueExtractorTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider intValueProvider
-     */
+    #[DataProvider('intValueProvider')]
     public function testGetIntValueSuccessful(mixed $input, int $extractedInt) : void
     {
         $this->assertSame($extractedInt, (new ValueExtractor())->getIntValueOfOther($input));
@@ -91,7 +87,7 @@ class ValueExtractorTest extends TestCase
         (new ValueExtractor())->getIntValueOfOther($instance);
     }
 
-    public function floatValueProvider() : array
+    public static function floatValueProvider() : array
     {
         return [
             'isFloatValue1' => [16.8, 16.8],
@@ -105,9 +101,7 @@ class ValueExtractorTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider floatValueProvider
-     */
+    #[DataProvider('floatValueProvider')]
     public function testGetFloatValueSuccessful(mixed $input, float $extractedFloat) : void
     {
         $this->assertSame($extractedFloat, (new ValueExtractor())->getFloatValueOfOther($input));

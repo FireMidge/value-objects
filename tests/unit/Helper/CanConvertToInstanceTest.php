@@ -15,12 +15,13 @@ use FireMidge\Tests\ValueObject\Unit\Classes\SimpleObject;
 use FireMidge\Tests\ValueObject\Unit\Classes\SimpleStringType;
 use FireMidge\Tests\ValueObject\Unit\Classes\StringClassArrayEnumType;
 use FireMidge\ValueObject\Exception\ConversionError;
+use FireMidge\ValueObject\Generic\AnyFloat;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringClassArrayEnumType
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\DynamicClassArrayEnumType
- */
+#[CoversClass(StringClassArrayEnumType::class)]
+#[CoversClass(DynamicClassArrayEnumType::class)]
 class CanConvertToInstanceTest extends TestCase
 {
     public function testConvertIntoInstance1() : void
@@ -82,6 +83,18 @@ class CanConvertToInstanceTest extends TestCase
         );
     }
 
+    public function testConvertFloatIntoBoolInstanceErrors() : void
+    {
+        $this->expectExceptionMessage('Could not convert value 7.1 to FireMidge\Tests\ValueObject\Unit\Classes\BoolType.');
+        StringClassArrayEnumType::convertIntoInstance(7.1, BoolType::class);
+    }
+
+    public function testConvertStringIntoFloatInstanceErrors() : void
+    {
+        $this->expectExceptionMessage('Could not convert value true to FireMidge\ValueObject\Generic\AnyFloat.');
+        StringClassArrayEnumType::convertIntoInstance(true, AnyFloat::class);
+    }
+
     public function testFailedConversion() : void
     {
         $this->expectException(ConversionError::class);
@@ -111,7 +124,7 @@ class CanConvertToInstanceTest extends TestCase
         DynamicClassArrayEnumType::allowToStringConversion(false); // Reset
     }
 
-    public function invalidValueForStringConversionProvider() : array
+    public static function invalidValueForStringConversionProvider() : array
     {
         return [
             [false, 'false'],
@@ -120,9 +133,7 @@ class CanConvertToInstanceTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidValueForStringConversionProvider
-     */
+    #[DataProvider('invalidValueForStringConversionProvider')]
     public function testAllowStringConversionWithInvalidValue(mixed $value, string $expectedTypeInError) : void
     {
         DynamicClassArrayEnumType::useClass(IntEnumType::class);

@@ -7,15 +7,17 @@ use FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType;
 use FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType;
 use FireMidge\ValueObject\Exception\DuplicateValue;
 use FireMidge\ValueObject\Exception\InvalidValue;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Depends;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringVOArrayEnumType
- * @uses \FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType
- */
+#[CoversClass(StringVOArrayEnumType::class)]
+#[UsesClass(StringEnumType::class)]
 class StringVOArrayEnumTest extends TestCase
 {
-    public function validValueProvider() : array
+    public static function validValueProvider() : array
     {
         return [
             [ [] ],
@@ -28,16 +30,14 @@ class StringVOArrayEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validValueProvider
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromArrayWithValidValue(array $values) : void
     {
         $instance = StringVOArrayEnumType::fromArray($values);
         $this->assertSame($values, $instance->toArray());
     }
 
-    public function invalidValueProvider() : array
+    public static function invalidValueProvider() : array
     {
         return [
             'springAsString' => [
@@ -47,9 +47,7 @@ class StringVOArrayEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromArrayWithInvalidValue(array $values, string $expectedExceptionMessage) : void
     {
         $this->expectException(InvalidValue::class);
@@ -87,7 +85,7 @@ class StringVOArrayEnumTest extends TestCase
         $this->assertSame([], $instance->toArray());
     }
 
-    public function singleValidValueProvider() : array
+    public static function singleValidValueProvider() : array
     {
         return [
             'summer' => [ StringEnumType::summer(), ],
@@ -96,11 +94,8 @@ class StringVOArrayEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider singleValidValueProvider
-     *
-     * @depends testFromArrayWithEmptyArray
-     */
+    #[DataProvider('singleValidValueProvider')]
+    #[Depends('testFromArrayWithEmptyArray')]
     public function testWithValueWithValidValue(StringEnumType $value) : void
     {
         $instance    = StringVOArrayEnumType::fromArray([

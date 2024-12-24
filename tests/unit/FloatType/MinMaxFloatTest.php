@@ -5,14 +5,17 @@ namespace FireMidge\Tests\ValueObject\Unit\FloatType;
 
 use FireMidge\Tests\ValueObject\Unit\Classes\MinMaxFloatType;
 use FireMidge\ValueObject\Exception\InvalidValue;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \FireMidge\Tests\ValueObject\Unit\Classes\MinMaxFloatType
  */
+#[CoversClass(MinMaxFloatType::class)]
 class MinMaxFloatTest extends TestCase
 {
-    public function validValueProvider() : array
+    public static function validValueProvider() : array
     {
         return [
             [ 11.111 ],
@@ -26,31 +29,21 @@ class MinMaxFloatTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validValueProvider
-     *
-     * @covers       \FireMidge\Tests\ValueObject\Unit\Classes\MinMaxFloatType::fromFloat
-     * @covers       \FireMidge\Tests\ValueObject\Unit\Classes\MinMaxFloatType::toFloat
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromFloatWithValidValue(float $value) : void
     {
         $instance = MinMaxFloatType::fromFloat($value);
         $this->assertSame($value, $instance->toFloat());
     }
 
-    /**
-     * @dataProvider validValueProvider
-     *
-     * @covers       \FireMidge\Tests\ValueObject\Unit\Classes\MinMaxFloatType::fromFloatOrNull
-     * @covers       \FireMidge\Tests\ValueObject\Unit\Classes\MinMaxFloatType::toFloat
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromFloatOrNullWithValidValue(float $value) : void
     {
         $instance = MinMaxFloatType::fromFloatOrNull($value);
         $this->assertSame($value, $instance->toFloat());
     }
 
-    public function invalidValueProvider() : array
+    public static function invalidValueProvider() : array
     {
         return [
             [ -1, 'Value must be higher than or equal to 11.111, value provided is -1' ],
@@ -67,44 +60,28 @@ class MinMaxFloatTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\MinMaxFloatType::fromFloat
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromFloatWithInvalidValue(float $value) : void
     {
         $this->expectException(InvalidValue::class);
         MinMaxFloatType::fromFloat($value);
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\MinMaxFloatType::fromFloat
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromFloatWithInvalidValueErrorMessage(float $value, string $expectedException) : void
     {
         $this->expectExceptionMessage($expectedException);
         MinMaxFloatType::fromFloat($value);
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\MinMaxFloatType::fromFloatOrNull
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromFloatOrNullWithInvalidValue(float $value) : void
     {
         $this->expectException(InvalidValue::class);
         MinMaxFloatType::fromFloatOrNull($value);
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     *
-     * @covers \FireMidge\Tests\ValueObject\Unit\Classes\MinMaxFloatType::fromFloatOrNull
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromFloatOrNullWithInvalidValueErrorMessage(float $value, string $expectedException) : void
     {
         $this->expectExceptionMessage($expectedException);

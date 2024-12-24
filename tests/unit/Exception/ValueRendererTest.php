@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace FireMidge\Tests\ValueObject\Unit\Exception;
 
 use FireMidge\Tests\ValueObject\Unit\Classes\ValueRenderer;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -11,6 +13,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ValueRenderer
  */
+#[CoversClass(ValueRenderer::class)]
 class ValueRendererTest extends TestCase
 {
     public function testRendersMultiDimensionalStringArray() : void
@@ -29,7 +32,7 @@ class ValueRendererTest extends TestCase
         );
     }
 
-    public function simpleScalarValueProviders() : array
+    public static function simpleScalarValueProvider() : array
     {
         return [
             [true, 'true'],
@@ -42,9 +45,7 @@ class ValueRendererTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider simpleScalarValueProviders
-     */
+    #[DataProvider('simpleScalarValueProvider')]
     public function testRendersSimpleScalarValues(mixed $input, string $expected) : void
     {
         $this->assertSame(

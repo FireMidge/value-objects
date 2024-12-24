@@ -15,9 +15,7 @@ use FireMidge\ValueObject\Helper\CanTransformStrings;
  * You can override areValuesUnique() to return true, which means any strings passed to this class
  * must be unique.
  *
- * @method static withValue(string $addedValue)
- * @method static tryWithoutValue(string $value)
- * @method static contains(string $value)
+ * @extends IsCollectionType<string>
  */
 trait IsStringArrayEnumType
 {

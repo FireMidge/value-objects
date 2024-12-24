@@ -3,8 +3,11 @@ declare(strict_types=1);
 
 namespace FireMidge\Tests\ValueObject\Unit\ArrayEnumType;
 
+use FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType;
 use FireMidge\Tests\ValueObject\Unit\Classes\TransformIntArrayEnumType;
 use FireMidge\ValueObject\Exception\InvalidValue;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -22,13 +25,12 @@ use PHPUnit\Framework\TestCase;
  *
  * So, we're saying that ObjectArrayEnumType, which directly includes IsArrayEnumType, is covered here,
  * but only to "trick" Infection, as it won't recognise it in the conventional way.
- *
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\TransformIntArrayEnumType
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\ObjectArrayEnumType
  */
+#[CoversClass(TransformIntArrayEnumType::class)]
+#[CoversClass(ObjectArrayEnumType::class)]
 class TransformIntArrayEnumTest extends TestCase
 {
-    public function validValueProvider() : array
+    public static function validValueProvider() : array
     {
         return [
             [ [], [] ],
@@ -43,33 +45,31 @@ class TransformIntArrayEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validValueProvider
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromArrayWithValidValue(array $input, array $output) : void
     {
         $instance = TransformIntArrayEnumType::fromArray($input);
         $this->assertSame($output, $instance->toArray());
     }
 
-    public function invalidValueProvider() : array
+    public static function invalidValueProvider() : array
     {
         return [
             'floatRoundedDown' => [
                 [ 10.9 ],
-                'The following values are not valid: "10". Valid values are: "11", "22", "33"'
+                'The following values are not valid: 10. Valid values are: 11, 22, 33'
             ],
             'invalidString' => [
                 [ '35' ],
-                'The following values are not valid: "35". Valid values are: "11", "22", "33"'
+                'The following values are not valid: 35. Valid values are: 11, 22, 33'
             ],
             'invalidInt' => [
                 [ 44 ],
-                'The following values are not valid: "44". Valid values are: "11", "22", "33"'
+                'The following values are not valid: 44. Valid values are: 11, 22, 33'
             ],
             'mixedValidAndInvalid' => [
                 [ 33, 44, 11, '55' ],
-                'The following values are not valid: "44", "55". Valid values are: "11", "22", "33"'
+                'The following values are not valid: 44, 55. Valid values are: 11, 22, 33'
             ],
             'mixedInvalidAndInvalidType' => [
                 [ 33, 11, [ 44 ] ],
@@ -78,9 +78,7 @@ class TransformIntArrayEnumTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromArrayWithInvalidValue(array $values, string $expectedExceptionMessage) : void
     {
         $this->expectException(InvalidValue::class);

@@ -12,9 +12,7 @@ use FireMidge\ValueObject\Exception\InvalidValue;
  * You can override areValuesUnique() to return true, which means any integers passed to this class
  * must be unique.
  *
- * @method static withValue(int $addedValue)
- * @method static tryWithoutValue(int $value)
- * @method static contains(int $value)
+ * @extends IsCollectionType<int>
  */
 trait IsIntArrayEnumType
 {

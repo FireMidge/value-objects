@@ -7,11 +7,13 @@ use FireMidge\Tests\ValueObject\Unit\Classes\IntEnumType;
 use FireMidge\Tests\ValueObject\Unit\Classes\StringClassArrayEnumType;
 use FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType;
 use FireMidge\ValueObject\Exception\InvalidValue;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \FireMidge\Tests\ValueObject\Unit\Classes\StringClassArrayEnumType
  */
+#[CoversClass(StringClassArrayEnumType::class)]
 class StringClassArrayEnumTest extends TestCase
 {
     public function testWithAll() : void

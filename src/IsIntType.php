@@ -101,6 +101,7 @@ trait IsIntType
      */
     public function add(int|float|object $valueToAdd) : static
     {
+        $this->checkMinMaxValues($valueToAdd, 'add');
         return static::fromInt($this->toInt() + $this->getIntValueOfOther($valueToAdd));
     }
 
@@ -109,6 +110,7 @@ trait IsIntType
      */
     public function subtract(int|float|object $valueToSubtract) : static
     {
+        $this->checkMinMaxValues($valueToSubtract, 'subtract');
         return static::fromInt($this->toInt() - $this->getIntValueOfOther($valueToSubtract));
     }
 
@@ -190,6 +192,14 @@ trait IsIntType
         return $this->value;
     }
 
+    /**
+     * This allows you to implement the \JsonSerializable interface.
+     */
+    public function jsonSerialize() : int
+    {
+        return $this->value;
+    }
+
     public function __toString() : string
     {
         return (string) $this->value;
@@ -229,5 +239,60 @@ trait IsIntType
     protected static function maxValidValue() : ?int
     {
         return null;
+    }
+
+    /**
+     * This method works similar to validate(), but is used specifically when doing mathematical operations,
+     * to provide a more accurate error message than just 'Value must be lower than or equal to x, value provided is y',
+     * where x is the absolute minimum value and y is the total of the current value plus (or minus) the dev-provided
+     * value.
+     * This may make debugging more difficult as the dev would need to know what the total value was at the time,
+     * rather than looking for the value that was added/subtracted.
+     *
+     * @param int|float|object $valueToAddOrSub  The value to add or subtract from the current value. Remember that
+     *                                           this could be a negative value.
+     * @param string           $operation        Either 'add' or 'subtract'.
+     */
+    private function checkMinMaxValues(int|float|object $valueToAddOrSub, string $operation) : void
+    {
+        if (is_object($valueToAddOrSub)) {
+            $valueToAddOrSub = $this->getIntValueOfOther($valueToAddOrSub);
+        }
+
+        if (static::minValidValue() === null && static::maxValidValue() === null) {
+            return;
+        }
+
+        if ( // $valueToAddOrSub could be negative
+            static::minValidValue() !== null && (
+                ($operation === 'add' && ($total = ($this->value + $valueToAddOrSub)) < static::minValidValue())
+                || ($operation === 'subtract' && ($total = ($this->value - $valueToAddOrSub)) < static::minValidValue())
+            )) {
+            throw new InvalidValue(sprintf(
+                'Cannot %s value %s %s %s as it brings the total (%s) below the minimum value of %s',
+                $operation,
+                (string) $valueToAddOrSub,
+                $operation === 'add' ? 'to' : 'from',
+                (string) $this->value,
+                (string) $total,
+                (string) static::minValidValue()
+            ));
+        }
+
+        if (
+            static::maxValidValue() !== null && (
+                ($operation === 'add' && ($total = ($this->value + $valueToAddOrSub)) > static::maxValidValue())
+                || ($operation === 'subtract' && ($total = ($this->value - $valueToAddOrSub)) > static::maxValidValue())
+            )) {
+            throw new InvalidValue(sprintf(
+                'Cannot %s value %s %s %s as it brings the total (%s) above the maximum value of %s',
+                $operation,
+                (string) $valueToAddOrSub,
+                $operation === 'add' ? 'to' : 'from',
+                (string) $this->value,
+                (string) $total,
+                (string) static::maxValidValue()
+            ));
+        }
     }
 }

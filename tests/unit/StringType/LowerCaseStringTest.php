@@ -5,14 +5,14 @@ namespace FireMidge\Tests\ValueObject\Unit\StringType;
 
 use FireMidge\Tests\ValueObject\Unit\Classes\LowerCaseStringType;
 use FireMidge\ValueObject\Exception\InvalidValue;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\LowerCaseStringType
- */
+#[CoversClass(LowerCaseStringType::class)]
 class LowerCaseStringTest extends TestCase
 {
-    public function validValueProvider() : array
+    public static function validValueProvider() : array
     {
         return [
             [ ' UPPERCASE', 'uppercase' ],
@@ -29,25 +29,21 @@ class LowerCaseStringTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validValueProvider
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromStringWithValidValue(string $raw, string $value) : void
     {
         $instance = LowerCaseStringType::fromString($raw);
         $this->assertSame($value, $instance->toString());
     }
 
-    /**
-     * @dataProvider validValueProvider
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromStringOrNullWithValidValue(string $raw, string $value) : void
     {
         $instance = LowerCaseStringType::fromStringOrNull($value);
         $this->assertSame($value, $instance->toString());
     }
 
-    public function invalidValueProvider() : array
+    public static function invalidValueProvider() : array
     {
         return [
             [ ' UPPE', 'Value "uppe" is too short; must have 5 or more characters' ],
@@ -59,9 +55,7 @@ class LowerCaseStringTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromStringWithInvalidValue(string $value, string $expectedExceptionMessagePart) : void
     {
         $this->expectException(InvalidValue::class);
@@ -69,9 +63,7 @@ class LowerCaseStringTest extends TestCase
         LowerCaseStringType::fromString($value);
     }
 
-    /**
-     * @dataProvider invalidValueProvider
-     */
+    #[DataProvider('invalidValueProvider')]
     public function testFromStringOrNullWithInvalidValue(string $value, string $expectedExceptionMessagePart) : void
     {
         $this->expectException(InvalidValue::class);

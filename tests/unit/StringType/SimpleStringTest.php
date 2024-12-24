@@ -10,14 +10,14 @@ use FireMidge\Tests\ValueObject\Unit\Classes\StringEnumType;
 use FireMidge\ValueObject\Exception\ConversionError;
 use FireMidge\ValueObject\Exception\InvalidValue;
 use LogicException;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \FireMidge\Tests\ValueObject\Unit\Classes\SimpleStringType
- */
+#[CoversClass(SimpleStringType::class)]
 class SimpleStringTest extends TestCase
 {
-    public function validValueProvider() : array
+    public static function validValueProvider() : array
     {
         return [
             [ '' ],
@@ -39,18 +39,14 @@ class SimpleStringTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validValueProvider
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromStringWithValidValue(string $value) : void
     {
         $instance = SimpleStringType::fromString($value);
         $this->assertSame($value, $instance->toString());
     }
 
-    /**
-     * @dataProvider validValueProvider
-     */
+    #[DataProvider('validValueProvider')]
     public function testFromStringOrNullWithValidValue(string $value) : void
     {
         $instance = SimpleStringType::fromStringOrNull($value);
@@ -63,16 +59,14 @@ class SimpleStringTest extends TestCase
         $this->assertNull($instance);
     }
 
-    /**
-     * @dataProvider validValueProvider
-     */
+    #[DataProvider('validValueProvider')]
     public function testMagicToString(string $value) : void
     {
         $instance = SimpleStringType::fromString($value);
         $this->assertEquals($value, $instance);
     }
 
-    public function validateLengthSuccessfulProvider() : array
+    public static function validateLengthSuccessfulProvider() : array
     {
         return [
           [ 'ÖSTERREICH', null, 10 ],
@@ -88,16 +82,14 @@ class SimpleStringTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validateLengthSuccessfulProvider
-     */
+    #[DataProvider('validateLengthSuccessfulProvider')]
     public function testValidateLengthSuccessful(string $value, ?int $minLength, ?int $maxLength) : void
     {
         SimpleStringType::fromString('')->validateLength($value, $minLength, $maxLength);
         $this->assertTrue(true, 'Expected validateLength not to throw an exception');
     }
 
-    public function validateLengthExceptionProvider() : array
+    public static function validateLengthExceptionProvider() : array
     {
         return [
             [ 'ÖSTERREICH', null, 9, 'Value "ÖSTERREICH" is too long; can only have a maximum length of 9 characters' ],
@@ -112,9 +104,7 @@ class SimpleStringTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validateLengthExceptionProvider
-     */
+    #[DataProvider('validateLengthExceptionProvider')]
     public function testValidateLengthThrowsException(
         string $value,
         ?int $minLength,
@@ -139,7 +129,7 @@ class SimpleStringTest extends TestCase
         SimpleStringType::fromString('')->validateLength('Hola', 10, 9);
     }
 
-    public function validEmailProvider() : array
+    public static function validEmailProvider() : array
     {
         return [
             [ 'me@mine.com' ],
@@ -150,16 +140,14 @@ class SimpleStringTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validEmailProvider
-     */
+    #[DataProvider('validEmailProvider')]
     public function testValidateEmailAddressSuccessful(string $value) : void
     {
         SimpleStringType::fromString('')->validateEmailAddress($value);
         $this->assertTrue(true, 'Expected validateEmailAddress not to throw an exception');
     }
 
-    public function invalidEmailProvider() : array
+    public static function invalidEmailProvider() : array
     {
         return [
             [ 'not@', 'E-mail address "not@" is invalid.' ],
@@ -174,9 +162,7 @@ class SimpleStringTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidEmailProvider
-     */
+    #[DataProvider('invalidEmailProvider')]
     public function testValidateEmailAddressThrowsLogicException(string $value, string $expectedErrorMessage) : void
     {
         $this->expectException(InvalidValue::class);
@@ -209,7 +195,7 @@ class SimpleStringTest extends TestCase
         $this->assertTrue($instance1->isNotEqualTo($instance2), 'isNotEqualTo with strict check');
     }
 
-    public function successfulLooseCheckComparisonsProvider() : array
+    public static function successfulLooseCheckComparisonsProvider() : array
     {
         return [
             [ StringEnumType::spring() ],
@@ -218,9 +204,7 @@ class SimpleStringTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider successfulLooseCheckComparisonsProvider
-     */
+    #[DataProvider('successfulLooseCheckComparisonsProvider')]
     public function testEqualsToOnlyWithLooseCheckSuccessful(mixed $other) : void
     {
         $instance1 = SimpleStringType::fromString('spring');
@@ -233,7 +217,7 @@ class SimpleStringTest extends TestCase
         $this->assertTrue($instance1->isNotEqualTo($instance2), 'isNotEqualTo with strict check');
     }
 
-    public function unsuccessfulLooseCheckComparisonsProvider() : array
+    public static function unsuccessfulLooseCheckComparisonsProvider() : array
     {
         return [
             [ 'Spring' ],
@@ -246,9 +230,7 @@ class SimpleStringTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider unsuccessfulLooseCheckComparisonsProvider
-     */
+    #[DataProvider('unsuccessfulLooseCheckComparisonsProvider')]
     public function testIsEqualEvenWithLooseCheckUnsuccessful(mixed $other) : void
     {
         $instance1 = SimpleStringType::fromString('spring');

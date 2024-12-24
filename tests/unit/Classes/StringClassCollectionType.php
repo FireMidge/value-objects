@@ -5,7 +5,11 @@ namespace FireMidge\Tests\ValueObject\Unit\Classes;
 
 use FireMidge\ValueObject\Helper\CanBeConvertedToStringArray;
 use FireMidge\ValueObject\IsClassCollectionType;
+use FireMidge\ValueObject\IsCollectionType;
 
+/**
+ * @extends IsCollectionType<SimpleStringType>
+ */
 class StringClassCollectionType
 {
     use IsClassCollectionType;

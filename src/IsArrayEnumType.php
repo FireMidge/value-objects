@@ -28,6 +28,8 @@ trait IsArrayEnumType
             );
         }
 
+        // Those first two checks (for values unique or ignore duplicates)
+        // are repeated inside handleDuplication.
         if ((static::areValuesUnique() || static::ignoreDuplicateValues())
             && count(array_unique($values)) !== count($values)
         ) {
