@@ -13,7 +13,6 @@ class TransformIntArrayEnumType
 {
     use IsIntArrayEnumType;
 
-
     protected static function all() : array
     {
         return [
@@ -23,7 +22,7 @@ class TransformIntArrayEnumType
         ];
     }
 
-    protected function transformEach($value)
+    protected function transformEach(mixed $value) : mixed
     {
         if (! is_numeric($value)) {
             return $value;

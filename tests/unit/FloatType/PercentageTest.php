@@ -71,6 +71,14 @@ class PercentageTest extends TestCase
     {
         $per = Percentage::fromFloat(70.49);
         $this->assertSame('70%', $per->toString());
+        $this->assertSame('70.5%', $per->toString(1));
+        $this->assertSame('70.49%', $per->toString(2));
         $this->assertSame(70, $per->toInt());
+    }
+
+    public function testSerialisesToJson() : void
+    {
+        $instance = Percentage::fromNumber(43.99);
+        $this->assertSame('43.99', json_encode($instance));
     }
 }

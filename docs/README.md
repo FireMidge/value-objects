@@ -1,24 +1,44 @@
 # value-objects
-This library provides convenience methods for creating value objects.
+
+**Tested with PHP 8.4. Requires PHP ^8.1.**
+
+This library provides convenience methods for creating value objects in the form of traits, as well as some generic classes implementing said traits to use as-is where no configuration is needed.
 
 You may use the below table to decide which type is best for you.
-*"Single Value" means the object will hold a single value, whereas "Array of Values" means the object can hold more than one value.*
+*"Single Value" means the object will hold a single value, whereas "Array of Values" means the object can hold more than one value.* 
+
+**You can click on the relevant type to jump straight to their documentation.**
 
 |                             | Single Value                                                                                                                        | Array of Values                                                                                                                                                                                   |
 |:----------------------------|:------------------------------------------------------------------------------------------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | List of Valid Values        | [`IsStringEnumType`](#isstringenumtype)<br />[`IsIntEnumType`](#isintenumtype)<br/>[`IsIntStringMapType`](#isintstringmaptype)      | [`IsStringArrayEnumType`](#isstringarrayenumtype)<br />[`IsIntArrayEnumType`](#isintarrayenumtype)<br />[`IsClassArrayEnumType`](#isclassarrayenumtype)<br/>[`IsArrayEnumType`](#isarrayenumtype) |
 | Any Value/Custom Validation | [`IsEmailType`](#isemailtype)<br/>[`IsStringType`](#isstringtype)<br />[`IsFloatType`](#isfloattype) <br/>[`IsIntType`](#isinttype) | [`IsClassCollectionType`](#isclasscollectiontype)<br />[`IsCollectionType`](#iscollectiontype)                                                                                                    |
 
+### Generic classes
+
+They only exist for convenience, already implementing a type trait with no or minimal configuration.
+All classes are extendable if needed, or you can implement the relevant trait directly.
+
+| Name            | Implemented trait   | Notes                                                                                                                                                                                                                                                                                                                                     |
+|:----------------|:--------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `AnyCollection` | `IsCollectionTrait` | Used when you just want to access an array using normalised OOP methods rather than PHP-native global functions, while not caring about the type of elements.                                                                                                                                                                             |
+| `AnyFloat`      | `IsFloatType`       | Used when you do not want to customise min/max value or other validation rules and the value is a float.                                                                                                                                                                                                                                  |
+| `AnyInteger`    | `IsIntType`         | Used when you do not want to customise min/max value or other validation rules and the value is an integer.                                                                                                                                                                                                                               |
+| `AnyString`     | `IsStringType`      | Used when there are no rules about the format of the string and there is no list of valid values either.                                                                                                                                                                                                                                  |
+| `Email`         | `IsEmailType`       | Used when dealing with an email address without custom validation rules/custom formatting.                                                                                                                                                                                                                                                |
+| `Percentage`    | `IsFloatType`       | Used when expecting a value between 0 and 100, which can be represented as a string (with a % symbol), an integer, or a float (with a customisable number of decimal places. Passing a value less than 0 or greater than 100 results in an exception (rather than being clipped silently. The class can be extended to configure further. |
+
+
 ## Quality Control
 
 The following table is updated with each code update and is generated with the help of PhpUnit (unit testing tool) and Infection (mutation testing tool):
 
-| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Percentage               | Description                                                                                                                                                                                                                                                                                                                           |
-|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Code Coverage                                                                                                                                                                                                                                                | ![100%](docs/img/cc.png) | How many methods have been fully covered by tests.                                                                                                                                                                                                                                                                                    |
-| Mutation Score Indicator                                                                                                                                                                                                                                     | ![97%](docs/img/msi.png) | Indicates how many generated mutants were detected. *Note that some mutants are false positives.*                                                                                                                                                                                                                                     |
-| Mutation Code Coverage                                                                                                                                                                                                                                       | ![98%](docs/img/mcc.png) | Should be in the same ballpark as the normal code coverage. Formula: `(TotalMutantsCount - NotCoveredByTestsCount) / TotalMutantsCount`                                                                                                                                                                                               |
-| Covered Code MSI                                                                                                                                                                                                                                             | ![98%](docs/img/ccm.png) | This is the MSI (Mutation Score Indicator) for code that is actually covered by tests. It shows how effective the tests really are. Formula: `TotalDefeatedMutants / (TotalMutantsCount - NotCoveredByTestsCount)`. *Note that for some reason, Infection may report some mutants not being covered by tests when they actually are.* |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Percentage                | Description                                                                                                                                                                                                                                                                                                                           |
+|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:--------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Code Coverage                                                                                                                                                                                                                                                | ![100%](docs/img/cc.png)  | How many methods have been fully covered by tests.                                                                                                                                                                                                                                                                                    |
+| Mutation Score Indicator                                                                                                                                                                                                                                     | ![99%](docs/img/msi.png)  | Indicates how many generated mutants were detected. *Note that some mutants are false positives.*                                                                                                                                                                                                                                     |
+| Mutation Code Coverage                                                                                                                                                                                                                                       | ![99%](docs/img/mcc.png)  | Should be in the same ballpark as the normal code coverage. Formula: `(TotalMutantsCount - NotCoveredByTestsCount) / TotalMutantsCount`                                                                                                                                                                                               |
+| Covered Code MSI                                                                                                                                                                                                                                             | ![100%](docs/img/ccm.png) | This is the MSI (Mutation Score Indicator) for code that is actually covered by tests. It shows how effective the tests really are. Formula: `TotalDefeatedMutants / (TotalMutantsCount - NotCoveredByTestsCount)`.|
 
 
 ## IsStringEnumType
@@ -26,6 +46,8 @@ The following table is updated with each code update and is generated with the h
 Use this type when there is a set of fixed valid values, and your object represents a single value.
 
 *If there is a set of fixed valid values but your object represents an array of values, use [`IsStringArrayEnumType`](#isstringarrayenumtype).*
+
+**If you do not need to do any configuration, there is a generic class available, implementing this type: `FireMidge\ValueObject\Generic\AnyString`.**
 
 Example:
 ```php
@@ -54,6 +76,7 @@ Usage:
 ```php
 $spring = Season::fromString(Season::SPRING);
 ```
+
 
 ## IsIntEnumType
 
@@ -96,6 +119,8 @@ $success = Status::fromInt(Status::SUCCESS);
 Use this type when the value represents a single e-mail address.
 This trait uses [`IsStringType`](#isstringtype) under the hood but performs standard e-mail validation.
 
+**If you do not need to do any configuration, there is a generic class available, implementing this type: `FireMidge\ValueObject\Generic\Email`.**
+
 Example:
 
 ```php
@@ -109,6 +134,7 @@ Usage:
 ```php
 $email = Email::fromString('hello@there.co.uk');
 ```
+
 
 ## IsStringType
 
@@ -162,6 +188,8 @@ $productName = ProductName::fromString('  orange juice');
 
 Use this type when the value represents a single integer value, but there is no fixed list of valid values, or it is not feasible to write up each valid value.
 
+**If you do not need to do any configuration, there is a generic class available, implementing this type: `FireMidge\ValueObject\Generic\AnyInteger`.**
+
 
 ### Validation
 
@@ -187,6 +215,7 @@ class Percentage
     }
 }
 ```
+**Note that there is a convenient `Percentage` class already available: `FireMidge\ValueObject\Generic\Percentage`.**
 
 Another example, for a value without any limitations:
 ```php
@@ -243,6 +272,8 @@ $percentage = Percentage::fromInt(78);
 ## IsFloatType
 
 Use this type when the value represents a single float value.
+
+**If you do not need to do any configuration, there is a generic class available, implementing this type: `FireMidge\ValueObject\Generic\AnyFloat`.**
 
 
 ### Validation
@@ -607,11 +638,12 @@ You can combine this type with any other type, e.g. to get an array of float typ
 You can provide custom validation by overriding `protected function validateEach(mixed $value) : void`, which is executed for each value separately, both when instantiating it and when calling `withValue`. Note that this validation will also run before `withoutValue`, `tryWithoutValue` and `contains`, so you are notified when passing something entirely invalid rather than it being silently swallowed.
 
 Example:
+
 ```php
+use FireMidge\ValueObject\IsCollectionType;
+
 /**
- * @method static withValue(Status $addedValue)
- * @method static tryWithoutValue(Status $value)
- * @method static contains(Status $value)
+ * @extends IsCollectionType<Status>
  */
 class StatusList
 {
@@ -656,11 +688,51 @@ $duplicateStatusesIgnored = StatusList::fromArray([
     Status::SUCCESS, 
     Status::REDIRECTION,
     Status::SUCCESS,
-])
+]);
 
 // $newStatuses will only contain one instance of Status::REDIRECTION.
 // This is because of `ignoreDuplicateValues` returning true.
 $newStatuses = $statuses->withValue(Status::REDIRECTION);
+```
+
+You also have a variety of other array methods available, e.g.:
+
+```php
+use FireMidge\ValueObject\Generic\AnyCollection;$statuses = StatusList::fromArray([
+    Status::SUCCESS, 
+    Status::REDIRECTION,
+]);
+$errorStatuses = StatusList::fromArray([
+    Status::SERVER_ERROR,
+    Status::CLIENT_ERROR,
+]);
+
+// $newStatuses contains statuses from both $statuses and $errorStatuses,
+// without modifying the merged classes.
+$newStatuses = $statuses->withMerged($errorStatuses);
+
+// This does modify $statuses, and cause it to append the values from
+// $errorStatuses to its own.
+$statuses->merge($errorStatuses);
+
+// split() causes the values of one collection to be split into 
+// 2 collections. This modifies the original instance.
+// In this case, $alsoErrorStatuses contains Status::SERVER_ERROR
+// and Status::CLIENT_ERROR, while $statuses only keeps
+// the first 2 elements, i.e. STATUS::SUCCESS and STATUS::REDIRECTION.
+$alsoErrorStatuses = $statuses->split(2);
+
+// pop() removes the last element and returns it.
+// This modifies the original instance ($statuses).
+$redirection = $statuses->pop();
+
+// You can also pop multiple values at once, but note
+// that the returned order will be reversed, as each element
+// is popped individually and together, they are returned as a new
+// collection instance.
+$values = AnyCollection::fromArray('a', 'b', 'c', 'd', 'e');
+$last2 = $values->popMultiple(2);
+echo json_encode($last2); // ["e","d"]
 ```
 
 
@@ -687,10 +759,10 @@ You can provide custom validation by overriding `protected function validateEach
 Example:
 
 ```php
+use FireMidge\ValueObject\IsCollectionType;
+
 /**
- * @method static withValue(Email $addedValue)
- * @method static tryWithoutValue(Email $value)
- * @method static contains(Email $value)
+ * @extends IsCollectionType<Email>
  */
 class EmailCollection
 {
@@ -811,6 +883,8 @@ $emailsMatch = $emails->isEqualTo([
 
 Use this type when the value represents an array of values and there is **no** finite list of valid values. If there is a list of valid values, use [`IsArrayEnumType`](#isarrayenumtype) (or any of the more specific variations, e.g. [`IsStringArrayEnumType`](#isstringarrayenumtype) if applicable).
 
+**If you do not need to do any configuration, there is a generic class available, implementing this type: `FireMidge\ValueObject\Generic\AnyCollection`.**
+
 
 ### Combination with other types
 You can combine this type with any other type, e.g. to get an array of float types, an array of e-mail addresses, etc.
@@ -835,7 +909,7 @@ You can provide custom validation by overriding `protected function validateEach
 
 ### Value transformation
 
-If you want to transform the input value but not fail validation, override `protected function transformEach($value)`.
+If you want to transform the input value but not fail validation, override `protected function transformEach(mixed $value)`.
 
 By also using the trait `CanTransformStrings`, you'll get 3 convenience methods that you can call inside `transform` if you want:
 - `trimAndLowerCase(string $value)`
@@ -845,10 +919,10 @@ By also using the trait `CanTransformStrings`, you'll get 3 convenience methods 
 Example:
 
 ```php
+use FireMidge\ValueObject\IsCollectionType;
+
 /**
- * @method static withValue(string $addedValue)
- * @method static tryWithoutValue(string $value)
- * @method static contains(string $value)
+ * @extends IsCollectionType<string>
  */
 class ProductNameCollection
 {
@@ -862,11 +936,7 @@ class ProductNameCollection
         }
     }
 
-    /**
-    * @param mixed $value
-    * @return mixed
-     */
-    protected function transformEach($value)
+    protected function transformEach(mixed $value) : mixed
     {
         if (! is_string($value)) {
             return $value;

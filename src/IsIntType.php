@@ -192,6 +192,14 @@ trait IsIntType
         return $this->value;
     }
 
+    /**
+     * This allows you to implement the \JsonSerializable interface.
+     */
+    public function jsonSerialize() : int
+    {
+        return $this->value;
+    }
+
     public function __toString() : string
     {
         return (string) $this->value;

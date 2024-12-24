@@ -7,6 +7,9 @@ use FireMidge\ValueObject\Exception\InvalidValue;
 use FireMidge\ValueObject\Helper\CanTransformStrings;
 use FireMidge\ValueObject\IsCollectionType;
 
+/**
+ * @extends IsCollectionType<string>
+ */
 class BasicStringCollectionType
 {
     use IsCollectionType;

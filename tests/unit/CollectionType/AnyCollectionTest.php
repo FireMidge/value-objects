@@ -3,13 +3,16 @@ declare(strict_types=1);
 
 namespace FireMidge\Tests\ValueObject\Unit\CollectionType;
 
+use FireMidge\Tests\ValueObject\Unit\Classes\SimpleFloatType;
 use FireMidge\ValueObject\Generic\AnyCollection;
+use FireMidge\ValueObject\Generic\AnyFloat;
+use FireMidge\ValueObject\Generic\AnyString;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(AnyCollection::class)]
-class GenericCollectionTest extends TestCase
+class AnyCollectionTest extends TestCase
 {
     public static function successfulMergeProvider() : array
     {
@@ -272,5 +275,22 @@ class GenericCollectionTest extends TestCase
             [],
             $coll->withReversedOrder()->toArray()
         );
+    }
+
+    public function testSerialisesToJson() : void
+    {
+        $instance = AnyCollection::fromArray([
+            AnyString::fromString('Foobar'),
+            AnyFloat::fromNumber(11.66)
+        ]);
+
+        $this->assertSame('["Foobar",11.66]', json_encode($instance));
+    }
+
+    public function testSerialisesEmptyToJson() : void
+    {
+        $instance = AnyCollection::empty();
+
+        $this->assertSame('[]', json_encode($instance));
     }
 }

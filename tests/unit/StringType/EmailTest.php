@@ -5,6 +5,7 @@ namespace FireMidge\Tests\ValueObject\Unit\StringType;
 
 use FireMidge\Tests\ValueObject\Unit\Classes\EmailType;
 use FireMidge\ValueObject\Exception\InvalidValue;
+use FireMidge\ValueObject\Generic\Email;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -63,5 +64,11 @@ class EmailTest extends TestCase
         $this->expectException(InvalidValue::class);
         $this->expectExceptionMessage($expectedExceptionMessagePart);
         EmailType::fromStringOrNull($value);
+    }
+
+    public function testSerialisesToJson() : void
+    {
+        $instance = Email::fromString('sample@example.com');
+        $this->assertSame('"sample@example.com"', json_encode($instance));
     }
 }

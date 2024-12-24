@@ -104,6 +104,14 @@ trait IsStringType
         return $this->value;
     }
 
+    /**
+     * This allows you to implement the \JsonSerializable interface.
+     */
+    public function jsonSerialize() : string
+    {
+        return $this->value;
+    }
+
     public function __toString() : string
     {
         return $this->value;

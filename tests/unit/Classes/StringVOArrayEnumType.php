@@ -5,10 +5,13 @@ namespace FireMidge\Tests\ValueObject\Unit\Classes;
 
 use FireMidge\ValueObject\Exception\InvalidValue;
 use FireMidge\ValueObject\IsArrayEnumType;
+use FireMidge\ValueObject\IsClassCollectionType;
 
 /**
  * This is an array enum type, with each value
  * being a string type value object (VO).
+ *
+ * @extends IsClassCollectionType<StringEnumType>
  */
 class StringVOArrayEnumType
 {

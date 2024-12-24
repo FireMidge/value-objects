@@ -12,6 +12,9 @@ use Throwable;
  * A trait for a class that can hold an array of values (as opposed to a single value), and:
  * - where each array element has to be an instance of a specific value type class, and
  * - where the value type class only considers a limited set of values valid.
+ *
+ * @template T of object
+ * @extends IsCollectionType<T>
  */
 trait IsClassArrayEnumType
 {

@@ -487,6 +487,14 @@ trait IsCollectionType
     }
 
     /**
+     * This allows you to implement the \JsonSerializable interface.
+     */
+    public function jsonSerialize() : array
+    {
+        return $this->values;
+    }
+
+    /**
      * Override this and return true if you want to disallow adding the same
      * value more than once.
      */

@@ -215,6 +215,14 @@ trait IsFloatType
         return $this->value;
     }
 
+    /**
+     * This allows you to implement the \JsonSerializable interface.
+     */
+    public function jsonSerialize() : float
+    {
+        return $this->value;
+    }
+
     public function __toString() : string
     {
         return (string) $this->value;
