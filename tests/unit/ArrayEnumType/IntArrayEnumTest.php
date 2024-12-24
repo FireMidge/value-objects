@@ -94,8 +94,8 @@ class IntArrayEnumTest extends TestCase
         ];
     }
 
-    #[Depends('testFromArrayWithEmptyArray')]
     #[DataProvider('singleValidValueProvider')]
+    #[Depends('testFromArrayWithEmptyArray')]
     public function testWithValueWithValidValue(int $value) : void
     {
         $instance    = IntArrayEnumType::fromArray([

@@ -5,6 +5,13 @@
 - [Tests](#tests)
   - [Set-up](#set-up)
   - [Run tests](#run-tests)
+    - [Multiple PHP versions](#multiple-php-versions)
+    - [Commands to run tests](#commands-to-run-tests)
+    - [Run a specific test](#run-a-specific-test)
+      - [Class/Method](#method-or-class)
+      - [Named data set](#named-data-set)
+      - [Unnamed data set](#unnamed-data-set)
+    - [Adding new tests](#adding-new-tests)
 - [Dependencies](#dependencies)
 - [Commits](#commits)
   - [Validate composer.json](#validate-composerjson)
@@ -22,16 +29,16 @@ In order to be able to run tests, go through the following steps to set up the D
 
 
 #### Download and build the Docker image
-`docker-compose build --build-arg UID=`id -u` lib{v}`
+`docker-compose build --build-arg UID=`id -u` lib84 lib81`
 
-*Replace `{v}` with the relevant PHP version number.*
+or: (make sure that `USER_ID` in the `.env` file is correct)
+
+`docker compose up --build`
 
 
 #### Install dependencies
 
-`docker-compose run lib{v} composer install`
-
-*Replace `{v}` with the relevant PHP version number.*
+`docker-compose run lib84 composer install`
 
 
 ### Run tests
@@ -40,7 +47,7 @@ In order to be able to run tests, go through the following steps to set up the D
 
 Since version `2.7`, we have more than one Dockerfile, to run the tests against more than one PHP version.
 
-We haven't separated the `vendor` folder yet (which we could probably do by creating separate `vendor` directories for each container and then mounting them as `/src/vendor` volumes in the `docker-compose.yml`), as we're not increasing the minimum required PHP version dependency.
+There is only one `vendor` folder as we're not changing the minimum required PHP version dependency, so you only need to install them on the `lib81` service, and they'll automatically be available to `lib84` too.
 
 In order to run the PHP 8.1 container, you'd use:
 `docker compose run --rm lib81 vendor/bin/phpunit`
@@ -48,7 +55,7 @@ In order to run the PHP 8.1 container, you'd use:
 In order to run the PHP 8.4 container, you'd use:
 `docker compose run --rm lib84 vendor/bin/phpunit`
 
-A standalone "lib" service is no longer available, so wherever you see `run --rm lib84` in this file, update the last 2 numbers to run the relevant PHP version (if available), e.g. `run --rm lib81`. (The `--rm` flag makes sure that the container instance is removed once the command has finished executing, avoiding orphans).
+*Wherever you see `run --rm lib84` in this file, update the last 2 numbers to run the relevant PHP version (if available), e.g. `run --rm lib81`. (The `--rm` flag makes sure that the container instance is removed once the command has finished executing, avoiding orphans).*
 
 
 #### Commands to run tests
@@ -65,9 +72,10 @@ To create a code coverage report in HTML style:
 To create a quick code coverage overview in the CLI:
 `docker compose run --rm lib84 vendor/bin/phpunit --coverage-text`
 
-*Replace `{v}` with the relevant PHP version number.*
 
 #### Run a specific test
+
+##### Method or Class
 
 To run a specific class, or method, run:
 
@@ -75,13 +83,33 @@ To run a specific class, or method, run:
 
 where `testWithValueDoesNotChangePreExisting` is the name of the method. You can also use the name of a class instead.
 
-and `{v}` is the PHP version number.
+
+##### Named data set
 
 To run a specific data set (when using data providers), you can use the name of the data set after the `@`, e.g.:
 
 ` docker compose run --rm lib84 vendor/bin/phpunit --filter testWithValueDoesNotChangePreExisting@invalidNumber`
 
 where `testWithValueDoesNotChangePreExisting` is the name of the method, and `invalidNumber` is the name of the data set. Note that this only works with non-numeric data set names.
+
+
+##### Unnamed data set
+
+If you have unnamed data sets, you can still run an individual using the following syntax:
+
+`--filter methodName#dataSetNumber`
+
+E.g.: 
+`docker compose run --rm lib84 vendor/bin/phpunit testFromStringWithValidValue#3`
+
+Data set numbers start from 0.
+You can also use ranges:
+
+`docker compose run --rm lib84 vendor/bin/phpunit testFromStringWithValidValue#3-5`
+
+The above will run any test methods that are named "testFromStringWithValidValue", but only with the 4th, 5th and 6th data set.
+
+For more information, see the PhpUnit documentation.
 
 
 #### Adding new tests

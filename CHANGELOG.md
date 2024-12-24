@@ -10,6 +10,7 @@ Works with PHP 8.4.
 
 1) `next()` and `previous()` on `IsCollectionType` no longer return a value.
     - This is because of `\Iterator` requiring `next` to return `void`, and it makes sense for `next` and `previous` to function in the same way.
+2) `ConversionError` now extends from `\ValueError` (previously `\RuntimeException`)
 
 
 ### Features
@@ -43,7 +44,7 @@ Works with PHP 8.4.
 
 1) Added Psalm annotations in the collection type.
    - This allows for better IDE-internal type hints for methods like `toArray()`, `first()`, `last()` etc. 
-   - Usage is documented in `README.md`
+   - Usage is showcased in `README.md`
 2) More specific error messages for adding or subtracting a value from a float or integer type beyond allowed min/max values.
 3) Option to return `$reasons` from a `ConversionError`
 4) `InvalidValue` renders different types better, e.g. non-strings are no longer wrapped in double quotes
